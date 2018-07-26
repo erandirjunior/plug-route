@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: erandir
- * Date: 23/07/18
- * Time: 20:01
- */
 
 require_once '../vendor/autoload.php';
 
@@ -19,7 +13,7 @@ class PlugRouteTest extends TestCase
 
         $route->get('/','Teste@teste');
 
-        $this->assertSame([['route' => '/', 'callback' => 'Teste@teste',
+        $this->assertEquals([['route' => '/', 'callback' => 'Teste@teste',
             'type' => 'GET']], $route->getRoutes());
     }
 
@@ -39,6 +33,16 @@ class PlugRouteTest extends TestCase
                 'type' => 'POST']
         ];
 
-        $this->assertSame($expected, $route->getRoutes());
+        $this->assertEquals($expected, $route->getRoutes());
+    }
+
+    public function testAnyRoute()
+    {
+        $route = new PlugRoute();
+
+        $route->any('/', 'Teste@teste');
+
+        $this->assertEquals([['route' => '/', 'callback' => 'Teste@teste',
+            'type' => 'ANY']], $route->getRoutes());
     }
 }

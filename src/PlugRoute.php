@@ -48,7 +48,7 @@ class PlugRoute
      * @param $route string
      * @param $callback callable
      */
-    public function group(string $route, $callback)
+    public function group(string $route, callable $callback)
     {
         $routesBeforeGroup = $this->routes;
         $callback($this);
@@ -60,11 +60,24 @@ class PlugRoute
         }
     }
 
+    public function any(string $route, $callback)
+    {
+        $this->routes[] = [
+            'route' => $route,
+            'callback' => $callback,
+            'type' => 'ANY'
+        ];
+    }
+
     public function getRoutes()
     {
         return $this->routes;
     }
 
     public function on()
-    {}
+    {
+        $config = new PlugConfig($this->routes);
+        return $config->main();
+//        return $config->run();
+    }
 }
