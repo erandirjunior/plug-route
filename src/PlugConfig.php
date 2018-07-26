@@ -20,9 +20,7 @@ class PlugConfig
      * @var array
      */
     private $routes;
-    private $piecesUrl;
-    private $urlError;
-    private $matches;
+    private $countError;
 
     public function __construct($routes)
     {
@@ -63,10 +61,10 @@ class PlugConfig
 
     private function handleDynamicRoute($route, $url)
     {
-        $match = PlugHelper::getMatch($route['route']);
+        $match          = PlugHelper::getMatch($route['route']);
         $route['route'] = str_replace(['{', '}'], '', $route['route']);
-        $routeArray = explode('/', $route['route']);
-        $urlArray = explode('/', $url);
+        $routeArray     = explode('/', $route['route']);
+        $urlArray       = explode('/', $url);
 
         if (count($urlArray) > count($routeArray)) {
             array_unshift($routeArray, "");
@@ -74,7 +72,7 @@ class PlugConfig
         $index = PlugHelper::getIndex($routeArray, $match[0]);
 
         foreach ($routeArray as $k => $v) {
-            $routeArray[$k] = $k === $index[$k] ? $urlArray[$k] : $routeArray[$k];
+            $routeArray[$k] = ($k === $index[$k]) ? $urlArray[$k] : $routeArray[$k];
         }
 
         $route['route'] = implode('/', $routeArray);
@@ -83,17 +81,17 @@ class PlugConfig
 
     private function execute(string $url, array $route)
     {
-        if ($url === $route['route']) {
+        if (PlugHelper:: $url === $route['route']) {
             if (is_callable($route['callback'])) {
-                return $route['callback']($this->piecesUrl);
+                return $route['callback']();
             }
-            $callback = explode("@", $route['callback']);
-            $class = $callback[0];
-            $method = $callback[1];
-            $instance = $this->createInstance($class);
+            $callback   = explode("@", $route['callback']);
+            $class      = $callback[0];
+            $method     = $callback[1];
+            $instance   = $this->createInstance($class);
             return $this->action($instance, $method);
         }
-        $this->urlError ++;
+        $this->countError ++;
     }
 
     private function createInstance($class)
@@ -108,14 +106,14 @@ class PlugConfig
     private function action($instance, $method)
     {
         if (method_exists($instance, $method)) {
-            return $instance->$method($this->piecesUrl);
+            return $instance->$method();
         }
         throw new \Exception("Error: method don't exist.");
     }
 
     private function countError($value)
     {
-        if (count($value) == $this->urlError) {
+        if (count($value) === $this->countError) {
             throw new \Exception("Error: route don't exist");
         }
     }

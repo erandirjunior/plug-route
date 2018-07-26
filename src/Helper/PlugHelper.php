@@ -14,13 +14,13 @@ class PlugHelper
     public static function pathRoute($routeBase, $routeComplement)
     {
         $pathRoute = "{$routeBase}/{$routeComplement}";
-        $pathRoute = preg_replace('/\/{2,}/', '/', $pathRoute);
+        $pathRoute = self::clearRoute($pathRoute);
         return $pathRoute;
     }
 
-    public static function clearRoute($route)
+    public static function clearRoute($value)
     {
-        return preg_replace('/\/{2,}/', '/', $route);
+        return preg_replace('/\/{2,}/', '/', $value);
     }
 
     public static function getUrlPath()
@@ -68,8 +68,6 @@ class PlugHelper
             }
         });
         return $indice;
-
-
     }
 
     public static function isDynamic($route)
@@ -84,5 +82,9 @@ class PlugHelper
     {
         preg_match_all('({.+?}/?)', $route, $match);
         return $match;
+    }
+
+    public static function isEqual($value1, $value2) {
+        return $value1 === $value2;
     }
 }
