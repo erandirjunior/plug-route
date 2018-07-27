@@ -8,6 +8,9 @@ $route = new PlugRoute();
 
 $route->get('/', function() {
     echo 'rota básica';
+    var_dump($_GET);
+    echo "<hr>";
+    var_dump($_POST);
 });
 
 $route->get('/{example}', function() {
