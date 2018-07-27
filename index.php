@@ -6,27 +6,40 @@ use \PlugRoute\PlugRoute;
 
 $route = new PlugRoute();
 
-$route->get('{teste}/nada/{a}', function() {
-    echo 'olá';
+$route->get('/', function() {
+    echo 'rota básica';
 });
 
-$route->get('/{exemplo}', function() {
-    echo 'Exemplo de funcionamento de rota dinâmica';
+$route->get('/{example}', function() {
+    echo 'rota dinâmica básica';
 });
 
-/*$route->get('/', function() {
-    echo 'rota de qq tipo';
-});*/
+$route->get('/{example}/test/{e}', function() {
+    echo 'rota dinâmica intermediária';
+});
 
-/*$route->group('/noticias', function($route) {
-    $route->get('/esporte', function() {
-        echo 'noticias sobre esporte';
+$route->get('/{example}/test/{e}/a', function() {
+    echo 'rota dinâmica avançada';
+});
+
+$route->group('/news', function($route) {
+    $route->get('/', function() {
+        echo 'rota news básica';
     });
 
-    $route->get('/tecnologia', function() {
-        echo 'noticias sobre tecnologia';
+    $route->get('/{example}', function() {
+        echo 'rota news dinâmica básica';
     });
-});*/
+
+    $route->get('/{example}/t/{e}', function() {
+        echo 'rota news dinâmica intermediária';
+    });
+
+    $route->get('/{example}/t/{e}/a', function() {
+        echo 'rota news dinâmica avançada';
+    });
+});
+
 
 $route->on();
 

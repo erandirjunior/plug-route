@@ -4,20 +4,22 @@ namespace PlugRoute;
 
 
 use PlugRoute\Helper\PlugHelper;
+use PlugRoute\Helper\RouteHelper;
 
 class PlugRoute
 {
-    private $config;
-
+    /**
+     * Store all routes.
+     *
+     * @var array
+     */
     private $routes;
 
-    public function __construct()
-    {}
-
     /**
-     * Receive requests type post.
+     * Receive all routes of type post.
      *
-     * @param array $post
+     * @param string $route
+     * @param $callback
      */
     public function post(string $route, $callback)
     {
@@ -29,9 +31,10 @@ class PlugRoute
     }
 
     /**
-     * Receive requests type get.
+     * Receive all routes of type get.
      *
-     * @param array $get
+     * @param string $route
+     * @param $callback
      */
     public function get(string $route, $callback)
     {
@@ -43,23 +46,22 @@ class PlugRoute
     }
 
     /**
-     * Receive a group of requests
+     * Receives grouping of routes.
      *
-     * @param $route string
-     * @param $callback callable
+     * @param string $route
+     * @param callable $callback
      */
     public function group(string $route, callable $callback)
     {
-        $routesBeforeGroup = $this->routes;
-        $callback($this);
-
-        foreach ($this->routes as $key => $value) {
-            if (empty($routesBeforeGroup[$key])) {
-                $this->routes[$key]['route'] = PlugHelper::pathRoute($route, $value['route']);
-            }
-        }
+        $this->routes = $this->mountRouteGroup($route, $callback);
     }
 
+    /**
+     * Receive routes of all types.
+     *
+     * @param string $route
+     * @param $callback
+     */
     public function any(string $route, $callback)
     {
         $this->routes[] = [
@@ -69,15 +71,45 @@ class PlugRoute
         ];
     }
 
+    /**
+     * Return routes.
+     *
+     * @return array
+     */
     public function getRoutes()
     {
         return $this->routes;
     }
 
+    /**
+     * Mount routes that are grouped.
+     *
+     * @param $route
+     * @param callable $callback
+     * @return array
+     */
+    private function mountRouteGroup($route, $callback)
+    {
+        $routesBeforeGroup = $this->routes;
+        $callback($this);
+
+        foreach ( $this->routes as $key => $value) {
+            if (empty($routesBeforeGroup[$key])) {
+                $this->routes[$key]['route'] = RouteHelper::pathRoute($route, $value['route']);
+            }
+        }
+
+        return $this->routes;
+    }
+
+    /**
+     * Execute routes.
+     *
+     * @return string
+     */
     public function on()
     {
         $config = new PlugConfig($this->routes);
         return $config->main();
-//        return $config->run();
     }
 }
