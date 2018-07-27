@@ -9,6 +9,9 @@
 namespace PlugRoute;
 
 
+use PlugRoute\Exception\ClassException;
+use PlugRoute\Exception\MethodException;
+use PlugRoute\Exception\RouteException;
 use PlugRoute\Helper\PlugHelper;
 use PlugRoute\Helper\RouteHelper;
 
@@ -180,31 +183,28 @@ class PlugConfig
      *
      * @param string $class
      * @return mixed
-     * @throws \Exception
+     * @throws ClassException
      */
     private function createInstance($class)
     {
         if (!class_exists($class)) {
-            throw new \Exception("Error: class don't exist.");
+            throw new ClassException("Error: class don't exist.");
         }
         return new $class;
     }
 
     /**
-     * Call method of class.
-     * Return method.
-     *
      * @param object $instance
      * @param string $method
      * @return mixed
-     * @throws \Exception
+     * @throws MethodException
      */
     private function callMethod($instance, $method)
     {
         if (PlugHelper::methodExist($instance, $method)) {
             return $instance->$method();
         }
-        throw new \Exception("Error: method don't exist.");
+        throw new MethodException("Error: method don't exist.");
     }
 
     /**
@@ -222,12 +222,12 @@ class PlugConfig
      * Check if number of errors is equal number of routes.
      *
      * @param $value
-     * @throws \Exception
+     * @throws RouteException
      */
     private function countError($value)
     {
         if (PlugHelper::isEqual(count($value), $this->countError)) {
-            throw new \Exception("Error: route don't exist");
+            throw new RouteException("Error: route don't exist");
         }
     }
 }

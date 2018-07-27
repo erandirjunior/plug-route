@@ -1,49 +1,35 @@
 <?php
 
-require_once 'vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 use \PlugRoute\PlugRoute;
 
 $route = new PlugRoute();
 
 $route->get('/', function() {
-    echo 'rota básica';
-    var_dump($_GET);
-    echo "<hr>";
-    var_dump($_POST);
+    echo 'basic route';
 });
 
 $route->get('/{example}', function() {
-    echo 'rota dinâmica básica';
+    echo 'dynamic route';
 });
 
-$route->get('/{example}/test/{e}', function() {
-    echo 'rota dinâmica intermediária';
-});
-
-$route->get('/{example}/test/{e}/a', function() {
-    echo 'rota dinâmica avançada';
+$route->get('/{example}/test/{something}', function() {
+    echo 'other dynamic route';
 });
 
 $route->group('/news', function($route) {
     $route->get('/', function() {
-        echo 'rota news básica';
+        echo 'news basic route';
     });
 
     $route->get('/{example}', function() {
-        echo 'rota news dinâmica básica';
+        echo 'news dynamic route';
     });
 
-    $route->get('/{example}/t/{e}', function() {
-        echo 'rota news dinâmica intermediária';
-    });
-
-    $route->get('/{example}/t/{e}/a', function() {
-        echo 'rota news dinâmica avançada';
+    $route->get('/{example}/test/{something}', function() {
+        echo 'news other dynamic route';
     });
 });
 
-
 $route->on();
-
-var_dump($route->getRoutes());
