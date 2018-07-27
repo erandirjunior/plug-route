@@ -10,12 +10,17 @@ $route->get('/', function() {
     echo 'basic route';
 });
 
-$route->get('/{example}', function() {
-    echo 'dynamic route';
+$route->post('/', function() {
+    echo 'This is a post route';
 });
 
-$route->get('/{example}/test/{something}', function() {
+$route->get('/{something}/test/{something}', function() {
     echo 'other dynamic route';
+});
+
+$route->any('/home', function() {
+   echo 'route type any';
+   var_dump($_POST);
 });
 
 $route->group('/news', function($route) {
@@ -23,11 +28,11 @@ $route->group('/news', function($route) {
         echo 'news basic route';
     });
 
-    $route->get('/{example}', function() {
+    $route->get('/{something}', function() {
         echo 'news dynamic route';
     });
 
-    $route->get('/{example}/test/{something}', function() {
+    $route->get('/{something}/test/{something}', function() {
         echo 'news other dynamic route';
     });
 });
