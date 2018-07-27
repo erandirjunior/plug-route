@@ -1,2 +1,3 @@
 # plug-route
-Plug Route
+
+# <a href="https://github.com/fsoaresjunior/plug-route/wiki/Installing">View Doc</a>
