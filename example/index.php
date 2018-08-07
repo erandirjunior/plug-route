@@ -20,7 +20,6 @@ $route->get('/{something}/test/{something}', function() {
 
 $route->any('/home', function() {
    echo 'route type any';
-   var_dump($_POST);
 });
 
 $route->group('/news', function($route) {
@@ -28,8 +27,9 @@ $route->group('/news', function($route) {
         echo 'news basic route';
     });
 
-    $route->get('/{something}', function() {
-        echo 'news dynamic route';
+    // /news/sport
+    $route->get('/{something}', function($data) {
+        var_dump($data); // array (size=1) 0 => string 'sport' (length=5)
     });
 
     $route->get('/{something}/test/{something}', function() {

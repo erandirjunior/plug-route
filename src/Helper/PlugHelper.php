@@ -58,7 +58,7 @@ class PlugHelper
         array_walk($routes, function ($k, $v) use ($matches, &$indice) {
             foreach ($matches as $j => $value) {
                 $value = str_replace(['{', '}', '/'], '', $value);
-                if ($k == str_replace(['{', '}'], '', $value)) {
+                if ($k == $value) {
                     $indice[$v] = $v;
                 }
             }
@@ -76,6 +76,14 @@ class PlugHelper
     {
         preg_match_all('({.+?}/?)', $route, $match);
         return $match;
+    }
+
+    public static function getValuesDynamics(array $indexes, array $url)
+    {
+        foreach ($indexes as $k => $v) {
+            $data[] = $url[$k];
+        }
+        return $data;
     }
 
     /**

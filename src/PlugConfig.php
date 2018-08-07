@@ -32,6 +32,20 @@ class PlugConfig
     private $countError;
 
     /**
+     * Receive array of dynamic values.
+     *
+     * @var array
+     */
+    private $data;
+
+    /**
+     * Receive url path.
+     *
+     * @var string
+     */
+    private $url;
+
+    /**
      * PlugConfig constructor.
      *
      * @param array $routes
@@ -59,10 +73,10 @@ class PlugConfig
     public function main()
     {
         try {
-            $url = PlugHelper::getUrlPath();
+            $this->url = PlugHelper::getUrlPath();
             $this->routes = RouteHelper::filterRoute($this->routes);
-            array_walk($this->routes, function($route) use ($url) {
-                $this->handleRoute($route, $url);
+            array_walk($this->routes, function($route) {
+                $this->handleRoute($route);
             });
         } catch (\Exception $e) {
             return $this->showErrorMessage($e->getMessage());
@@ -88,13 +102,13 @@ class PlugConfig
      * @param string $url
      * @throws \Exception
      */
-    private function handleRoute($route, $url)
+    private function handleRoute($route)
     {
 
         if (RouteHelper::isDynamic($route['route'])) {
-            $this->handleDynamicRoute($route, $url);
+            $this->handleDynamicRoute($route);
         } else {
-            $this->handleCallback($url, $route);
+            $this->handleCallback($route);
         }
         $this->countError($this->routes);
     }
@@ -108,17 +122,17 @@ class PlugConfig
      *
      * @throws \Exception
      */
-    private function handleDynamicRoute($route, $url)
+    private function handleDynamicRoute($route)
     {
         $match          = PlugHelper::getMatch($route['route']);
         $route['route'] = str_replace(['{', '}'], '', $route['route']);
         $routeArray     = PlugHelper::toArray($route['route'], '/');
+        $urlArray       = PlugHelper::toArray($this->url, '/');
+        $indexes        = PlugHelper::getIndexDynamicOnRoute($routeArray, $match[0]);
+        $this->data     = PlugHelper::getValuesDynamics($indexes, $urlArray);
 
-        $urlArray       = PlugHelper::toArray($url, '/');
-
-        $index          = PlugHelper::getIndexDynamicOnRoute($routeArray, $match[0]);
-        $route['route'] = $this->mountUrl($routeArray, $urlArray, $index);
-        return $this->handleCallback($url, $route);
+        $route['route'] = $this->mountUrl($routeArray, $urlArray, $indexes);
+        return $this->handleCallback($route);
     }
 
     /**
@@ -150,9 +164,9 @@ class PlugConfig
      * @return int|mixed
      * @throws \Exception
      */
-    private function handleCallback(string $url, array $route)
+    private function handleCallback(array $route)
     {
-        if (!PlugHelper::isEqual($url, $route['route'])) {
+        if (!PlugHelper::isEqual($this->url, $route['route'])) {
             return $this->countError++;
         }
 
@@ -215,7 +229,7 @@ class PlugConfig
      */
     private function callFunction($function)
     {
-        return $function();
+        return $function($this->data);
     }
 
     /**
