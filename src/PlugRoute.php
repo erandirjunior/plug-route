@@ -3,7 +3,6 @@
 namespace PlugRoute;
 
 
-use PlugRoute\Helper\PlugHelper;
 use PlugRoute\Helper\RouteHelper;
 
 class PlugRoute

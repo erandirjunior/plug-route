@@ -80,8 +80,11 @@ class PlugHelper
 
     public static function getValuesDynamics(array $indexes, array $url)
     {
+    	$data = [];
         foreach ($indexes as $k => $v) {
-            $data[] = $url[$k];
+        	if (isset($url[$k])) {
+				$data[] = $url[$k];
+			}
         }
         return $data;
     }

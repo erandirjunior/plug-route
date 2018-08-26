@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "0316809963f464f4f547a59dc19d6038",
@@ -676,16 +676,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.3.0",
+            "version": "7.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "0b6b29faf95c03fd7867e866438b78d5692b6f03"
+                "reference": "34705f81bddc3f505b9599a2ef96e2b4315ba9b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/0b6b29faf95c03fd7867e866438b78d5692b6f03",
-                "reference": "0b6b29faf95c03fd7867e866438b78d5692b6f03",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/34705f81bddc3f505b9599a2ef96e2b4315ba9b8",
+                "reference": "34705f81bddc3f505b9599a2ef96e2b4315ba9b8",
                 "shasum": ""
             },
             "require": {
@@ -756,7 +756,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2018-08-03T06:02:45+00:00"
+            "time": "2018-08-22T06:39:21+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
