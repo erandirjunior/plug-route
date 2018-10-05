@@ -15,22 +15,7 @@ class PlugRoute
     private $routes;
 
     /**
-     * Receive all routes of type post.
-     *
-     * @param string $route
-     * @param $callback
-     */
-    public function post(string $route, $callback)
-    {
-        $this->routes[] = [
-            'route' => $route,
-            'callback' => $callback,
-            'type' => 'POST'
-        ];
-    }
-
-    /**
-     * Receive all routes of type get.
+     * Receive all routes of type GET.
      *
      * @param string $route
      * @param $callback
@@ -43,6 +28,51 @@ class PlugRoute
             'type' => 'GET'
         ];
     }
+
+	/**
+	 * Receive all routes of type POST.
+	 *
+	 * @param string $route
+	 * @param $callback
+	 */
+	public function post(string $route, $callback)
+	{
+		$this->routes[] = [
+			'route' => $route,
+			'callback' => $callback,
+			'type' => 'POST'
+		];
+	}
+
+	/**
+	 * Receive all routes of type PUT.
+	 *
+	 * @param string $route
+	 * @param $callback
+	 */
+	public function put(string $route, $callback)
+	{
+		$this->routes[] = [
+			'route' => $route,
+			'callback' => $callback,
+			'type' => 'POST'
+		];
+	}
+
+	/**
+	 * Receive all routes of type DELETE.
+	 *
+	 * @param string $route
+	 * @param $callback
+	 */
+	public function delete(string $route, $callback)
+	{
+		$this->routes[] = [
+			'route' => $route,
+			'callback' => $callback,
+			'type' => 'POST'
+		];
+	}
 
     /**
      * Receives grouping of routes.
