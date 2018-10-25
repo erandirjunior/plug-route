@@ -3,7 +3,8 @@
 namespace PlugRoute;
 
 
-use PlugRoute\Helper\RouteHelper;
+use PlugRoute\Helpers\RouteHelper;
+use PlugRoute\Rules\RouteManager;
 
 class PlugRoute
 {
@@ -14,7 +15,14 @@ class PlugRoute
      */
     private $routes;
 
-    /**
+    private $manager;
+
+    public function __construct()
+	{
+		$this->manager = new RouteManager();
+	}
+
+	/**
      * Receive all routes of type GET.
      *
      * @param string $route
@@ -22,6 +30,7 @@ class PlugRoute
      */
     public function get(string $route, $callback)
     {
+    	$this->manager->addRoutes($route, $callback, 'GET');
         $this->routes[] = [
             'route' => $route,
             'callback' => $callback,
@@ -37,6 +46,7 @@ class PlugRoute
 	 */
 	public function post(string $route, $callback)
 	{
+		$this->manager->addRoutes($route, $callback, 'POST');
 		$this->routes[] = [
 			'route' => $route,
 			'callback' => $callback,
@@ -52,6 +62,7 @@ class PlugRoute
 	 */
 	public function put(string $route, $callback)
 	{
+		$this->manager->addRoutes($route, $callback, 'PUT');
 		$this->routes[] = [
 			'route' => $route,
 			'callback' => $callback,
@@ -67,6 +78,23 @@ class PlugRoute
 	 */
 	public function delete(string $route, $callback)
 	{
+		$this->manager->addRoutes($route, $callback, 'DELETE');
+		$this->routes[] = [
+			'route' => $route,
+			'callback' => $callback,
+			'type' => 'POST'
+		];
+	}
+
+	/**
+	 * Receive all routes of type DELETE.
+	 *
+	 * @param string $route
+	 * @param $callback
+	 */
+	public function patch(string $route, $callback)
+	{
+		$this->manager->addRoutes($route, $callback, 'PATCH');
 		$this->routes[] = [
 			'route' => $route,
 			'callback' => $callback,
@@ -82,6 +110,7 @@ class PlugRoute
      */
     public function group(string $route, callable $callback)
     {
+		$this->manager->manipulateRouteGroup($route, $callback);
         $this->routes = $this->mountRouteGroup($route, $callback);
     }
 
@@ -93,6 +122,7 @@ class PlugRoute
      */
     public function any(string $route, $callback)
     {
+		$this->manager->manipulateRouteTypeAny($route, $callback);
         $this->routes[] = [
             'route' => $route,
             'callback' => $callback,
@@ -107,7 +137,7 @@ class PlugRoute
      */
     public function getRoutes()
     {
-        return $this->routes;
+        return $this->manager->getRoutes();
     }
 
     /**
@@ -119,6 +149,7 @@ class PlugRoute
      */
     private function mountRouteGroup($route, $callback)
     {
+    	$this->manager->addRouteGroup($route, $callback);
         $routesBeforeGroup = $this->routes;
         $callback($this);
 
@@ -139,6 +170,7 @@ class PlugRoute
     public function on()
     {
         $config = new PlugConfig($this->routes);
+        //$config = new PlugConfig($this->getRoutes());
         return $config->main();
     }
 }

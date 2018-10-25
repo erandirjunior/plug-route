@@ -6,7 +6,7 @@
  * Time: 11:55
  */
 
-namespace PlugRoute\Helper;
+namespace PlugRoute\Helpers;
 
 
 class RouteHelper
