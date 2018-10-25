@@ -50,13 +50,13 @@ class RouteService
      */
     private function manipulateRouteGroup($routeBase, $routesBeforeGroup)
     {
-        foreach ($this->routes as $typeRoutes => $values) {
-            foreach ($values as $index => $routes) {
-                if (empty($routesBeforeGroup[$typeRoutes][$index])) {
-                    $this->routes[$typeRoutes][$index]['route'] = RouteHelper::pathRoute($routeBase, $routes['route']);
+        array_walk($this->routes, function ($routes, $typeRoute) use ($routeBase, $routesBeforeGroup) {
+            foreach ($routes as $index => $route) {
+                if (empty($routesBeforeGroup[$typeRoute][$index])) {
+                    $this->routes[$typeRoute][$index]['route'] = RouteHelper::pathRoute($routeBase, $route['route']);
                 }
             }
-        }
+        });
     }
 
 	public function getRoutes()

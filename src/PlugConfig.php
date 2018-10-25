@@ -6,7 +6,9 @@ use PlugRoute\Exceptions\ClassException;
 use PlugRoute\Exceptions\MethodException;
 use PlugRoute\Exceptions\RouteException;
 use PlugRoute\Helpers\PlugHelper;
+use PlugRoute\Helpers\RequestHelper;
 use PlugRoute\Helpers\RouteHelper;
+use PlugRoute\Helpers\ValidateHelper;
 
 class PlugConfig
 {
@@ -63,7 +65,7 @@ class PlugConfig
 	public function main()
 	{
 		try {
-			$this->url    = PlugHelper::getUrlPath();
+			$this->url    = RequestHelper::getUrlPath();
 			$this->routes = RouteHelper::filterRoute($this->routes);
 			array_walk($this->routes, function($route) {
 				$this->handleRoute($route);
@@ -158,7 +160,7 @@ class PlugConfig
 	 */
 	private function handleCallback(array $route)
 	{
-		if (!PlugHelper::isEqual($this->url, $route['route'])) {
+		if (!ValidateHelper::isEqual($this->url, $route['route'])) {
 			return $this->countError++;
 		}
 		if (is_callable($route['callback'])) {
@@ -193,7 +195,7 @@ class PlugConfig
 	 */
 	private function createInstance($class)
 	{
-		if (!class_exists($class)) {
+		if (!ValidateHelper::classExist($class)) {
 			throw new ClassException("Error: class don't exist.");
 		}
 		return new $class;
@@ -208,7 +210,7 @@ class PlugConfig
 	 */
 	private function callMethod($instance, $method)
 	{
-		if (PlugHelper::methodExist($instance, $method)) {
+		if (ValidateHelper::methodExist($instance, $method)) {
 			return $instance->$method();
 		}
 		throw new MethodException("Error: method don't exist.");
@@ -235,7 +237,7 @@ class PlugConfig
 	 */
 	private function countError($value)
 	{
-		if (PlugHelper::isEqual(count($value), $this->countError)) {
+		if (ValidateHelper::isEqual(count($value), $this->countError)) {
 			throw new RouteException("Error: route don't exist");
 		}
 	}

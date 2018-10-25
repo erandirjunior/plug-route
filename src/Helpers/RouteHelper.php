@@ -44,11 +44,7 @@ class RouteHelper
      */
     public static function filterRoute($array)
     {
-        return $array[PlugHelper::getTypeRequest()];
-        /*$type = PlugHelper::getTypeRequest();
-        return array_filter($array, function($arr) use ($type) {
-            return $arr['type'] === $type || $arr['type'] === 'ANY';
-        });*/
+        return $array[RequestHelper::getTypeRequest()];
     }
 
     /**
