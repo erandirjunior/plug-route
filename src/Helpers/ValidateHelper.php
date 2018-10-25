@@ -11,7 +11,8 @@ class ValidateHelper
      * @param $value2
      * @return bool
      */
-    public static function isEqual($value1, $value2) {
+    public static function isEqual($value1, $value2)
+    {
         return $value1 === $value2;
     }
 

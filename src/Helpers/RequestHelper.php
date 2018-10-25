@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: erandir
- * Date: 25/10/18
- * Time: 09:36
- */
 
 namespace PlugRoute\Helpers;
 

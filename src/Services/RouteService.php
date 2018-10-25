@@ -7,47 +7,34 @@ use PlugRoute\PlugRoute;
 
 class RouteService
 {
-	private $routes;
+    private $routes;
 
-	public function __construct()
-	{
-	    foreach (['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as $type) {
+    public function __construct()
+    {
+        foreach (['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as $type) {
             $this->routes[$type] = [];
         }
-	}
+    }
 
-	public function addRoutes($route, $callback, $typeRequest)
-	{
-		$this->routes[$typeRequest][] = [
-			'route' => $route,
-			'callback' => $callback
-		];
-	}
+    public function addRoutes($route, $callback, $typeRequest)
+    {
+        $this->routes[$typeRequest][] = ['route' => $route, 'callback' => $callback];
+    }
 
-	public function manipulateRouteTypeAny($route, $callback)
-	{
+    public function manipulateRouteTypeAny($route, $callback)
+    {
         foreach ($this->routes as $typeRequest => $routes) {
-            $this->routes[$typeRequest][] = [
-                'route' => $route,
-                'callback' => $callback
-            ];
+            $this->routes[$typeRequest][] = ['route' => $route, 'callback' => $callback];
         }
-	}
+    }
 
-	public function addRouteGroup($routeBase, $callback, PlugRoute $plugRoute)
-	{
-		$routesBeforeGroup = $this->routes;
-		$callback($plugRoute);
-		$this->manipulateRouteGroup($routeBase, $routesBeforeGroup);
-	}
+    public function addRouteGroup($routeBase, $callback, PlugRoute $plugRoute)
+    {
+        $routesBeforeGroup = $this->routes;
+        $callback($plugRoute);
+        $this->manipulateRouteGroup($routeBase, $routesBeforeGroup);
+    }
 
-    /**
-     * Mount routes that are grouped.
-     *
-     * @param $route
-     * @param callable $callback
-     * @return array
-     */
     private function manipulateRouteGroup($routeBase, $routesBeforeGroup)
     {
         array_walk($this->routes, function ($routes, $typeRoute) use ($routeBase, $routesBeforeGroup) {
@@ -59,8 +46,8 @@ class RouteService
         });
     }
 
-	public function getRoutes()
-	{
-		return $this->routes;
-	}
+    public function getRoutes()
+    {
+        return $this->routes;
+    }
 }

@@ -15,7 +15,6 @@ class PlugHelper
         foreach ($matches[0] as $k => $v) {
             $matches[$k] = str_replace(['/{', '{', '}', '}/', '/'], '', $v);
         }
-
         return $matches;
     }
 
@@ -53,11 +52,11 @@ class PlugHelper
 
     public static function getValuesDynamics(array $indexes, array $url)
     {
-    	$data = [];
+        $data = [];
         foreach ($indexes as $k => $v) {
-        	if (isset($url[$k])) {
-				$data[] = $url[$k];
-			}
+            if (isset($url[$k])) {
+                $data[] = $url[$k];
+            }
         }
         return $data;
     }
@@ -70,7 +69,7 @@ class PlugHelper
      */
     public static function removeEmptyValue(array $array)
     {
-        return array_filter($array, function($v) {
+        return array_filter($array, function ($v) {
             return !empty($v);
         });
     }

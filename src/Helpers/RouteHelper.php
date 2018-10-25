@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: erandir
- * Date: 27/07/18
- * Time: 11:55
- */
 
 namespace PlugRoute\Helpers;
-
 
 class RouteHelper
 {
