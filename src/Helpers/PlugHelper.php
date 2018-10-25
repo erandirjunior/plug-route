@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: erandir
- * Date: 24/07/18
- * Time: 20:14
- */
 
 namespace PlugRoute\Helpers;
-
 
 class PlugHelper
 {
@@ -17,7 +10,7 @@ class PlugHelper
      * @param $matches
      * @return mixed
      */
-    public static function clearMatch($matches)
+    public static function clearArrayValues($matches)
     {
         foreach ($matches[0] as $k => $v) {
             $matches[$k] = str_replace(['/{', '{', '}', '}/', '/'], '', $v);
