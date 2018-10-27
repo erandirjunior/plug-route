@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: erandir
- * Date: 27/07/18
- * Time: 11:55
- */
 
 namespace PlugRoute\Helpers;
-
 
 class RouteHelper
 {
@@ -44,10 +37,7 @@ class RouteHelper
      */
     public static function filterRoute($array)
     {
-        $type = PlugHelper::getTypeRequest();
-        return array_filter($array, function($arr) use ($type) {
-            return $arr['type'] === $type || $arr['type'] === 'ANY';
-        });
+        return $array[RequestHelper::getTypeRequest()];
     }
 
     /**

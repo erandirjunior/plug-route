@@ -23,6 +23,7 @@ $route->any('/home', function() {
 });
 
 $route->group('/news', function($route) {
+    //var_dump($route);
     $route->get('/', function() {
         echo 'news basic route';
     });
@@ -36,5 +37,11 @@ $route->group('/news', function($route) {
         echo 'news other dynamic route';
     });
 });
+
+$route->any('/route/type/any', function() {
+    echo 'hi';
+});
+
+$route->getRoutes();
 
 $route->on();
