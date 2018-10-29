@@ -216,7 +216,7 @@ class PlugConfig
     private function callMethod($instance, $method)
     {
         if (PlugHelper::methodExist($instance, $method)) {
-            return $instance->$method();
+            return $instance->$method($this->data);
         }
         throw new MethodException("Error: method don't exist.");
     }
