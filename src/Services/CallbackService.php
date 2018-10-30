@@ -10,20 +10,20 @@ class CallbackService
 {
     private $params;
 
-    public function __construct($params = null)
+    public function __construct()
     {
-        $this->params = [];
+        /*$this->params = [];
 
         if (!is_null($params) && is_array($params)) {
             foreach ($params as $key => $value) {
                 $this->params[$key] = $value;
             }
-        }
+        }*/
 
-        $this->handleCallback();
+        //$this->handleCallback();
     }
 
-    public function handleCallback($route)
+    public function handleCallback($route, $parameters = null)
     {
         if (is_callable($route['callback'])) {
             return $this->callFunction($route['callback']);
@@ -56,6 +56,6 @@ class CallbackService
 
     private function callFunction($function)
     {
-        return $function($this->data);
+        return $function(); //$this->data
     }
 }

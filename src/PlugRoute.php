@@ -3,6 +3,7 @@
 namespace PlugRoute;
 
 use PlugRoute\Helpers\RouteHelper;
+use PlugRoute\Services\Routes\RouteService;
 
 class PlugRoute
 {
@@ -11,7 +12,8 @@ class PlugRoute
         'POST'      => [],
         'PUT'       => [],
         'PATCH'     => [],
-        'DELETE'    => []];
+        'DELETE'    => []
+	];
 
     public function get(string $route, $callback)
     {
@@ -80,6 +82,7 @@ class PlugRoute
 
     public function on()
     {
+		(new RouteService($this->routes))->manipulateRoutes();
         //$manager = new ManagerService($this->manager->getRoutes());
         //$manager->manipulateRoutes();
     }
