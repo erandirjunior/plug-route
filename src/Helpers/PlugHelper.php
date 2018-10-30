@@ -31,7 +31,7 @@ class PlugHelper
             foreach ($matches as $j => $value) {
                 $value = str_replace(['{', '}', '/'], '', $value);
                 if ($k == $value) {
-                    $indice[$v] = $v;
+                    $indice[$value] = $v;
                 }
             }
         });
@@ -54,8 +54,8 @@ class PlugHelper
     {
         $data = [];
         foreach ($indexes as $k => $v) {
-            if (isset($url[$k])) {
-                $data[] = $url[$k];
+            if (isset($url[$v])) {
+                $data[$k] = $url[$v];
             }
         }
         return $data;

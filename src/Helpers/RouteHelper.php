@@ -30,17 +30,6 @@ class RouteHelper
     }
 
     /**
-     * Filter routes by request type.
-     *
-     * @param $array
-     * @return array
-     */
-    public static function filterRoute($array)
-    {
-        return $array[RequestHelper::getTypeRequest()];
-    }
-
-    /**
      * Verify if route is dynamic.
      *
      * @param $route

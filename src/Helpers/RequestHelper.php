@@ -42,7 +42,7 @@ class RequestHelper
 		return $_SERVER['CONTENT_TYPE'];
 	}
 
-	public function getBodyFormUrlEncoded()
+	public static function getBodyFormUrlEncoded()
 	{
 		$raw_data = file_get_contents('php://input');
 		$boundary = substr($raw_data, 0, strpos($raw_data, "\r\n"));

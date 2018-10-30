@@ -128,7 +128,9 @@ class PlugConfig
         $indexes = PlugHelper::getIndexDynamicOnRoute($routeArray, $match[0]);
         $this->data = PlugHelper::getValuesDynamics($indexes, $urlArray);
         $route['route'] = $this->mountUrl($routeArray, $urlArray, $indexes);
-        return $this->handleCallback($route);
+        if (!ValidateHelper::isEqual($this->url, $route['route'])) {
+            return $this->countError++;
+        }
     }
 
     /**
@@ -149,86 +151,6 @@ class PlugConfig
         }
         $route = implode('/', $route);
         return count($url) > 0 ? '/'.$route : $route;
-    }
-
-    /**
-     * Handle callback.
-     * Can call manipulator object.
-     *
-     * @param string $url
-     * @param array $route
-     *
-     * @return int|mixed
-     * @throws \Exception
-     */
-    private function handleCallback(array $route)
-    {
-        if (!ValidateHelper::isEqual($this->url, $route['route'])) {
-            return $this->countError++;
-        }
-        if (is_callable($route['callback'])) {
-            return $this->callFunction($route['callback']);
-        }
-        return $this->handleObject($route);
-    }
-
-    /**
-     * Treat route that handle object.
-     *
-     * @param array $route
-     *
-     * @return mixed
-     * @throws \Exception
-     */
-    private function handleObject($route)
-    {
-        $callback = explode("@", $route['callback']);
-        $instance = $this->createInstance($callback[0]);
-        return $this->callMethod($instance, $callback[1]);
-    }
-
-    /**
-     * Create a instance of class.
-     * Return instance.
-     *
-     * @param string $class
-     *
-     * @return mixed
-     * @throws ClassException
-     */
-    private function createInstance($class)
-    {
-        if (!ValidateHelper::classExist($class)) {
-            throw new ClassException("Error: class don't exist.");
-        }
-        return new $class;
-    }
-
-    /**
-     * @param object $instance
-     * @param string $method
-     *
-     * @return mixed
-     * @throws MethodException
-     */
-    private function callMethod($instance, $method)
-    {
-        if (ValidateHelper::methodExist($instance, $method)) {
-            return $instance->$method();
-        }
-        throw new MethodException("Error: method don't exist.");
-    }
-
-    /**
-     * Invoke function.
-     *
-     * @param callable $function
-     *
-     * @return mixed
-     */
-    private function callFunction($function)
-    {
-        return $function($this->data);
     }
 
     /**

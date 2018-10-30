@@ -16,18 +16,21 @@ class RequestService
 				return $_POST;
 				break;
 			default:
-				return $this->getBodyData();
+				return $this->getData();
 		}
 	}
 
-	private function getBodyData()
+	private function getData()
 	{
 		switch (RequestHelper::getContentType()) {
 			case 'application/x-www-form-urlencoded':
+			    return RequestHelper::getBodyFormData();
 				break;
 			case 'application/json':
+			    return RequestHelper::getBodyDecode();
 				break;
 			default:
+			    RequestHelper::getBodyFormUrlEncoded();
 				break;
 		}
 	}

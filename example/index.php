@@ -1,6 +1,6 @@
 <?php
 
-require_once '../vendor/autoload.php';
+require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use \PlugRoute\PlugRoute;
 
@@ -14,7 +14,7 @@ $route->post('/', function() {
     echo 'This is a post route';
 });
 
-$route->get('/{something}/test/{something}', function() {
+$route->get('/{parameterOne}/test/{parameterTwo}', function() {
     echo 'other dynamic route';
 });
 
@@ -23,7 +23,6 @@ $route->any('/home', function() {
 });
 
 $route->group('/news', function($route) {
-    //var_dump($route);
     $route->get('/', function() {
         echo 'news basic route';
     });
@@ -33,7 +32,7 @@ $route->group('/news', function($route) {
         var_dump($data); // array (size=1) 0 => string 'sport' (length=5)
     });
 
-    $route->get('/{something}/test/{something}', function() {
+    $route->any('/{something}/test/{something}', function() {
         echo 'news other dynamic route';
     });
 });
@@ -41,7 +40,5 @@ $route->group('/news', function($route) {
 $route->any('/route/type/any', function() {
     echo 'hi';
 });
-
-$route->getRoutes();
 
 $route->on();

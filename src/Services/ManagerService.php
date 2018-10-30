@@ -2,52 +2,117 @@
 
 namespace PlugRoute\Services;
 
-use PlugRoute\Exceptions\ClassException;
-use PlugRoute\Exceptions\MethodException;
+use PlugRoute\Helpers\PlugHelper;
+use PlugRoute\Helpers\RequestHelper;
+use PlugRoute\Helpers\RouteHelper;
 use PlugRoute\Helpers\ValidateHelper;
 
 class ManagerService
 {
-	private $params;
+    private $routes;
 
+    private $countError;
 
+    private $data;
 
-	public function handleCallback(array $route)
-	{
-		if (!ValidateHelper::isEqual($this->url, $route['route'])) {
-			return $this->countError++;
-		}
-		if (is_callable($route['callback'])) {
-			return $this->callFunction($route['callback']);
-		}
-		return $this->handleObject($route);
-	}
+    private $urlPath;
 
-	private function handleObject($route)
-	{
-		$callback = explode("@", $route['callback']);
-		$instance = $this->createObject($callback[0]);
-		return $this->callMethod($instance, $callback[1]);
-	}
+    private $callbackService;
 
-	private function createObject($class)
-	{
-		if (!ValidateHelper::classExist($class)) {
-			throw new ClassException("Error: class don't exist.");
-		}
-		return new $class;
-	}
+    public function __construct($routes)
+    {
+        $this->routes           = $routes[RequestHelper::getTypeRequest()];
+        $this->callbackService  = new CallbackService();
+        $this->urlPath          = RequestHelper::getUrlPath();
+    }
 
-	private function callMethod($instance, $method)
-	{
-		if (ValidateHelper::methodExist($instance, $method)) {
-			return $instance->$method();
-		}
-		throw new MethodException("Error: method don't exist.");
-	}
-	
-	private function callFunction($function)
-	{
-		return $function($this->data);
-	}
+    public function manipulateRoutes()
+    {
+        try {
+            array_walk($this->routes, function ($route) {
+                $isDynamic = RouteHelper::isDynamic($route['routes']);
+                $isDynamic ? $this->handleDynamicRoute($route) : $this->executeCallback($route);
+            });
+        } catch (\Exception $e) {
+            return $this->showErrorMessage($e->getMessage());
+        }
+    }
+
+    /**
+     * Show and return error message.
+     *
+     * @param string $message
+     *
+     * @return mixed
+     */
+    private function showErrorMessage($message)
+    {
+        echo $message;
+        return $message;
+    }
+
+    /**
+     * Handle dynamic route.
+     *
+     * @param array $route
+     * @param string $url
+     *
+     * @return int|mixed
+     *
+     * @throws \Exception
+     */
+    private function handleDynamicRoute($route)
+    {
+        $match          = PlugHelper::getMatch($route['route']);
+        $route['route'] = str_replace(['{', '}'], '', $route['route']);
+        $routeArray     = PlugHelper::toArray($route['route'], '/');
+        $urlArray       = PlugHelper::toArray($this->urlPath, '/');
+        $indexes        = PlugHelper::getIndexDynamicOnRoute($routeArray, $match[0]);
+        $this->data     = PlugHelper::getValuesDynamics($indexes, $urlArray);
+        $route['route'] = $this->mountUrl($routeArray, $urlArray, $indexes);
+        $this->executeCallback($route);
+    }
+
+    private function executeCallback($route)
+    {
+        if (!ValidateHelper::isEqual($this->url, $route['route'])) {
+            return $this->countError++;
+        }
+        $callbackService = new CallbackService();
+        return $callbackService->handleCallback($this->data);
+    }
+
+    /**
+     * Return path dynamic route.
+     *
+     * @param $route
+     * @param $url
+     * @param $index
+     *
+     * @return string
+     */
+    private function mountUrl($route, $url, $index)
+    {
+        foreach ($index as $v) {
+            if (!empty($url[$v])) {
+                $route[$v] = $url[$v];
+            }
+        }
+        $route = implode('/', $route);
+        return count($url) > 0 ? '/'.$route : $route;
+    }
+
+    /**
+     * Check if number of errors is equal number of routes.
+     *
+     * @param $value
+     *
+     * @throws RouteException
+     */
+    private function countError($value)
+    {
+        if (ValidateHelper::isEqual(count($value), $this->countError++)) {
+            throw new RouteException("Error: route don't exist");
+        }
+    }
 }

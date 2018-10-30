@@ -2,60 +2,85 @@
 
 namespace PlugRoute;
 
-use PlugRoute\Services\RouteService;
+use PlugRoute\Helpers\RouteHelper;
 
 class PlugRoute
 {
-    private $manager;
-
-    public function __construct()
-    {
-        $this->manager = new RouteService();
-    }
+    private $routes = [
+        'GET'       => [],
+        'POST'      => [],
+        'PUT'       => [],
+        'PATCH'     => [],
+        'DELETE'    => []];
 
     public function get(string $route, $callback)
     {
-        $this->manager->addRoutes($route, $callback, 'GET');
+        $this->routes['GET'][] = [
+            'route' => $route,
+            'callback' => $callback
+        ];
     }
 
     public function post(string $route, $callback)
     {
-        $this->manager->addRoutes($route, $callback, 'POST');
+        $this->routes['POST'][] = [
+            'route' => $route,
+            'callback' => $callback
+        ];
     }
 
     public function put(string $route, $callback)
     {
-        $this->manager->addRoutes($route, $callback, 'PUT');
+        $this->routes['PUT'][] = [
+            'route' => $route,
+            'callback' => $callback
+        ];
     }
 
     public function delete(string $route, $callback)
     {
-        $this->manager->addRoutes($route, $callback, 'DELETE');
+        $this->routes['DELETE'][] = [
+            'route' => $route,
+            'callback' => $callback
+        ];
     }
 
     public function patch(string $route, $callback)
     {
-        $this->manager->addRoutes($route, $callback, 'PATCH');
+        $this->routes['PATCH'][] = [
+            'route' => $route,
+            'callback' => $callback
+        ];
     }
 
     public function group(string $route, callable $callback)
     {
-        $this->manager->addRouteGroup($route, $callback, $this);
+        $routesBeforeGroup = $this->routes;
+        $callback($this);
+        $this->addRouteGroup($route, $routesBeforeGroup);
     }
 
     public function any(string $route, $callback)
     {
-        $this->manager->manipulateRouteTypeAny($route, $callback, $this);
+        foreach ($this->routes as $typeRequest => $routes) {
+            $this->routes[$typeRequest][] = ['route' => $route, 'callback' => $callback];
+        }
     }
 
-    public function getRoutes()
+    private function addRouteGroup($routeBase, $routesBeforeGroup)
     {
-        return $this->manager->getRoutes();
+        array_walk($this->routes, function ($routes, $typeRoute) use ($routeBase, $routesBeforeGroup) {
+            foreach ($routes as $index => $route) {
+                if (empty($routesBeforeGroup[$typeRoute][$index])) {
+                    $this->routes[$typeRoute][$index]['route'] = RouteHelper::pathRoute($routeBase, $route['route']);
+                }
+            }
+        });
     }
 
     public function on()
     {
-        $config = new PlugConfig($this->getRoutes());
-        return $config->main();
+        //$manager = new ManagerService($this->manager->getRoutes());
+        //$manager->manipulateRoutes();
     }
 }
