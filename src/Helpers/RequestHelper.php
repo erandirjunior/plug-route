@@ -28,4 +28,12 @@ class RequestHelper
     {
         return $_SERVER['CONTENT_TYPE'];
     }
+
+	public static function returnArrayFormated($body, array $values)
+	{
+		foreach ($values as $k => $v) {
+			$body[$k] = $v;
+		}
+		return $body;
+    }
 }
