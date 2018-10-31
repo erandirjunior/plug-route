@@ -19,5 +19,7 @@ class SimpleRouteService
 		if (ValidateHelper::isEqual($route['route'], $url)) {
 			return $this->callback->handleCallback($route);
 		}
+
+		return RouteService::$accountUrlNotFound++;
     }
 }
