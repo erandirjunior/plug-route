@@ -8,10 +8,11 @@ $route = new PlugRoute();
 
 $route->put('/', function($request, $response) {
     //var_dump(get_class_methods($request), get_class_methods($response));
-    $request->all();
+    var_dump($request->all());
 });
 
-$route->post('/', function() {
+$route->put('/a/{a}', function($request, $response) {
+	var_dump($request->all());
     echo 'This is a post route';
 });
 
@@ -19,13 +20,13 @@ $route->get('/{parameterOne}/test/{parameterTwo}', function() {
     echo 'other dynamic route';
 });
 
-$route->any('/{something}/{a}', function() {
+/*$route->any('/{something}/{a}', function() {
    echo 'route type any';
 });
 
 $route->any('/{something}/{a}', function() {
    echo 'route type any2';
-});
+});*/
 
 $route->group('/news', function($route) {
     $route->get('/', function() {
