@@ -5,29 +5,29 @@ namespace PlugRoute\Services;
 use PlugRoute\Exceptions\ClassException;
 use PlugRoute\Exceptions\MethodException;
 use PlugRoute\Helpers\ValidateHelper;
+use PlugRoute\Http\HttpRequest;
+use PlugRoute\Http\HttpResponse;
 
 class CallbackService
 {
-    private $params;
+    private $request;
+
+    private $response;
 
     public function __construct()
     {
-        /*$this->params = [];
-
-        if (!is_null($params) && is_array($params)) {
-            foreach ($params as $key => $value) {
-                $this->params[$key] = $value;
-            }
-        }*/
-
-        //$this->handleCallback();
+        $this->request = new HttpRequest();
+        $this->response = new HttpResponse();
     }
 
     public function handleCallback($route, $parameters = null)
     {
+        $this->request->setBody($parameters);
+
         if (is_callable($route['callback'])) {
             return $this->callFunction($route['callback']);
         }
+
         return $this->handleObject($route);
     }
 
@@ -49,13 +49,13 @@ class CallbackService
     private function callMethod($instance, $method)
     {
         if (ValidateHelper::methodExist($instance, $method)) {
-            return $instance->$method();
+            return $instance->$method($this->request, $this->response);
         }
         throw new MethodException("Error: method don't exist.");
     }
 
     private function callFunction($function)
     {
-        return $function(); //$this->data
+        return $function($this->request, $this->response);
     }
 }
