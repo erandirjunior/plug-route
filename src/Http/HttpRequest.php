@@ -2,14 +2,31 @@
 
 namespace PlugRoute\Http;
 
-use PlugRoute\Helpers\PlugHelper;
+use PlugRoute\Helpers\RequestHelper;
+use PlugRoute\Services\RequestService;
 
 class HttpRequest
 {
 	private $body;
 
-	public function getBody($index = null)
+	private $requestService;
+
+	public function __construct()
+    {
+        $this->requestService = new RequestService();
+    }
+
+    public function setBody($body)
+    {
+        if (!is_null($body)) {
+            $this->body = $body;
+        }
+    }
+
+	public function all($index = null)
 	{
+	    $this->getRequisitionBody();
+
 		if (is_null($index)) {
 			return $this->body;
 		}
@@ -24,28 +41,19 @@ class HttpRequest
 
 	public function getMethod()
 	{
-		return PlugHelper::getTypeRequest();
+		return RequestHelper::getTypeRequest();
 	}
 
-	public function getHeaders()
-	{
-
-	}
-
-	private function getRequest() {
-		$typeRequest = $this->getMethod();
-
-		switch ($typeRequest) {
+	private function getRequisitionBody() {
+		switch ($this->getMethod()) {
 			case 'GET' :
+			    $this->body = $_GET;
 				break;
 			case 'POST' :
+                $this->body = $_POST;
 				break;
-			case 'PUT' :
-				break;
-			case 'DELETE' :
-				break;
-			case 'PATCH' :
-				break;
+            default :
+                return $this->requestService->getDataRequest();
 		}
 	}
 }

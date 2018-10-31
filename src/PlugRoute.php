@@ -83,7 +83,5 @@ class PlugRoute
     public function on()
     {
 		(new RouteService($this->routes))->manipulateRoutes();
-        //$manager = new ManagerService($this->manager->getRoutes());
-        //$manager->manipulateRoutes();
     }
 }
