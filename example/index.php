@@ -6,8 +6,9 @@ use \PlugRoute\PlugRoute;
 
 $route = new PlugRoute();
 
-$route->get('/', function() {
-    echo 'basic route';
+$route->put('/', function($request, $response) {
+    //var_dump(get_class_methods($request), get_class_methods($response));
+    $request->all();
 });
 
 $route->post('/', function() {
@@ -18,8 +19,12 @@ $route->get('/{parameterOne}/test/{parameterTwo}', function() {
     echo 'other dynamic route';
 });
 
-$route->any('/home', function() {
+$route->any('/{something}/{a}', function() {
    echo 'route type any';
+});
+
+$route->any('/{something}/{a}', function() {
+   echo 'route type any2';
 });
 
 $route->group('/news', function($route) {
