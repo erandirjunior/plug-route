@@ -16,10 +16,10 @@ class HttpRequest
         $this->requestService = new RequestService();
     }
 
-    public function setBody($body)
+    public function setBody(array $parameters)
     {
-        if (!is_null($body)) {
-            $this->body = $body;
+        if (!is_null($parameters)) {
+            $this->body = RequestHelper::returnArrayFormated($this->body, $parameters);
         }
     }
 
@@ -47,13 +47,13 @@ class HttpRequest
 	private function getRequisitionBody() {
 		switch ($this->getMethod()) {
 			case 'GET' :
-			    $this->body = $_GET;
+			    $this->body = RequestHelper::returnArrayFormated($this->body, $_GET);
 				break;
 			case 'POST' :
-                $this->body = $_POST;
+                $this->body = RequestHelper::returnArrayFormated($this->body, $_POST);
 				break;
             default :
-                return $this->requestService->getDataRequest();
+                $this->body = RequestHelper::returnArrayFormated($this->body, $this->requestService->getDataRequest());
 		}
 	}
 }

@@ -55,7 +55,7 @@ class RouteService
         echo $message;
     }
 
-    private function countError($value)
+    private function countError()
     {
         if (ValidateHelper::isEqual(count($this->routes), self::$accountUrlNotFound)) {
             throw new RouteException("Error: route don't exist");
