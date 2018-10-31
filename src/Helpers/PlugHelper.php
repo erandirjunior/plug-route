@@ -27,15 +27,16 @@ class PlugHelper
      */
     public static function getIndexDynamicOnRoute(array $routes, array $matches)
     {
-        array_walk($routes, function ($k, $v) use ($matches, &$indice) {
+        array_walk($routes, function ($k, $v) use ($matches, &$indexes) {
             foreach ($matches as $j => $value) {
                 $value = str_replace(['{', '}', '/'], '', $value);
+                $k = str_replace(['{', '}', '/'], '', $k);
                 if ($k == $value) {
-                    $indice[$value] = $v;
+                    $indexes[$value] = $v;
                 }
             }
         });
-        return $indice;
+        return $indexes;
     }
 
     /**
@@ -61,12 +62,6 @@ class PlugHelper
         return $data;
     }
 
-    /**
-     * Remove empty values of a array.
-     *
-     * @param array $array
-     * @return array
-     */
     public static function removeEmptyValue(array $array)
     {
         return array_filter($array, function ($v) {
@@ -74,13 +69,7 @@ class PlugHelper
         });
     }
 
-    /**
-     * Return a array without values empty.
-     *
-     * @param $str
-     * @param $separator
-     */
-    public static function toArray($str, $separator)
+    public static function returnArrayWithoutEmptyValues($str, $separator)
     {
         $array = explode($separator, $str);
         return self::removeEmptyValue($array);
