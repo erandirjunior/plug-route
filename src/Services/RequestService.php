@@ -22,15 +22,19 @@ class RequestService
         }
 	}
 
-    public static function getBodyDecode()
+	private function getValuePhpInput()
     {
-        return json_decode(file_get_contents("php://input"), true);
+        return file_get_contents("php://input");
     }
 
-    public static function getBodyFormData()
+    public function getBodyDecode()
     {
-		$content = file_get_contents('php://input');
-		preg_match_all('/"(.+)"+\s+(.*)/', $content, $matches);
+        return json_decode($this->getValuePhpInput(), true);
+    }
+
+    public function getBodyFormData()
+    {
+		preg_match_all('/"(.+)"+\s+(.*)/', $this->getValuePhpInput(), $matches);
 
 		foreach ($matches[1] as $key => $match) {
 			$matchKey = RouteHelper::removeCaractersOfString($match, ['\'', "\""]);
@@ -41,9 +45,9 @@ class RequestService
 		return $array;
 	}
 
-    public static function getBodyFormUrlEncoded()
+    public function getBodyFormUrlEncoded()
     {
-		$content = file_get_contents("php://input");
+		$content = $this->getValuePhpInput();
 
 		if (!strpos($content, '&')) {
 			$array = explode('=', $content);
