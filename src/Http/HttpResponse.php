@@ -29,7 +29,7 @@ class HttpResponse
 		$this->header['contentType'] = $contentType;
 	}
 
-	public function send($data)
+	public function responseAsJson($data)
 	{
 		header("Content-type: {$this->header['contentType']}");
 		header("HTTP/1.0 {$this->header}");
