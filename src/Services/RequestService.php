@@ -9,27 +9,52 @@ class RequestService
 {
 	public function getDataRequest()
 	{
-        switch (RequestHelper::getContentType()) {
-            case 'application/x-www-form-urlencoded':
+        switch ($this->returnCodeOfTypeRequest()) {
+            case 1:
                 return $this->getBodyFormUrlEncoded();
-                break;
-            case 'application/json':
-                return $this->getBodyDecode();
-                break;
-            default:
+            case 2:
+                return $this->getBodyDecode($this->getValuePhpInput());
+            case 3:
                 return $this->getBodyFormData();
-                break;
         }
 	}
+
+	private function returnCodeOfTypeRequest()
+    {
+        $contentType = RequestHelper::getContentType();
+
+        if (strpos($contentType, 'application/x-www-form-urlencoded') !== false) {
+            return 1;
+        }
+
+        if (strpos($contentType, 'application/json') !== false) {
+            return 2;
+        }
+
+        if (strpos($contentType, 'application/form-data') !== false) {
+            return 3;
+        }
+    }
+
+	public function manipulatePost($post)
+    {
+        switch (RequestHelper::getContentType())
+        {
+            case 'application/json' :
+                return $this->getBodyDecode($post);
+            default :
+                return $post;
+        }
+    }
 
 	private function getValuePhpInput()
     {
         return file_get_contents("php://input");
     }
 
-    public function getBodyDecode()
+    public function getBodyDecode($value)
     {
-        return json_decode($this->getValuePhpInput(), true);
+        return json_decode($value, true);
     }
 
     public function getBodyFormData()

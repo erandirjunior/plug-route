@@ -9,6 +9,8 @@ class HttpRequest
 {
 	private $body;
 
+	private $urlBody;
+
 	private $requestService;
 
 	public function __construct()
@@ -16,23 +18,27 @@ class HttpRequest
         $this->requestService = new RequestService();
     }
 
-    public function setBody(array $parameters)
+    public function setUrlBody($urlBody = null)
     {
-        if (!is_null($parameters)) {
-            $this->body = RequestHelper::returnArrayFormated($this->body, $parameters);
+        if (!is_null($urlBody)) {
+            $this->urlBody = RequestHelper::returnArrayFormated($this->urlBody, $urlBody);
         }
     }
 
-	public function all($index = null)
+    public function getUrlBodyWith($parameter)
+    {
+        return $this->urlBody[$parameter];
+    }
+
+	public function all()
 	{
 	    $this->getRequisitionBody();
-
-		if (is_null($index)) {
-			return $this->body;
-		}
-
-		return $this->body[$index];
+        return $this->body;
 	}
+
+	public function getBodyWith($index) {
+        return $this->body[$index];
+    }
 
 	public function getFiles()
 	{
@@ -47,10 +53,10 @@ class HttpRequest
 	private function getRequisitionBody() {
 		switch ($this->getMethod()) {
 			case 'GET' :
-			    $this->body = RequestHelper::returnArrayFormated($this->body, $_GET);
+			    $this->body = $_GET;
 				break;
 			case 'POST' :
-                $this->body = RequestHelper::returnArrayFormated($this->body, $_POST);
+			    $this->body =  $_POST;
 				break;
             default :
                 $this->body = RequestHelper::returnArrayFormated($this->body, $this->requestService->getDataRequest());
