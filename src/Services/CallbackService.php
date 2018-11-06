@@ -22,7 +22,7 @@ class CallbackService
 
     public function handleCallback($route, $parameters = null)
     {
-        $this->request->setBody($parameters);
+        $this->request->setUrlBody($parameters);
 
         if (is_callable($route['callback'])) {
             return $this->callFunction($route['callback']);
