@@ -4,47 +4,49 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use \PlugRoute\PlugRoute;
 
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH");
+header("Access-Control-Allow-Headers: Content-Type");
+
 $route = new PlugRoute();
 
-$route->put('/', function($request, $response) {
-    //var_dump(get_class_methods($request), get_class_methods($response));
+$route->get('/', function () {
+    echo 'Hello World!';
+});
+
+$route->get('/sport/{something}', function ($request) {
+    echo $request->getUrlBodyWith('something');
+});
+
+$route->post('/people', function ($request) {
     var_dump($request->all());
 });
 
-$route->put('/a/{a}', function($request, $response) {
-	var_dump($request->all());
-    echo 'This is a post route';
+$route->put('/people/{id}', function ($request) {
+    var_dump($request->all());
+    echo $request->getUrlBodyWith('id');
 });
 
-$route->get('/{parameterOne}/test/{parameterTwo}', function() {
-    echo 'other dynamic route';
+$route->delete('/people/{id}', function ($request) {
+    echo $request->getUrlBodyWith('id');
 });
 
-/*$route->any('/{something}/{a}', function() {
-   echo 'route type any';
+$route->patch('/people/{id}', function ($request) {
+    echo $request->getUrlBodyWith('id');
 });
 
-$route->any('/{something}/{a}', function() {
-   echo 'route type any2';
-});*/
+$route->any('/url', function () {
+   echo 'Receive type requests GET, POST, PUT, PATCH and DELETE';
+});
 
 $route->group('/news', function($route) {
     $route->get('/', function() {
-        echo 'news basic route';
+        echo 'Home news';
     });
 
-    // /news/sport
-    $route->get('/{something}', function($data) {
-        var_dump($data); // array (size=1) 0 => string 'sport' (length=5)
+    $route->get('/{something}', function($request) {
+        var_dump($request->all());
     });
-
-    $route->any('/{something}/test/{something}', function() {
-        echo 'news other dynamic route';
-    });
-});
-
-$route->any('/route/type/any', function() {
-    echo 'hi';
 });
 
 $route->on();
