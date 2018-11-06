@@ -1,39 +1,51 @@
 <?php
 
-require_once '../vendor/autoload.php';
+require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use \PlugRoute\PlugRoute;
 
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH");
+header("Access-Control-Allow-Headers: Content-Type");
+
 $route = new PlugRoute();
 
-$route->get('/', function() {
-    echo 'basic route';
+$route->get('/', function () {
+    echo 'Hello World!';
 });
 
-$route->post('/', function() {
-    echo 'This is a post route';
+$route->get('/sport/{something}', function ($request) {
+    echo $request->getUrlBodyWith('something');
 });
 
-$route->get('/{something}/test/{something}', function() {
-    echo 'other dynamic route';
+$route->post('/people', function ($request) {
+    var_dump($request->all());
 });
 
-$route->any('/home', function() {
-   echo 'route type any';
+$route->put('/people/{id}', function ($request) {
+    var_dump($request->all());
+    echo $request->getUrlBodyWith('id');
+});
+
+$route->delete('/people/{id}', function ($request) {
+    echo $request->getUrlBodyWith('id');
+});
+
+$route->patch('/people/{id}', function ($request) {
+    echo $request->getUrlBodyWith('id');
+});
+
+$route->any('/url', function () {
+   echo 'Receive type requests GET, POST, PUT, PATCH and DELETE';
 });
 
 $route->group('/news', function($route) {
     $route->get('/', function() {
-        echo 'news basic route';
+        echo 'Home news';
     });
 
-    // /news/sport
-    $route->get('/{something}', function($data) {
-        var_dump($data); // array (size=1) 0 => string 'sport' (length=5)
-    });
-
-    $route->get('/{something}/test/{something}', function() {
-        echo 'news other dynamic route';
+    $route->get('/{something}', function($request) {
+        var_dump($request->all());
     });
 });
 

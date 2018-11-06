@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: erandir
- * Date: 27/07/18
- * Time: 11:55
- */
 
-namespace PlugRoute\Helper;
-
+namespace PlugRoute\Helpers;
 
 class RouteHelper
 {
@@ -37,20 +30,6 @@ class RouteHelper
     }
 
     /**
-     * Filter routes by request type.
-     *
-     * @param $array
-     * @return array
-     */
-    public static function filterRoute($array)
-    {
-        $type = PlugHelper::getTypeRequest();
-        return array_filter($array, function($arr) use ($type) {
-            return $arr['type'] === $type || $arr['type'] === 'ANY';
-        });
-    }
-
-    /**
      * Verify if route is dynamic.
      *
      * @param $route
@@ -62,5 +41,10 @@ class RouteHelper
             return true;
         }
         return false;
+    }
+
+	public static function removeCaractersOfString($str, array $caracters)
+	{
+		return str_replace($caracters, '', $str);
     }
 }
