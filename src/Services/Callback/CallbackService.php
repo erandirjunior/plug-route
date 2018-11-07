@@ -1,6 +1,6 @@
 <?php
 
-namespace PlugRoute\Services;
+namespace PlugRoute\Services\Callback;
 
 use PlugRoute\Exceptions\ClassException;
 use PlugRoute\Exceptions\MethodException;
