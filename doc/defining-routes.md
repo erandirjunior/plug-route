@@ -21,14 +21,14 @@ $route->post('/', function() {
 
 > Route Type **PUT**
 ```php
-$route->post('/', function() {
+$route->put('/', function() {
     echo 'Request Type PUT';
 });
 ```
 
 > Route Type **DELETE**
 ```php
-$route->post('/', function() {
+$route->delete('/', function() {
     echo 'Request Type DELETE';
 });
 ```
