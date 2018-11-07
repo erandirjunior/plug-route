@@ -25,8 +25,9 @@ $route->post('/people', function ($request) {
     var_dump($request->all());
 });
 
-$route->put('/people/{id}', function ($request) {
-    echo $request->getUrlBodyWith('id');
+$route->put('/people/{id}', function ($request, $response) {
+    $id = $request->getUrlBodyWith('id');
+    echo $response->responseAsJson(['id' => $id]);
 });
 
 $route->delete('/people/{id}', function ($request) {
@@ -47,7 +48,7 @@ $route->group('/news', function($route) {
     });
 
     $route->get('/{something}', function($request) {
-        var_dump($request->all());
+        echo $request->getUrlBodyWith('something');
     });
 });
 
