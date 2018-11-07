@@ -57,3 +57,5 @@ $route->post('/people', function($request) {
      echo $request->getMethod();
 });
 ```
+
+[Response](response.md)

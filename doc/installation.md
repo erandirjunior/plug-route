@@ -9,4 +9,4 @@
 composer require erandir/plug-route
 ``` 
 
-[Definig Routes](defining-routes.md)
+[Defining Routes](defining-routes.md)
