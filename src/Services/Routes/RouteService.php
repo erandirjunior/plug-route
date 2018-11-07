@@ -21,7 +21,8 @@ class RouteService
 
     public function __construct($routes)
     {
-        $this->routes           = $routes[RequestHelper::getTypeRequest()];
+        $typeRequest            = RequestHelper::getTypeRequest();
+        $this->routes           = $typeRequest !== 'OPTIONS' ? $routes[$typeRequest] : [];
         $this->urlPath          = RequestHelper::getUrlPath();
         $this->simpleRoute      = new SimpleRouteService($routes);
         $this->dynamicRoute     = new DynamicRouteService($routes);

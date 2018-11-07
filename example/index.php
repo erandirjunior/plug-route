@@ -4,13 +4,16 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use \PlugRoute\PlugRoute;
 
+/**** CORS ****/
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH");
 header("Access-Control-Allow-Headers: Content-Type");
+/**** CORS ****/
 
 $route = new PlugRoute();
 
-$route->get('/', function () {
+$route->any('/', function ($request) {
+    var_dump($request->all());
     echo 'Hello World!';
 });
 
@@ -23,7 +26,6 @@ $route->post('/people', function ($request) {
 });
 
 $route->put('/people/{id}', function ($request) {
-    var_dump($request->all());
     echo $request->getUrlBodyWith('id');
 });
 
@@ -48,5 +50,7 @@ $route->group('/news', function($route) {
         var_dump($request->all());
     });
 });
+
+$route->any('/url', '\NAMESPACE\YOUR_CLASS@method');
 
 $route->on();

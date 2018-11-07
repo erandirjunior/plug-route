@@ -4,7 +4,7 @@ namespace PlugRoute\Services\Routes;
 
 use PlugRoute\Helpers\PlugHelper;
 use PlugRoute\Helpers\ValidateHelper;
-use PlugRoute\Services\CallbackService;
+use PlugRoute\Services\Callback\CallbackService;
 
 class DynamicRouteService
 {
