@@ -15,7 +15,7 @@ class HttpRequest
 
 	public function __construct()
     {
-        $this->requestService = new RequestService();
+        $this->requestService = new \PlugRoute\Services\Http\RequestService();
     }
 
     public function setUrlBody($urlBody = null)
@@ -25,9 +25,24 @@ class HttpRequest
         }
     }
 
+    public function getUrlBodyAll()
+    {
+        return $this->urlBody;
+    }
+
     public function getUrlBodyWith($parameter)
     {
         return $this->urlBody[$parameter];
+    }
+
+    public function getQueryAll()
+    {
+        return $_GET;
+    }
+
+    public function getQueryWith($parameter)
+    {
+        return $_GET[$parameter];
     }
 
 	public function all()
@@ -40,7 +55,7 @@ class HttpRequest
         return $this->body[$index];
     }
 
-	public function getFiles()
+	public function getUploadFiles()
 	{
 		return $_FILES;
 	}
@@ -56,7 +71,7 @@ class HttpRequest
 			    $this->body = $_GET;
 				break;
 			case 'POST' :
-			    $this->body =  $_POST;
+			    $this->body =  $this->requestService->getBodyPostRequest();
 				break;
             default :
                 $this->body = RequestHelper::returnArrayFormated($this->body, $this->requestService->getDataRequest());
