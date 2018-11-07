@@ -32,7 +32,7 @@ class HttpResponse
 	public function responseAsJson($data)
 	{
 		header("Content-type: {$this->header['contentType']}");
-		header("HTTP/1.0 {$this->header}");
+		header("HTTP/1.0 {$this->header['statusCode']}");
 
 		return json_encode($data);
 	}
