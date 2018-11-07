@@ -9,7 +9,7 @@
             "email": "aefs12junior@gmail.com"
         }
     ],
-    "version" : "v1.7",
+    "version" : "v1.8",
     "require": {
         "php": ">=7.0"
     },
