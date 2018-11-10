@@ -12,8 +12,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 $route = new PlugRoute();
 
-$route->any('/', function ($request) {
-    var_dump($request->all());
+$route->get('/', function ($request) {
     echo 'Hello World!';
 });
 
