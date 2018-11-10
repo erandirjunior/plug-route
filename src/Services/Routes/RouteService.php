@@ -2,64 +2,71 @@
 
 namespace PlugRoute\Services\Routes;
 
-use PlugRoute\Exceptions\RouteException;
-use PlugRoute\Helpers\RequestHelper;
-use PlugRoute\Helpers\RouteHelper;
-use PlugRoute\Helpers\ValidateHelper;
+use PlugRoute\PlugRoute;
 
 class RouteService
 {
-    private $routes;
+	private $routes;
 
-    public static $accountUrlNotFound;
+	private $preName = '';
 
-    private $urlPath;
+	private $exists = false;
 
-    private $simpleRoute;
+	public function __construct()
+	{
+		$this->routes = [
+			'GET' => [],
+			'POST' => [],
+			'PUT' => [],
+			'DELETE' => [],
+			'PATCH' => []
+		];
+	}
 
-    private $dynamicRoute;
+	public function getRoutes(): array
+	{
+		return $this->routes;
+	}
 
-    public function __construct($routes)
-    {
-        $typeRequest            = RequestHelper::getTypeRequest();
-        $this->routes           = $typeRequest !== 'OPTIONS' ? $routes[$typeRequest] : [];
-        $this->urlPath          = RequestHelper::getUrlPath();
-        $this->simpleRoute      = new SimpleRouteService($routes);
-        $this->dynamicRoute     = new DynamicRouteService($routes);
-    }
+	public function addRoute($typeRequest, $route, $callback)
+	{
+		$path = $this->preName.$route;
 
-    public function manipulateRoutes()
-    {
-        try {
-            array_walk($this->routes, function ($route) {
-                $isDynamic = RouteHelper::isDynamic($route['route']);
-                $isDynamic ? $this->handleDynamicRoute($route) : $this->handleSimpleRoute($route);
-                $this->countError($route);
-            });
-        } catch (\Exception $e) {
-            return $this->showErrorMessage($e->getMessage());
-        }
-    }
+		$this->exists = false;
 
-    private function handleDynamicRoute($route)
-    {
-        $this->dynamicRoute->execute($route, $this->urlPath);
-    }
+		foreach ($this->routes[$typeRequest] as $k => $v) {
+			if ($v['route'] === $path) {
+				$this->routes[$typeRequest][$k] = [
+					'route' => $path,
+					'callback' => $callback
+				];
+				$this->exists = true;
+			}
+		}
+		$this->add($typeRequest, $path, $callback);
+	}
 
-    private function handleSimpleRoute($route)
-    {
-        return $this->simpleRoute->execute($route, $this->urlPath);
-    }
+	public function add($typeRequest, $path, $callback)
+	{
+		if (!$this->exists) {
+			$this->routes[$typeRequest][] = [
+				'route' => $path,
+				'callback' => $callback
+			];
+		}
+	}
 
-    private function showErrorMessage($message)
-    {
-        echo $message;
-    }
+	public function addGroup(PlugRoute $plugRoute, $route, $callback)
+	{
+		$this->preName = $route;
+		$callback($plugRoute);
+		$this->preName = '';
+	}
 
-    private function countError()
-    {
-        if (ValidateHelper::isEqual(count($this->routes), self::$accountUrlNotFound)) {
-            throw new RouteException("Error: route don't exist");
-        }
-    }
+	public function addRouteTypeAny(string $route, $callback)
+	{
+		foreach ($this->routes as $typeRequest => $routes) {
+			$this->routes[$typeRequest][] = ['route' => $route, 'callback' => $callback];
+		}
+	}
 }
