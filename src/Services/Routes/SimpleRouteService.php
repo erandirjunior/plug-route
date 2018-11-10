@@ -20,6 +20,6 @@ class SimpleRouteService
 			return $this->callback->handleCallback($route);
 		}
 
-		return RouteService::$accountUrlNotFound++;
+		return ManagerRouteService::$accountUrlNotFound++;
     }
 }

@@ -25,7 +25,7 @@ class DynamicRouteService
 			return $this->callback->handleCallback($route, $this->data);
 		}
 
-		return RouteService::$accountUrlNotFound++;
+		return ManagerRouteService::$accountUrlNotFound++;
     }
 
     private function handleRoute($route, $urlPath)
