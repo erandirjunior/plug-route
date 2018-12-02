@@ -3,7 +3,7 @@
 namespace PlugRoute\Http;
 
 use PlugRoute\Helpers\RequestHelper;
-use PlugRoute\Services\RequestService;
+use PlugRoute\Rules\Http\Request;
 
 class HttpRequest
 {
@@ -11,11 +11,13 @@ class HttpRequest
 
 	private $urlBody;
 
-	private $requestService;
+	private $route;
 
-	public function __construct()
+	public function __construct($route)
     {
-        $this->requestService = new \PlugRoute\Services\Http\RequestService();
+    	$this->route = $route;
+        $requestService = (new Request())->getRequisitionBody($this->getMethod());
+        $this->body = RequestHelper::returnArrayFormated($this->urlBody, $requestService);
     }
 
     public function setUrlBody($urlBody = null)
@@ -47,12 +49,16 @@ class HttpRequest
 
 	public function all()
 	{
-	    $this->getRequisitionBody();
         return $this->body;
 	}
 
 	public function getBodyWith($index) {
         return $this->body[$index];
+    }
+
+	public function setBody(array $body)
+	{
+		$this->body = RequestHelper::returnArrayFormated($this->body, $body);
     }
 
 	public function getUploadFiles()
@@ -65,16 +71,19 @@ class HttpRequest
 		return RequestHelper::getTypeRequest();
 	}
 
-	private function getRequisitionBody() {
-		switch ($this->getMethod()) {
-			case 'GET' :
-			    $this->body = $_GET;
-				break;
-			case 'POST' :
-			    $this->body =  $this->requestService->getBodyPostRequest();
-				break;
-            default :
-                $this->body = RequestHelper::returnArrayFormated($this->body, $this->requestService->getDataRequest());
+	public function redirectWithName($name)
+	{
+		if (empty($this->route[$name])) {
+			throw new \Exception("Name wasn't defined.");
 		}
+
+		header("Location: {$this->route[$name]}");
+		die;
+	}
+
+	public function redirect($path)
+	{
+		header("Location: {$path}");
+		die;
 	}
 }
