@@ -58,4 +58,20 @@ $route->post('/people', function($request) {
 });
 ```
 
+## Redirect
+```php
+$route->get('/people', function($request) {
+     $request->redirectWithName('home');
+     // or
+     $request->redirect('/home');
+});
+```
+
+## Getting type request
+```php
+$route->post('/people', function($request) {
+     echo $request->getMethod();
+});
+```
+
 [Response](response.md)

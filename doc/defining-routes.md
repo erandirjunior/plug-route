@@ -70,6 +70,14 @@ $route->group('/news', function($route) {
     });
 });
 ``` 
+
+## Named routes
+```php
+$route->get('/', function() {
+    echo 'basic route';
+})->name('home');
+``` 
+
 ## Working Classes
 ```php
 $route->get('/', '\Path\To\Class@method');
