@@ -63,7 +63,7 @@ $route->post('/people', function($request) {
 $route->get('/people', function($request) {
      $request->redirectWithName('home');
      // or
-     $request->redirect('home');
+     $request->redirect('/home');
 });
 ```
 
