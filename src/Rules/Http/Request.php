@@ -5,9 +5,22 @@ namespace PlugRoute\Rules\Http;
 use PlugRoute\Helpers\RequestHelper;
 use PlugRoute\Helpers\RouteHelper;
 
-class RequestService
+class Request
 {
-	public function getDataRequest()
+	public function getRequisitionBody($method) {
+		switch ($method) {
+			case 'GET' :
+				return $_GET;
+				break;
+			case 'POST' :
+				return $this->getBodyPostRequest();
+				break;
+			default :
+				return $this->getDataRequest();
+		}
+	}
+
+	private function getDataRequest()
 	{
         if ($this->contentTypeIsJson()) {
             return $this->getBodyJson();

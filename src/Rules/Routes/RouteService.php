@@ -1,6 +1,6 @@
 <?php
 
-namespace PlugRoute\Services\Routes;
+namespace PlugRoute\Rules\Routes;
 
 use PlugRoute\PlugRoute;
 
@@ -35,7 +35,6 @@ class RouteService
 				'route' => $path,
 				'callback' => $callback,
 				'name'	=> null,
-				''
 			];
 			$this->index = [$typeRequest, count($this->routes[$typeRequest]) - 1];
 		}
@@ -60,14 +59,6 @@ class RouteService
 		$typeRquest = $index[0];
 		$index 		= $index[1];
 		$this->routes[$typeRquest][$index]['name'] = $name;
-
-	}
-
-	public function addMiddleware(array $middlewares, array $index)
-	{
-		$typeRquest = $index[0];
-		$index 		= $index[1];
-		$this->routes[$typeRquest][$index]['middleware'] = $middlewares;
 
 	}
 

@@ -5,13 +5,13 @@ namespace PlugRoute\Rules\Routes;
 use PlugRoute\Helpers\ValidateHelper;
 use PlugRoute\Rules\Callback\Callback;
 
-class SimpleRouteService implements IRoute
+class SimpleRoute implements IRoute
 {
 	private $callback;
 
-	public function __construct()
+	public function __construct($name)
 	{
-		$this->callback = new Callback();
+		$this->callback = new Callback($name);
 	}
 
 	public function execute($route, $url)
@@ -20,6 +20,6 @@ class SimpleRouteService implements IRoute
 			return $this->callback->handleCallback($route);
 		}
 
-		return ManagerRouteService::$accountUrlNotFound++;
+		return ManagerRoute::$accountUrlNotFound++;
     }
 }

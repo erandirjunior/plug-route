@@ -6,15 +6,15 @@ use PlugRoute\Helpers\PlugHelper;
 use PlugRoute\Helpers\ValidateHelper;
 use PlugRoute\Rules\Callback\Callback;
 
-class DynamicRouteService implements IRoute
+class DynamicRoute implements IRoute
 {
 	private $callback;
 
 	private $data;
 
-	public function __construct()
+	public function __construct($name)
 	{
-		$this->callback = new Callback();
+		$this->callback = new Callback($name);
 	}
 
 	public function execute($route, $urlPath)
@@ -25,7 +25,7 @@ class DynamicRouteService implements IRoute
 			return $this->callback->handleCallback($route, $this->data);
 		}
 
-		return ManagerRouteService::$accountUrlNotFound++;
+		return ManagerRoute::$accountUrlNotFound++;
     }
 
     private function handleRoute($route, $urlPath)

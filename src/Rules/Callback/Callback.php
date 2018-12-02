@@ -1,6 +1,6 @@
 <?php
 
-namespace PlugRoute\Services\Callback;
+namespace PlugRoute\Rules\Callback;
 
 use PlugRoute\Exceptions\ClassException;
 use PlugRoute\Exceptions\MethodException;
@@ -8,15 +8,15 @@ use PlugRoute\Helpers\ValidateHelper;
 use PlugRoute\Http\HttpRequest;
 use PlugRoute\Http\HttpResponse;
 
-class CallbackService
+class Callback
 {
     private $request;
 
     private $response;
 
-    public function __construct()
+    public function __construct($name)
     {
-        $this->request = new HttpRequest();
+        $this->request = new HttpRequest($name);
         $this->response = new HttpResponse();
     }
 

@@ -7,7 +7,7 @@ use PlugRoute\Helpers\RequestHelper;
 use PlugRoute\Helpers\RouteHelper;
 use PlugRoute\Helpers\ValidateHelper;
 
-class ManagerRouteService
+class ManagerRoute
 {
 	private $routes;
 
@@ -24,8 +24,9 @@ class ManagerRouteService
 		$typeRequest            = RequestHelper::getTypeRequest();
 		$this->routes           = $typeRequest !== 'OPTIONS' ? $routes[$typeRequest] : [];
 		$this->urlPath          = RequestHelper::getUrlPath();
-		$this->simpleRoute      = new SimpleRouteService($routes);
-		$this->dynamicRoute     = new DynamicRouteService($routes);
+		$name 					= $this->handleNameRoute();
+		$this->simpleRoute      = new SimpleRoute($name);
+		$this->dynamicRoute     = new DynamicRoute($name);
 	}
 
 	public function manipulateRoutes()
@@ -61,5 +62,17 @@ class ManagerRouteService
 		if (ValidateHelper::isEqual(count($this->routes), self::$accountUrlNotFound)) {
 			throw new RouteException("Error: route don't exist");
 		}
+	}
+
+	private function handleNameRoute()
+	{
+		$array = [];
+		foreach ($this->routes as $route) {
+			if (!empty($route['name'])) {
+				$array[$route['name']] = $route['route'];
+			}
+		}
+
+		return $array;
 	}
 }
