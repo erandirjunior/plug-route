@@ -18,7 +18,7 @@ $route->get('/', function ($request) {
 
 $route->get('/sport/{something}', function (\PlugRoute\Http\HttpRequest $request) {
     echo $request->getUrlBodyWith('something');
-    $request->redirectWithName('homes');
+    $request->redirectWithName('home');
 });
 
 $route->post('/people', function ($request) {
