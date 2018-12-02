@@ -14,10 +14,11 @@ $route = new PlugRoute();
 
 $route->get('/', function ($request) {
     echo 'Hello World!';
-});
+})->name('home');
 
-$route->get('/sport/{something}', function ($request) {
+$route->get('/sport/{something}', function (\PlugRoute\Http\HttpRequest $request) {
     echo $request->getUrlBodyWith('something');
+    $request->redirectWithName('homes');
 });
 
 $route->post('/people', function ($request) {
@@ -44,7 +45,7 @@ $route->any('/url', function () {
 $route->group('/news', function($route) {
     $route->get('/', function() {
         echo 'Home news';
-    });
+    })->name('news');
 
     $route->get('/{something}', function($request) {
         echo $request->getUrlBodyWith('something');
