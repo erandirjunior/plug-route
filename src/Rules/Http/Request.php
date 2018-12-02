@@ -1,6 +1,6 @@
 <?php
 
-namespace PlugRoute\Services\Http;
+namespace PlugRoute\Rules\Http;
 
 use PlugRoute\Helpers\RequestHelper;
 use PlugRoute\Helpers\RouteHelper;

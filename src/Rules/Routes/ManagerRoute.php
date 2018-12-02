@@ -1,6 +1,6 @@
 <?php
 
-namespace PlugRoute\Services\Routes;
+namespace PlugRoute\Rules\Routes;
 
 use PlugRoute\Exceptions\RouteException;
 use PlugRoute\Helpers\RequestHelper;

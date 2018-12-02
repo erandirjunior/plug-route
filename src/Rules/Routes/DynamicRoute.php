@@ -1,12 +1,12 @@
 <?php
 
-namespace PlugRoute\Services\Routes;
+namespace PlugRoute\Rules\Routes;
 
 use PlugRoute\Helpers\PlugHelper;
 use PlugRoute\Helpers\ValidateHelper;
-use PlugRoute\Services\Callback\CallbackService;
+use PlugRoute\Rules\Callback\Callback;
 
-class DynamicRouteService
+class DynamicRouteService implements IRoute
 {
 	private $callback;
 
@@ -14,7 +14,7 @@ class DynamicRouteService
 
 	public function __construct()
 	{
-		$this->callback = new CallbackService();
+		$this->callback = new Callback();
 	}
 
 	public function execute($route, $urlPath)
