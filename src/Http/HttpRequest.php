@@ -15,8 +15,11 @@ class HttpRequest
 
 	public function __construct($route)
     {
+        $request = new Request();
     	$this->route = $route;
-        $requestService = (new Request())->getRequisitionBody($this->getMethod());
+    	$this->urlBody = $request->get();
+    	$this->body = [];
+        $requestService = $request->getRequisitionBody($this->getMethod());
 
         if ($requestService) {
             $this->body = RequestHelper::returnArrayFormated($this->body, $requestService);
