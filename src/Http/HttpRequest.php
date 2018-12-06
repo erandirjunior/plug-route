@@ -15,11 +15,10 @@ class HttpRequest
 
 	public function __construct($route)
     {
-        $request = new Request();
-    	$this->route = $route;
-    	$this->urlBody = $request->get();
+        $this->route = $route;
+    	$this->urlBody = [];
     	$this->body = [];
-        $requestService = $request->getRequisitionBody($this->getMethod());
+        $requestService = (new Request())->getRequisitionBody($this->getMethod());
 
         if ($requestService) {
             $this->body = RequestHelper::returnArrayFormated($this->body, $requestService);
@@ -33,12 +32,12 @@ class HttpRequest
         }
     }
 
-    public function get()
+    public function parameters()
     {
         return $this->urlBody;
     }
 
-    public function getWith($parameter)
+    public function parameter($parameter)
     {
         return $this->urlBody[$parameter];
     }
