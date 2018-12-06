@@ -12,8 +12,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 $route = new PlugRoute();
 
-$route->get('/', function ($request) {
-    echo 'Hello World!';
+$route->get('/', function ($request, $response) {
 })->name('home');
 
 $route->get('/sport/{something}', function (\PlugRoute\Http\HttpRequest $request) {
@@ -26,16 +25,16 @@ $route->post('/people', function ($request) {
 });
 
 $route->put('/people/{id}', function ($request, $response) {
-    $id = $request->getUrlBodyWith('id');
-    echo $response->responseAsJson(['id' => $id]);
+    $id = $request->getWith('id');
+    echo $response->json(['id' => $id]);
 });
 
 $route->delete('/people/{id}', function ($request) {
-    echo $request->getUrlBodyWith('id');
+    echo $request->getWith('id');
 });
 
 $route->patch('/people/{id}', function ($request) {
-    echo $request->getUrlBodyWith('id');
+    echo $request->getWith('id');
 });
 
 $route->any('/url', function () {
@@ -48,7 +47,7 @@ $route->group('/news', function($route) {
     })->name('news');
 
     $route->get('/{something}', function($request) {
-        echo $request->getUrlBodyWith('something');
+        echo $request->getWith('something');
     });
 });
 
