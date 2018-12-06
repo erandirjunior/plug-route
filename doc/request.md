@@ -3,14 +3,14 @@
 ## Getting values dynamics
 ```php
 $route->get('/sport/{something}', function($request) {
-     echo $request->getUrlBodyWith('something');
+     echo $request->parameter('something');
 });
 ```
 
 ## Getting all values dynamics
 ```php
 $route->get('/sport/{something}/{name}', function($request) {
-     var_dump($request->getUrlBodyAll());
+     var_dump($request->parameters());
 });
 ```
 
@@ -18,22 +18,22 @@ $route->get('/sport/{something}/{name}', function($request) {
 ```php
 // /person?age=20
 $route->get('/person', function($request) {
-     var_dump($request->getQueryWith('status));
+     var_dump($request->queryWith('age));
 });
 ```
 
-## Getting all queries
+## Getting all query
 ```php
 // /person?age=20&name=Erandir
 $route->get('/person', function($request) {
-     var_dump($request->getQueryAll());
+     var_dump($request->query());
 });
 ```
 
 ## Getting request body
 ```php
 $route->post('/people', function($request) {
-     echo $request->getUrlBodyWith('id');
+     echo $request->input('id');
 });
 ```
 
