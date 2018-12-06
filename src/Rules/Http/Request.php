@@ -7,6 +7,8 @@ use PlugRoute\Helpers\RouteHelper;
 
 class Request
 {
+    private $body = [];
+
 	public function getRequisitionBody($method) {
 		switch ($method) {
 			case 'GET' :
