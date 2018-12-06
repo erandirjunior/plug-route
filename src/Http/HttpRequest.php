@@ -17,32 +17,35 @@ class HttpRequest
     {
     	$this->route = $route;
         $requestService = (new Request())->getRequisitionBody($this->getMethod());
-        $this->body = RequestHelper::returnArrayFormated($this->urlBody, $requestService);
+
+        if ($requestService) {
+            $this->body = RequestHelper::returnArrayFormated($this->body, $requestService);
+        }
     }
 
-    public function setUrlBody($urlBody = null)
+    public function setUrlParameter($urlBody = null)
     {
         if (!is_null($urlBody)) {
             $this->urlBody = RequestHelper::returnArrayFormated($this->urlBody, $urlBody);
         }
     }
 
-    public function getUrlBodyAll()
+    public function get()
     {
         return $this->urlBody;
     }
 
-    public function getUrlBodyWith($parameter)
+    public function getWith($parameter)
     {
         return $this->urlBody[$parameter];
     }
 
-    public function getQueryAll()
+    public function query()
     {
         return $_GET;
     }
 
-    public function getQueryWith($parameter)
+    public function queryWith($parameter)
     {
         return $_GET[$parameter];
     }
@@ -52,11 +55,11 @@ class HttpRequest
         return $this->body;
 	}
 
-	public function getBodyWith($index) {
+	public function input($index) {
         return $this->body[$index];
     }
 
-	public function setBody(array $body)
+	public function setBodyParameter(array $body)
 	{
 		$this->body = RequestHelper::returnArrayFormated($this->body, $body);
     }
@@ -78,12 +81,17 @@ class HttpRequest
 		}
 
 		header("Location: {$this->route[$name]}");
-		die;
+		$this->kill();
 	}
 
 	public function redirect($path)
 	{
 		header("Location: {$path}");
-		die;
+        $this->kill();
 	}
+
+	private function kill()
+    {
+        die;
+    }
 }
