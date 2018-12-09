@@ -7,10 +7,12 @@ use PlugRoute\Helpers\RouteHelper;
 
 class Request
 {
+    private $body = [];
+
 	public function getRequisitionBody($method) {
 		switch ($method) {
 			case 'GET' :
-				return $_GET;
+				return $this->get();
 				break;
 			case 'POST' :
 				return $this->getBodyPostRequest();
@@ -19,6 +21,11 @@ class Request
 				return $this->getDataRequest();
 		}
 	}
+
+	public function get()
+    {
+        return $_GET;
+    }
 
 	private function getDataRequest()
 	{
