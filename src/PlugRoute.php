@@ -16,10 +16,18 @@ class PlugRoute
 
     private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
+    private $prefix;
+
     public function __construct()
 	{
 		$this->name = null;
-		$this->routes = [];
+		$this->routes = [
+			'GET' => [],
+			'POST' => [],
+			'PUT' => [],
+			'DELETE' => [],
+			'PATCH' => []
+		];
 	}
 
 	public function __call(string $name, $callback)
@@ -39,13 +47,20 @@ class PlugRoute
 		$exists = $this->removeDuplicateRoutes($typeRequest, $callback);
 		if (!$exists) {
 			$this->routes[$typeRequest][] = [
-				'route' 	=> $callback[0],
+				'route' 	=> $this->prefix.$callback[0],
 				'callback' 	=> $callback[1],
 				'name'		=> $this->name
 			];
 			$this->setLastRoute($typeRequest, $this->getIndex($typeRequest));
 			return $this;
 		}
+	}
+
+	public function group($route, $callback)
+	{
+		$this->prefix = $route;
+		$callback($this);
+		$this->preName = '';
 	}
 
 	public function name(string $name)
