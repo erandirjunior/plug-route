@@ -24,11 +24,22 @@ class Callback
     {
         $this->request->setUrlParameter($parameters);
 
+
+
         if (is_callable($route['callback'])) {
             return $this->callFunction($route['callback']);
         }
 
         return $this->handleObject($route);
+    }
+
+    private function callMiddleware($middlewares)
+    {
+        foreach ($middlewares as $middleware) {
+            if (!($middleware instanceof A)) {
+                throw new \Exception('Error');
+            }
+        }
     }
 
     private function handleObject($route)

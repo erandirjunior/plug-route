@@ -47,9 +47,10 @@ class PlugRoute
 		$exists = $this->removeDuplicateRoutes($typeRequest, $callback);
 		if (!$exists) {
 			$this->routes[$typeRequest][] = [
-				'route' 	=> $this->prefix.$callback[0],
-				'callback' 	=> $callback[1],
-				'name'		=> $this->name
+				'route' 	    => $this->prefix.$callback[0],
+				'callback' 	    => $callback[1],
+				'name'		    => $this->name,
+				'middleware'	=> [],
 			];
 			$this->setLastRoute($typeRequest, $this->getIndex($typeRequest));
 			return $this;
@@ -66,6 +67,14 @@ class PlugRoute
 	public function name(string $name)
 	{
 		$this->routes[$this->typeMethod][$this->index]['name'] = $name;
+        return $this;
+	}
+
+	public function middleware($middleware)
+	{
+	    var_dump($middleware);
+		$this->routes[$this->typeMethod][$this->index]['middleware'][] = $middleware;
+		return $this;
 	}
 
 	public function any(string $route, $callback)
@@ -105,6 +114,7 @@ class PlugRoute
 
     public function on()
     {
+        var_dump($this->routes);die;
 		(new ManagerRoute($this->routes))->manipulateRoutes();
     }
 }

@@ -4,6 +4,9 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use \PlugRoute\PlugRoute;
 
+class Teste {
+}
+
 /**** CORS ****/
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH");
@@ -27,8 +30,7 @@ $route->get('/', function () {
 
 $route->get('/aass', function () {
 	echo 'entrou';
-})->name('home');
-
+})->name('home')->middleware(\PlugRoute\Http\Request::class);
 
 /*$route->get('/sport/{something}', function (\PlugRoute\Http\HttpRequest $request) {
     echo $request->getUrlBodyWith('something');
