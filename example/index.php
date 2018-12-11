@@ -11,13 +11,28 @@ header("Access-Control-Allow-Headers: Content-Type");
 /**** CORS ****/
 
 $route = new PlugRoute();
+//$route->teste();
 
-$route->get('/', function ($request, $response) {
+$route->get('/', function () {
+	echo 'entrou';
+});//->name('home');
+
+$route->get('/', function () {
+	echo 'entrou';
+})->name('asa');
+
+$route->get('/', function () {
+	echo 'entrou';
+});
+
+$route->get('/aass', function () {
+	echo 'entrou';
 })->name('home');
 
-$route->get('/sport/{something}', function (\PlugRoute\Http\HttpRequest $request) {
+
+/*$route->get('/sport/{something}', function (\PlugRoute\Http\HttpRequest $request) {
     echo $request->getUrlBodyWith('something');
-    $request->redirectWithName('homes');
+    $request->redirectWithName('home');
 });
 
 $route->post('/people', function ($request) {
@@ -51,6 +66,6 @@ $route->group('/news', function($route) {
     });
 });
 
-$route->any('/url', '\NAMESPACE\YOUR_CLASS@method');
+$route->any('/url', '\NAMESPACE\YOUR_CLASS@method');*/
 
 $route->on();

@@ -3,68 +3,93 @@
 namespace PlugRoute;
 
 use PlugRoute\Rules\Routes\ManagerRoute;
-use PlugRoute\Rules\Routes\RouteService;
 
 class PlugRoute
 {
-    private $routeService;
+    private $routes;
 
-    private $route;
+    private $index;
+
+    private $typeMethod;
+
+    private $name;
+
+    private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
     public function __construct()
 	{
-		$this->routeService = new RouteService();
+		$this->name = null;
+		$this->routes = [];
 	}
 
-	public function get(string $route, $callback)
-    {
-    	$this->route = $this->routeService->addRoute('GET', $route, $callback);
-    	return $this;
-    }
-
-    public function post(string $route, $callback)
-    {
-		$this->route = $this->routeService->addRoute('POST', $route, $callback);
-		return $this;
-    }
-
-    public function put(string $route, $callback)
-    {
-		$this->route = $this->routeService->addRoute('PUT', $route, $callback);
-		return $this;
-    }
-
-    public function delete(string $route, $callback)
-    {
-		$this->route = $this->routeService->addRoute('DELETE', $route, $callback);
-		return $this;
-    }
-
-    public function patch(string $route, $callback)
-    {
-		$this->route = $this->routeService->addRoute('PATCH', $route, $callback);
-		return $this;
-    }
-
-    public function group(string $route, callable $callback)
-    {
-		$this->route = $this->routeService->addGroup($this, $route, $callback);
-		return $this;
-    }
-
-    public function any(string $route, $callback)
-    {
-		$this->route = $this->routeService->addRouteTypeAny($route, $callback);
-		return $this;
-    }
-
-    public function name(string $name)
+	public function __call(string $name, $callback)
 	{
-		$this->routeService->addName($name, $this->route);
+		$nameMethod = strtoupper($name);
+
+		if (!in_array($nameMethod, $this->methods)) {
+			throw new \Exception("Method don't exists");
+		}
+
+		$this->addRoutes($nameMethod, $callback);
+		return $this;
+	}
+
+	private function addRoutes(string $typeRequest, array $callback)
+	{
+		$exists = $this->removeDuplicateRoutes($typeRequest, $callback);
+		if (!$exists) {
+			$this->routes[$typeRequest][] = [
+				'route' 	=> $callback[0],
+				'callback' 	=> $callback[1],
+				'name'		=> $this->name
+			];
+			$this->setLastRoute($typeRequest, $this->getIndex($typeRequest));
+			return $this;
+		}
+	}
+
+	public function name(string $name)
+	{
+		$this->routes[$this->typeMethod][$this->index]['name'] = $name;
+	}
+
+	public function any(string $route, $callback)
+	{
+		foreach ($this->methods as $typeRequest => $routes) {
+			$this->addRoutes($route, $callback);
+		}
+	}
+
+	private function removeDuplicateRoutes($typeRequest, $callback)
+	{
+		$exists = false;
+		foreach ($this->routes[$typeRequest] as $k => $v) {
+			if ($v['route'] === $callback[0]) {
+				$this->routes[$typeRequest][$k] = [
+					'route' 	=> $callback[0],
+					'callback' 	=> $callback[1],
+					'name' 		=> null
+				];
+				$exists 			= true;
+				$this->setLastRoute($typeRequest, $k);
+			}
+		}
+		return $exists;
+	}
+
+	private function getIndex($typeMethod)
+	{
+		return count($this->routes[$typeMethod]) - 1;
+	}
+
+	private function setLastRoute($typeMethod, $index)
+	{
+		$this->index 		= $index;
+		$this->typeMethod 	= $typeMethod;
 	}
 
     public function on()
     {
-		(new ManagerRoute($this->routeService->getRoutes()))->manipulateRoutes();
+		(new ManagerRoute($this->routes))->manipulateRoutes();
     }
 }
