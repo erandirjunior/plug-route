@@ -2,21 +2,99 @@
 
 namespace PlugRoute\Http;
 
-use \Symfony\Component\HttpFoundation\Request as HttpRequest;
+use PlugRoute\Helpers\RequestHelper;
+use PlugRoute\Rules\Http\DataRequest;
 
-class Request extends HttpRequest
+class Request
 {
-	public function __construct(array $query = array(), array $request = array(), array $attributes = array(), array $cookies = array(), array $files = array(), array $server = array(), $content = null)
+	private $body;
+
+	private $urlBody;
+
+	private $route;
+
+	public function __construct($route)
+    {
+    	$this->route = $route;
+    	$this->urlBody = [];
+    	$this->body = [];
+        $requestService = (new DataRequest())->getRequisitionBody($this->getMethod());
+
+        if ($requestService) {
+            $this->body = RequestHelper::returnArrayFormated($this->body, $requestService);
+        }
+    }
+
+    public function setUrlParameter($urlBody = null)
+    {
+        if (!is_null($urlBody)) {
+            $this->urlBody = RequestHelper::returnArrayFormated($this->urlBody, $urlBody);
+        }
+    }
+
+    public function parameters()
+    {
+        return $this->urlBody;
+    }
+
+    public function parameter($parameter)
+    {
+        return $this->urlBody[$parameter];
+    }
+
+    public function query()
+    {
+        return $_GET;
+    }
+
+    public function queryWith($parameter)
+    {
+        return $_GET[$parameter];
+    }
+
+	public function all()
 	{
-		parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+        return $this->body;
 	}
 
-	public function json($assoc)
+	public function input($index) {
+        return $this->body[$index];
+    }
+
+	public function setBodyParameter(array $body)
 	{
-		if (strrpos($this->getContentType(),'application/json') !== false) {
-			return json_decode($this->getContent());
+		$this->body = RequestHelper::returnArrayFormated($this->body, $body);
+    }
+
+	public function getUploadFiles()
+	{
+		return $_FILES;
+	}
+
+	public function getMethod()
+	{
+		return RequestHelper::getTypeRequest();
+	}
+
+	public function redirectToRoute($name)
+	{
+		var_dump($this->route);
+		if (empty($this->route[$name])) {
+			throw new \Exception("Name wasn't defined.");
 		}
 
-		return null;
+		header("Location: {$this->route[$name]}");
+		$this->kill();
 	}
+
+	public function redirect($path)
+	{
+		header("Location: {$path}");
+        $this->kill();
+	}
+
+	private function kill()
+    {
+        die;
+    }
 }

@@ -5,7 +5,7 @@ namespace PlugRoute\Rules\Http;
 use PlugRoute\Helpers\RequestHelper;
 use PlugRoute\Helpers\RouteHelper;
 
-class Request
+class DataRequest
 {
     private $body = [];
 

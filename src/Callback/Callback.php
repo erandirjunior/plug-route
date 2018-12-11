@@ -1,12 +1,12 @@
 <?php
 
-namespace PlugRoute\Rules\Callback;
+namespace PlugRoute\Callback;
 
 use PlugRoute\Exceptions\ClassException;
 use PlugRoute\Exceptions\MethodException;
 use PlugRoute\Helpers\ValidateHelper;
-use PlugRoute\Http\HttpRequest;
-use PlugRoute\Http\HttpResponse;
+use PlugRoute\Http\Request;
+use PlugRoute\Http\Response;
 
 class Callback
 {
@@ -16,15 +16,15 @@ class Callback
 
     public function __construct($name)
     {
-        $this->request = new HttpRequest($name);
-        $this->response = new HttpResponse();
+        $this->request = new Request($name);
+        $this->response = new Response();
     }
 
     public function handleCallback($route, $parameters = null)
     {
         $this->request->setUrlParameter($parameters);
 
-
+		$this->callMiddleware($route['middleware']);
 
         if (is_callable($route['callback'])) {
             return $this->callFunction($route['callback']);
@@ -35,10 +35,17 @@ class Callback
 
     private function callMiddleware($middlewares)
     {
+    	$func = function($request) {
+    		$this->request = $request;
+    		return function(){};
+		};
         foreach ($middlewares as $middleware) {
-            if (!($middleware instanceof A)) {
+        	$obj = new $middleware();
+			$obj->handle($this->request, $func);
+//			var_dump($obj->handle($this->request, $func));
+            /*if (!($middleware instanceof A)) {
                 throw new \Exception('Error');
-            }
+            }*/
         }
     }
 

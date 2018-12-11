@@ -3,7 +3,7 @@
 namespace PlugRoute\Http;
 
 
-class HttpResponse
+class Response
 {
 	private $header = [];
 

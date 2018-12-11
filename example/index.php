@@ -4,9 +4,6 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use \PlugRoute\PlugRoute;
 
-class Teste {
-}
-
 /**** CORS ****/
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH");
@@ -18,21 +15,23 @@ $route = new PlugRoute();
 
 $route->get('/', function () {
 	echo 'entrou';
-});//->name('home');
+})->name('home');
 
-$route->get('/', function () {
+$route->get('/teste', function () {
 	echo 'entrou';
 })->name('asa');
 
-$route->get('/', function () {
+$route->get('/status', function () {
 	echo 'entrou';
 });
 
 $route->get('/aass', function () {
 	echo 'entrou';
-})->name('home')->middleware(\PlugRoute\Http\Request::class);
+})->name('homes')->middleware(\PlugRoute\Helpers\Teste::class)->middleware(\PlugRoute\Helpers\Novo::class);
 
-/*$route->get('/sport/{something}', function (\PlugRoute\Http\HttpRequest $request) {
+$route->
+
+/*$route->get('/sport/{something}', function (\PlugRoute\Http\DataRequest $request) {
     echo $request->getUrlBodyWith('something');
     $request->redirectWithName('home');
 });

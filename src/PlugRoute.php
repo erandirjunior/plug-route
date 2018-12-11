@@ -2,8 +2,18 @@
 
 namespace PlugRoute;
 
-use PlugRoute\Rules\Routes\ManagerRoute;
+use PlugRoute\Routes\ManagerRoute;
 
+/**
+ * @method post(string $route, $callback)
+ * @method get(string $route, $callback)
+ * @method put(string $route, $callback)
+ * @method delete(string $route, $callback)
+ * @method patch(string $route, $callback)
+ *
+ * Class PlugRoute
+ * @package PlugRoute
+ */
 class PlugRoute
 {
     private $routes;
@@ -57,11 +67,12 @@ class PlugRoute
 		}
 	}
 
-	public function group($route, $callback)
+	public function group(string $route, $callback)
 	{
 		$this->prefix = $route;
 		$callback($this);
-		$this->preName = '';
+		$this->prefix = '';
+		return $this;
 	}
 
 	public function name(string $name)
@@ -72,7 +83,6 @@ class PlugRoute
 
 	public function middleware($middleware)
 	{
-	    var_dump($middleware);
 		$this->routes[$this->typeMethod][$this->index]['middleware'][] = $middleware;
 		return $this;
 	}
@@ -114,7 +124,7 @@ class PlugRoute
 
     public function on()
     {
-        var_dump($this->routes);die;
+//        var_dump($this->routes);die;
 		(new ManagerRoute($this->routes))->manipulateRoutes();
     }
 }

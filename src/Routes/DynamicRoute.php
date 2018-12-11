@@ -1,10 +1,10 @@
 <?php
 
-namespace PlugRoute\Rules\Routes;
+namespace PlugRoute\Routes;
 
 use PlugRoute\Helpers\PlugHelper;
 use PlugRoute\Helpers\ValidateHelper;
-use PlugRoute\Rules\Callback\Callback;
+use PlugRoute\Callback\Callback;
 
 class DynamicRoute implements IRoute
 {

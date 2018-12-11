@@ -1,6 +1,6 @@
 <?php
 
-namespace PlugRoute\Rules\Routes;
+namespace PlugRoute\Routes;
 
 interface IRoute
 {
