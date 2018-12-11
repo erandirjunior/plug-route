@@ -12,8 +12,6 @@ class PlugRoute
 
     private $typeMethod;
 
-    private $settings;
-
     private $name;
 
     private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
@@ -61,8 +59,6 @@ class PlugRoute
 			$this->addRoutes($route, $callback);
 		}
 	}
-
-
 
 	private function removeDuplicateRoutes($typeRequest, $callback)
 	{

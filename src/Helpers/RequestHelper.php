@@ -6,7 +6,8 @@ class RequestHelper
 {
     public static function getUrlPath()
     {
-        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        return !empty($_SERVER['REDIRECT_BASE']) ? str_replace($_SERVER['REDIRECT_BASE'], '', $url) : $url;
     }
 
     public static function getTypeRequest()
