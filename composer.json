@@ -9,7 +9,7 @@
             "email": "aefs12junior@gmail.com"
         }
     ],
-    "version" : "v2.1",
+    "version" : "v2.2",
     "require": {
         "php": ">=7.0",
         "symfony/http-foundation": "^4.2"
