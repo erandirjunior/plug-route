@@ -1,14 +1,12 @@
 <?php
 
-namespace PlugRoute\Rules\Http;
+namespace PlugRoute\Data;
 
 use PlugRoute\Helpers\RequestHelper;
 use PlugRoute\Helpers\RouteHelper;
 
 class DataRequest
 {
-    private $body = [];
-
 	public function getRequisitionBody($method) {
 		switch ($method) {
 			case 'GET' :

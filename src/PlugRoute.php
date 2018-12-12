@@ -14,7 +14,7 @@ class PlugRoute
         'PATCH' => []
     ];
 
-    private $prefix;
+    private $prefix = '';
 
     private $name;
 
@@ -26,40 +26,40 @@ class PlugRoute
 
     private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
-	public function get(string $name, $callback)
+	public function get(string $route, $callback)
     {
-        $this->addRoutes('GET', [$name, $callback]);
+        $this->addRoutes('GET', [$route, $callback]);
         return $this;
     }
 
-	public function post(string $name, $callback)
+	public function post(string $route, $callback)
     {
-        $this->addRoutes('POST', [$name, $callback]);
+        $this->addRoutes('POST', [$route, $callback]);
         return $this;
     }
 
-	public function put(string $name, $callback)
+	public function put(string $route, $callback)
     {
-        $this->addRoutes('PUT', [$name, $callback]);
+        $this->addRoutes('PUT', [$route, $callback]);
         return $this;
     }
 
-	public function delete(string $name, $callback)
+	public function delete(string $route, $callback)
     {
-        $this->addRoutes('DELETE', [$name, $callback]);
+        $this->addRoutes('DELETE', [$route, $callback]);
         return $this;
     }
 
-	public function patch(string $name, $callback)
+	public function patch(string $route, $callback)
     {
-        $this->addRoutes('PATCH', [$name, $callback]);
+        $this->addRoutes('PATCH', [$route, $callback]);
         return $this;
     }
 
     public function any(string $route, $callback)
     {
-        foreach ($this->methods as $typeRequest => $routes) {
-            $this->addRoutes($route, $callback);
+        foreach ($this->methods as $typeRequest) {
+            $this->addRoutes($typeRequest, [$route, $callback]);
         }
     }
 
@@ -70,7 +70,7 @@ class PlugRoute
 
 		$callback($this);
 
-		$this->prefix       = null;
+		$this->prefix       = '';
 		$this->middleware   = [];
 	}
 
@@ -89,7 +89,7 @@ class PlugRoute
     private function prefixExists($route)
     {
         if (!empty($route['prefix'])) {
-            $this->prefix = $route;
+            $this->prefix = $route['prefix'];
         }
 	}
 
@@ -102,7 +102,12 @@ class PlugRoute
 
     private function addRoutes(string $typeRequest, array $callback)
     {
-        $exists = $this->removeDuplicateRoutes($typeRequest, $callback);
+        $exists = false;
+
+        if ($this->routes[$typeRequest]) {
+            $exists = $this->removeDuplicateRoutes($typeRequest, $callback);
+        }
+
         if (!$exists) {
             $this->routes[$typeRequest][] = [
                 'route' 	    => $this->prefix.$callback[0],
