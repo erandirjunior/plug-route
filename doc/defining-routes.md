@@ -78,6 +78,15 @@ $route->get('/', function() {
 })->name('home');
 ``` 
 
+
+## Middleware routes
+**The middlewares should implement PlugRouteMiddleware interface** 
+```php
+$route->get('/', function() {
+    echo 'basic route';
+})->name(\Namespace\YOUR_MIDDLWARE::class);
+``` 
+
 ## Working Classes
 ```php
 $route->get('/', '\Path\To\Class@method');

@@ -1,6 +1,6 @@
 <?php
 
-namespace PlugRoute\Rules\Routes;
+namespace PlugRoute\Routes;
 
 use PlugRoute\Exceptions\RouteException;
 use PlugRoute\Helpers\RequestHelper;
@@ -21,10 +21,6 @@ class ManagerRoute
 
 	public function __construct($routes)
 	{
-		if (count($routes) === 0) {
-			throw new \Exception("You should define at least one route");
-		}
-
 		$typeRequest            = RequestHelper::getTypeRequest();
 		$this->routes           = $typeRequest !== 'OPTIONS' ? $routes[$typeRequest] : [];
 		$this->urlPath          = RequestHelper::getUrlPath();

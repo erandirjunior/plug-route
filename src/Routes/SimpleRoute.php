@@ -1,9 +1,9 @@
 <?php
 
-namespace PlugRoute\Rules\Routes;
+namespace PlugRoute\Routes;
 
 use PlugRoute\Helpers\ValidateHelper;
-use PlugRoute\Rules\Callback\Callback;
+use PlugRoute\Callback\Callback;
 
 class SimpleRoute implements IRoute
 {

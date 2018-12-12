@@ -1,14 +1,12 @@
 <?php
 
-namespace PlugRoute\Rules\Http;
+namespace PlugRoute\Http\Data;
 
 use PlugRoute\Helpers\RequestHelper;
 use PlugRoute\Helpers\RouteHelper;
 
-class Request
+class DataRequest
 {
-    private $body = [];
-
 	public function getRequisitionBody($method) {
 		switch ($method) {
 			case 'GET' :
@@ -75,6 +73,8 @@ class Request
     public function getBodyFormData()
     {
 		preg_match_all('/"(.+)"+\s+(.*)/', $this->getValuePhpInput(), $matches);
+
+		$array = [];
 
 		foreach ($matches[1] as $key => $match) {
 			$matchKey = RouteHelper::removeCaractersOfString($match, ['\'', "\""]);

@@ -1,6 +1,8 @@
 <?php
 
 require_once dirname(__DIR__).'/vendor/autoload.php';
+require_once 'Auth.php';
+require_once 'OtherMiddleware.php';
 
 use \PlugRoute\PlugRoute;
 
@@ -11,28 +13,9 @@ header("Access-Control-Allow-Headers: Content-Type");
 /**** CORS ****/
 
 $route = new PlugRoute();
-//$route->teste();
 
 $route->get('/', function () {
-	echo 'entrou';
-});//->name('home');
-
-$route->get('/', function () {
-	echo 'entrou';
-})->name('asa');
-
-$route->get('/', function () {
-	echo 'entrou';
-});
-
-$route->get('/aass', function () {
-	echo 'entrou';
-})->name('home');
-
-
-/*$route->get('/sport/{something}', function (\PlugRoute\Http\HttpRequest $request) {
-    echo $request->getUrlBodyWith('something');
-    $request->redirectWithName('home');
+	echo 'Hello';
 });
 
 $route->post('/people', function ($request) {
@@ -40,32 +23,50 @@ $route->post('/people', function ($request) {
 });
 
 $route->put('/people/{id}', function ($request, $response) {
-    $id = $request->getWith('id');
+    $id = $request->parameter('id');
     echo $response->json(['id' => $id]);
 });
 
 $route->delete('/people/{id}', function ($request) {
-    echo $request->getWith('id');
+    echo $request->parameter('id');
 });
 
 $route->patch('/people/{id}', function ($request) {
-    echo $request->getWith('id');
+    echo $request->parameter('id');
 });
 
 $route->any('/url', function () {
    echo 'Receive type requests GET, POST, PUT, PATCH and DELETE';
 });
 
-$route->group('/news', function($route) {
-    $route->get('/', function() {
+$route->group(['prefix' => '/news'], function($route) {
+    $route->get('/sport', function() {
         echo 'Home news';
-    })->name('news');
+    });
+});
+
+$route->get('/sports', function() {
+    echo 'Sports';
+})->name('sports');
+
+$route->get('/sports/{something}', function($request) {
+    $request->redirectToRoute('sports');
+
+    // If you use this library without virtualhost or php server built-in
+    // use the redirect method
+    //$request->redirect('http://localhost/plug-route/example/sports');
+});
+
+$route->group(['prefix' => '/products', 'middleware' => [OtherMiddleware::class]], function($route) {
+    $route->get('', function() {
+        echo 'Home news';
+    })->name('news')->middleware(Auth::class);
 
     $route->get('/{something}', function($request) {
         echo $request->getWith('something');
     });
 });
 
-$route->any('/url', '\NAMESPACE\YOUR_CLASS@method');*/
+$route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
 
 $route->on();
