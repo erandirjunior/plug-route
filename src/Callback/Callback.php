@@ -7,6 +7,7 @@ use PlugRoute\Exceptions\MethodException;
 use PlugRoute\Helpers\ValidateHelper;
 use PlugRoute\Http\Request;
 use PlugRoute\Http\Response;
+use PlugRoute\Middleware\PlugRouteMiddleware;
 
 class Callback
 {
@@ -35,18 +36,25 @@ class Callback
 
     private function callMiddleware($middlewares)
     {
-    	$func = function($request) {
-    		$this->request = $request;
-    		return function(){};
-		};
+    	$func = $this->getFunc();
+
         foreach ($middlewares as $middleware) {
-        	$obj = new $middleware();
-			$obj->handle($this->request, $func);
-//			var_dump($obj->handle($this->request, $func));
-            /*if (!($middleware instanceof A)) {
-                throw new \Exception('Error');
-            }*/
+            $obj = new $middleware();
+
+            if (!($obj instanceof PlugRouteMiddleware)) {
+                throw new \Exception('Error: your class should implement PlugRouteMiddleware');
+            }
+
+            $obj->handle($this->request, $func);
         }
+    }
+
+    public function getFunc()
+    {
+        return function($request) {
+            $this->request = $request;
+            return function(){};
+        };
     }
 
     private function handleObject($route)
