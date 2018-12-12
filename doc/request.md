@@ -47,7 +47,7 @@ $route->put('/people', function($request) {
 ## Getting files sended
 ```php
 $route->post('/people', function($request) {
-     var_dump($request->getUploadFiles());
+     var_dump($request->files());
 });
 ```
 
@@ -71,6 +71,13 @@ $route->get('/people', function($request) {
 ```php
 $route->post('/people', function($request) {
      echo $request->getMethod();
+});
+```
+
+## Setting body
+```php
+$route->post('/people', function($request) {
+     $request->setBody(['id' => 10]);
 });
 ```
 
