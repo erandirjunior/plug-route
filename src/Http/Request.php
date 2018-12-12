@@ -3,7 +3,7 @@
 namespace PlugRoute\Http;
 
 use PlugRoute\Helpers\RequestHelper;
-use PlugRoute\Rules\Http\DataRequest;
+use PlugRoute\Http\Data\DataRequest;
 
 class Request
 {
@@ -15,9 +15,9 @@ class Request
 
 	public function __construct($route)
     {
-    	$this->route = $route;
-    	$this->urlBody = [];
-    	$this->body = [];
+    	$this->route    = $route;
+    	$this->urlBody  = [];
+    	$this->body     = [];
         $requestService = (new DataRequest())->getRequisitionBody($this->getMethod());
 
         if ($requestService) {
@@ -61,12 +61,12 @@ class Request
         return $this->body[$index];
     }
 
-	public function setBodyParameter(array $body)
+	public function setBody(array $body)
 	{
 		$this->body = RequestHelper::returnArrayFormated($this->body, $body);
     }
 
-	public function getUploadFiles()
+	public function files()
 	{
 		return $_FILES;
 	}
@@ -78,7 +78,6 @@ class Request
 
 	public function redirectToRoute($name)
 	{
-		var_dump($this->route);
 		if (empty($this->route[$name])) {
 			throw new \Exception("Name wasn't defined.");
 		}
