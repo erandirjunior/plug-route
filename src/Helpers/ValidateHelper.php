@@ -7,13 +7,19 @@ class ValidateHelper
     /**
      * Verify if two values are equals.
      *
-     * @param $value1
-     * @param $value2
+     * @param $route
+     * @param $url
      * @return bool
      */
-    public static function isEqual($value1, $value2)
+    public static function isEqual($route, $url)
     {
-        return $value1 === $value2;
+        $chekLastCaracter = substr("testers", -1); 
+
+        if($chekLastCaracter == '/'){
+            return substr($route, 0, -1) === $url;
+        }
+
+        return $route === $url;
     }
 
     /**
