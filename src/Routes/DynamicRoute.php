@@ -30,12 +30,43 @@ class DynamicRoute implements IRoute
 
     private function handleRoute($route, $urlPath)
     {
-        $match          = PlugHelper::getMatch($route['route']);
-        $routeArray     = PlugHelper::returnArrayWithoutEmptyValues($route['route'], '/');
-        $urlArray       = PlugHelper::returnArrayWithoutEmptyValues($urlPath, '/');
-        $indexes        = PlugHelper::getIndexDynamicOnRoute($routeArray, $match[0]);
-        $this->data     = PlugHelper::getValuesDynamics($indexes, $urlArray);
-        $route['route'] = $this->mountUrlPath($routeArray, $urlArray, $indexes);
+        $match['route']     = explode('/', $route['route']);
+
+        $chekLastCaracter['route']     = substr($route['route'], -1);
+        $chekLastCaracter['url']       = substr($urlPath, -1);
+
+        if($chekLastCaracter['route'] === "/"){
+            if($chekLastCaracter['url'] != '/'){
+                $urlPath .= '/';
+            }
+        }
+
+        $match['url']       = explode('/', $urlPath);
+        $match1             = PlugHelper::getMatch2($route['route']);
+
+        $count['route']     = count($match['route']);
+        $count['url']       = count($match['url']);
+
+        if ($count['route'] <= $count['url']) {
+
+            foreach ($match['route'] as $key => $value) {
+
+                if (in_array($value, $match1[1])) {
+                    $match['route'][$key] = $match['url'][$key];
+                }
+                //var_dump([$match1, $match]);
+            }
+            $route['route'] = implode('/', $match['route']);
+            var_dump($route, $urlPath);
+        }else{
+            var_dump($urlPath);
+        }
+//        $match          = PlugHelper::getMatch($route['route']);
+//        $routeArray     = PlugHelper::returnArrayWithoutEmptyValues($route['route'], '/');
+//        $urlArray       = PlugHelper::returnArrayWithoutEmptyValues($urlPath, '/');
+//        $indexes        = PlugHelper::getIndexDynamicOnRoute($routeArray, $match[0]);
+//        $this->data     = PlugHelper::getValuesDynamics($indexes, $urlArray);
+//        $route['route'] = $this->mountUrlPath($routeArray, $urlArray, $indexes);
         return $route;
     }
 

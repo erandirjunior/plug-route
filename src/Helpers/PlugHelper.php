@@ -51,6 +51,12 @@ class PlugHelper
         return $match;
     }
 
+    public static function getMatch2($route)
+    {
+        preg_match_all('/({.+?})\/?/', $route, $match);
+        return $match;
+    }
+
     public static function getValuesDynamics(array $indexes, array $url)
     {
         $data = [];

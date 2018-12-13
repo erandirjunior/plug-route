@@ -13,9 +13,10 @@ class ValidateHelper
      */
     public static function isEqual($route, $url)
     {
-        $chekLastCaracter = substr($url, -1); 
+        $chekLastCaracter['url'] = substr($url, -1);
+        $chekLastCaracter['route'] = substr($url, -1);
 
-        if($chekLastCaracter == '/'){
+        if($chekLastCaracter['url'] == '/' && $url != '/' && $chekLastCaracter['route'] != '/' ){
             return substr($url, 0, -1) === $route;
         }
 

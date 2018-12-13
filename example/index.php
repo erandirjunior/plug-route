@@ -14,10 +14,14 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 $route = new PlugRoute();
 
-$route->get('/', function () {
+$route->get('/pessoas/{id}/', function () {
 	echo 'Hello';
 });
 
+$route->get('/pessoas/{id}/{data}', function () {
+	echo 'Hello aaaaaa';
+});
+/*
 $route->post('/people', function ($request) {
     var_dump($request->all());
 });
@@ -67,6 +71,6 @@ $route->group(['prefix' => '/products', 'middleware' => [OtherMiddleware::class]
     });
 });
 
-$route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
+$route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');*/
 
 $route->on();
