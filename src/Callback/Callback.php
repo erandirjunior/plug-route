@@ -36,8 +36,6 @@ class Callback
 
     private function callMiddleware($middlewares)
     {
-    	$func = $this->getFunc();
-
         foreach ($middlewares as $middleware) {
             $obj = new $middleware();
 
@@ -45,16 +43,8 @@ class Callback
                 throw new \Exception('Error: your class should implement PlugRouteMiddleware');
             }
 
-            $obj->handle($this->request, $func);
+            $this->request = $obj->handle($this->request);
         }
-    }
-
-    public function getFunc()
-    {
-        return function($request) {
-            $this->request = $request;
-            return function(){};
-        };
     }
 
     private function handleObject($route)
