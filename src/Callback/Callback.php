@@ -17,13 +17,13 @@ class Callback
 
     public function __construct($name)
     {
-        $this->request = new Request($name);
+        $this->request 	= new Request($name);
         $this->response = new Response();
     }
 
-    public function handleCallback($route, $parameters = null)
+    public function handleCallback($route, array $urlParameters)
     {
-        $this->request->setUrlParameter($parameters);
+		$this->request->setUrlParameter($urlParameters);
 
 		$this->callMiddleware($route['middleware']);
 
@@ -66,10 +66,11 @@ class Callback
 
     private function createObject($class)
     {
-        if (!ValidateHelper::classExist($class)) {
-            throw new ClassException("Error: class don't exist.");
-        }
-        return new $class;
+        if (ValidateHelper::classExist($class)) {
+			return new $class;
+		}
+
+		throw new ClassException("Error: class don't exist.");
     }
 
     private function callMethod($instance, $method)
@@ -77,6 +78,7 @@ class Callback
         if (ValidateHelper::methodExist($instance, $method)) {
             return $instance->$method($this->request, $this->response);
         }
+
         throw new MethodException("Error: method don't exist.");
     }
 

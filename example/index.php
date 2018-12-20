@@ -63,7 +63,7 @@ $route->group(['prefix' => '/products', 'middleware' => [OtherMiddleware::class]
     })->name('news')->middleware(Auth::class);
 
     $route->get('/{something}', function($request) {
-        echo $request->getWith('something');
+        echo $request->parameter('something');
     });
 });
 
