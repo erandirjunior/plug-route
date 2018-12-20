@@ -10,5 +10,17 @@
 
 > Use routes without virtualhost.
 
+**Using**
+```php
+use \PlugRoute\PlugRoute;
+
+$route = new PlugRoute();
+
+$route->get('/', function() {
+    echo 'basic route';
+});
+
+$route->on();
+```
 ### Access the documentation e see much more
 <a href="https://github.com/erandirjunior/plug-route/blob/master/doc/installation.md">Access Documentation Now</a>
