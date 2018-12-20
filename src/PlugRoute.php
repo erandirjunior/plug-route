@@ -2,6 +2,8 @@
 
 namespace PlugRoute;
 
+use PlugRoute\Routes\ManagerRoute;
+
 class PlugRoute
 {
     private $routes = [
@@ -155,6 +157,6 @@ class PlugRoute
 
     public function on()
     {
-		(new RouteProcessor($this->routes))->run();
+		(new ManagerRoute($this->routes))->manipulateRoutes();
     }
 }

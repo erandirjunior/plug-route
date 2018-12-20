@@ -15,7 +15,7 @@ class ValidateHelper
     {
         $chekLastCaracter = substr($url, -1); 
 
-        if($chekLastCaracter == '/' && $url != '/'){
+        if($chekLastCaracter == '/'){
             return substr($url, 0, -1) === $route;
         }
 

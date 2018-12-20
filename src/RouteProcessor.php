@@ -4,18 +4,14 @@ namespace PlugRoute;
 
 use PlugRoute\Callback\Callback;
 use PlugRoute\Helpers\PlugHelper;
+use PlugRoute\Helpers\RequestHelper;
 use PlugRoute\Helpers\ValidateHelper;
-use PlugRoute\Http\Data\DataServer;
 
 class RouteProcessor
 {
-	use DataServer;
-
 	private $callback;
-
 	private $urlParameters;
-
-	private $url;
+	private $url = '';
 
 	private $routes;
 
@@ -23,8 +19,8 @@ class RouteProcessor
 	{
 		$this->callback      	= new Callback($this->getNamedRoutes($routes));
 		$this->urlParameters 	= [];
-		$this->url           	= $this->getUrl();
-		$requestType 			= $this->getMethod();
+		$this->url           	= RequestHelper::getUrlPath();
+		$requestType 			= RequestHelper::getTypeRequest();
 		$this->routes        	= $requestType !== 'OPTIONS' ? $routes[$requestType] : [];
 	}
 

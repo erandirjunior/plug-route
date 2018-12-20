@@ -18,11 +18,6 @@ class PlugHelper
         return $matches;
     }
 
-    public static function removeCaracterKey($string)
-	{
-		return preg_replace('/[{}]/', '', $string);
-	}
-
     /**
      * Return array of indexes where url parts are dynamics.
      *
@@ -52,8 +47,8 @@ class PlugHelper
      */
     public static function getMatch($route)
     {
-        preg_match_all('/{(.*?)}/', $route, $match);
-        return $match[0];
+        preg_match_all('({.+?}/?)', $route, $match);
+        return $match;
     }
 
     public static function getValuesDynamics(array $indexes, array $url)

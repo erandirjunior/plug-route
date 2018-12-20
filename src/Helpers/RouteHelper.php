@@ -37,7 +37,7 @@ class RouteHelper
      */
     public static function isDynamic($route)
     {
-        if (preg_match_all('/({.+?})/', $route)) {
+        if (preg_match_all('({.+?}/?)', $route)) {
             return true;
         }
         return false;

@@ -4,12 +4,9 @@ namespace PlugRoute\Http;
 
 use PlugRoute\Helpers\RequestHelper;
 use PlugRoute\Http\Data\DataRequest;
-use PlugRoute\Http\Data\DataServer;
 
 class Request
 {
-	use DataRequest;//, DataServer;
-
 	private $body;
 
 	private $urlBody;
@@ -21,7 +18,7 @@ class Request
     	$this->route    = $route;
     	$this->urlBody  = [];
     	$this->body     = [];
-        $requestService = $this->getRequisitionBody($this->getMethod());
+        $requestService = (new DataRequest())->getRequisitionBody($this->getMethod());
 
         if ($requestService) {
             $this->body = RequestHelper::returnArrayFormated($this->body, $requestService);
@@ -72,6 +69,11 @@ class Request
 	public function files()
 	{
 		return $_FILES;
+	}
+
+	public function getMethod()
+	{
+		return RequestHelper::getTypeRequest();
 	}
 
 	public function redirectToRoute($name)
