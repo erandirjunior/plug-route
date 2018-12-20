@@ -5,8 +5,10 @@ namespace PlugRoute\Http\Data;
 use PlugRoute\Helpers\RequestHelper;
 use PlugRoute\Helpers\RouteHelper;
 
-class DataRequest
+trait DataRequest
 {
+	use DataServer;
+
 	public function getRequisitionBody($method) {
 		switch ($method) {
 			case 'GET' :
@@ -20,7 +22,7 @@ class DataRequest
 		}
 	}
 
-	public function get()
+	private function get()
     {
         return $_GET;
     }
@@ -52,17 +54,17 @@ class DataRequest
 
     public function contentTypeIsJson()
     {
-        return strpos(RequestHelper::getContentType(), 'json') !== false ? true : false;
+        return strpos($this->getContentType(), 'json') !== false ? true : false;
 	}
 
     public function contentTypeIsFormData()
     {
-        return strpos(RequestHelper::getContentType(), 'form-data') !== false ? true : false;
+        return strpos($this->getContentType(), 'form-data') !== false ? true : false;
 	}
 
     public function contentTypeIsFormUrlencoded()
     {
-        return strpos(RequestHelper::getContentType(), 'x-www-form-urlencoded') !== false ? true : false;
+        return strpos($this->getContentType(), 'x-www-form-urlencoded') !== false ? true : false;
 	}
 
     public function getBodyJson()
