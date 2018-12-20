@@ -37,3 +37,5 @@ $route->put('/people/{id}', function ($request, $response) {
     echo $response->setStatusCode(404)->response->json(['error' => 'Page not found']);
 });
 ```
+
+[previous](request.md)
