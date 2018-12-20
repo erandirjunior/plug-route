@@ -1,4 +1,7 @@
 ## Here's a basic usage example:
+
+**Important: see the more examples [here](../example)**
+
 ```php
 use \PlugRoute\PlugRoute;
 
@@ -60,7 +63,7 @@ $route->get('/{something}/test/{something}', function() {
 
 ## Route group
 ```php
-$route->group('/news', function($route) {
+$route->group(['prefix' => '/news'], function($route) {
     $route->get('/', function() {
         echo 'News basic route';
     });
@@ -73,18 +76,30 @@ $route->group('/news', function($route) {
 
 ## Named routes
 ```php
-$route->get('/', function() {
+$route->get(['prefix' => '/'], function() {
     echo 'basic route';
 })->name('home');
 ``` 
 
 
-## Middleware routes
-**The middlewares should implement PlugRouteMiddleware interface** 
+## Middlewares
+**The middlewares must implement the PlugRouteMiddleware interface and can return a Request type data** 
 ```php
 $route->get('/', function() {
     echo 'basic route';
 })->name(\Namespace\YOUR_MIDDLWARE::class);
+``` 
+
+```php
+$route->group(['prefix' => '/news', 'middleware' => [\Namespace\YOUR_MIDDLWARE::class], function($route) {
+    $route->get('/', function() {
+        echo 'News basic route';
+    });
+
+    $route->get('/{something}', function() {
+        echo 'News dynamic route';
+    });
+});
 ``` 
 
 ## Working Classes
@@ -92,4 +107,4 @@ $route->get('/', function() {
 $route->get('/', '\Path\To\Class@method');
 ```
 
-[Get request data](request.md)
+[previous](installation.md) | [next](request.md)
