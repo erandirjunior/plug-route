@@ -19,13 +19,16 @@ class RouteProcessor
 
 	private $routes;
 
-	public function __construct($routes)
+	private $routeError;
+
+	public function __construct(array $routes, array $routeError = [])
 	{
 		$this->callback      	= new Callback($this->getNamedRoutes($routes));
 		$this->urlParameters 	= [];
 		$this->url           	= $this->getUrl();
 		$requestType 			= $this->getMethod();
 		$this->routes        	= $requestType !== 'OPTIONS' ? $routes[$requestType] : [];
+		$this->routeError		= $routeError;
 	}
 
 	public function run()
@@ -39,28 +42,37 @@ class RouteProcessor
 				$this->urlParameters = [];
 			}
 
-			throw new \Exception("Error: Route wasn't defined");
+			$this->callError();
 		} catch (\Exception $e) {
 			echo $e->getMessage();
 		}
 	}
 
+	private function callError()
+	{
+		if ($this->routeError) {
+			return $this->callback->handleCallback($this->routeError);
+		}
+
+		throw new \Exception("The route could not be found");
+	}
+
 	private function handleRoute($route, $urlPath)
 	{
-		$match          = PlugHelper::getMatch($route);
+		$match 			= PlugHelper::getMatch($route);
 		$routeArray     = explode('/', $route);
 		$urlArray       = explode('/', $urlPath);
 		$sizeUrlArray   = count($routeArray);
 		$sizeRouteArray = count($urlArray);
-		return $sizeRouteArray === $sizeUrlArray ? $this->mountUrlPath($routeArray, $urlArray, $match) : $route;
+		return $sizeRouteArray === $sizeUrlArray && $match ? $this->mountUrlPath($routeArray, $urlArray, $match) : $route;
 	}
 
 	private function mountUrlPath($route, $url, $match)
 	{
 		foreach ($route as $k => $v) {
 			if (in_array($v, $match)) {
-				$route[$k]             = $url[$k];
-				$key = PlugHelper::removeCaracterKey($v);
+				$route[$k]	= $url[$k];
+				$key 		= PlugHelper::removeCaracterKey($v);
 				$this->urlParameters[$key] = $url[$k];
 			}
 		}
