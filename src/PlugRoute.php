@@ -4,25 +4,41 @@ namespace PlugRoute;
 
 class PlugRoute
 {
-    private $routes = [
-        'GET' => [],
-        'POST' => [],
-        'PUT' => [],
-        'DELETE' => [],
-        'PATCH' => []
-    ];
+    private $routes;
 
-    private $prefix = '';
+    private $routeError;
+
+    private $prefix;
 
     private $name;
 
-    private $middleware = [];
+    private $middleware;
 
     private $index;
 
     private $typeMethod;
 
-    private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+    private $methods;
+
+    public function __construct()
+	{
+		$this->routes = [
+			'GET' => [],
+			'POST' => [],
+			'PUT' => [],
+			'DELETE' => [],
+			'PATCH' => []
+		];
+		$this->routeError 	= null;
+		$this->prefix 		= '';
+		$this->methods		= ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+		$this->middleware	= [];
+	}
+
+	public function setRouteError($callback)
+	{
+		$this->routeError = ['callback' => $callback];
+	}
 
 	public function get(string $route, $callback)
     {
@@ -155,6 +171,6 @@ class PlugRoute
 
     public function on()
     {
-		(new RouteProcessor($this->routes))->run();
+		(new RouteProcessor($this->routes, $this->routeError))->run();
     }
 }
