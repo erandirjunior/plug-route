@@ -2,7 +2,9 @@
 
 namespace PlugRoute\Middleware;
 
+use PlugRoute\Http\Request;
+
 interface PlugRouteMiddleware
 {
-    public function handle($request, \Closure $next)  : callable;
+    public function handle($request) : Request;
 }

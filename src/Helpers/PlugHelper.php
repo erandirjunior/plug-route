@@ -4,80 +4,37 @@ namespace PlugRoute\Helpers;
 
 class PlugHelper
 {
-    /**
-     * Remove caracteres of match.
-     *
-     * @param $matches
-     * @return mixed
-     */
-    public static function clearArrayValues($matches)
+    public static function getMatchAll($route, $pattern = '{(.*?)}')
     {
-        foreach ($matches[0] as $k => $v) {
-            $matches[$k] = str_replace(['/{', '{', '}', '}/', '/'], '', $v);
-        }
+        preg_match_all("/{$pattern}/", $route, $match);
+        return $match[0];
+    }
+
+    public static function getMatch($route, $pattern = '{(.*?)}')
+    {
+        $pattern = "/{$pattern}/";
+        preg_match($pattern, $route, $matches);
         return $matches;
     }
 
-    /**
-     * Return array of indexes where url parts are dynamics.
-     *
-     * @param array $routes
-     * @param array $matches
-     * @return mixed
-     */
-    public static function getIndexDynamicOnRoute(array $routes, array $matches)
+    public static function stringToArray($str, $delimiter = '/')
     {
-        array_walk($routes, function ($k, $v) use ($matches, &$indexes) {
-            foreach ($matches as $j => $value) {
-                $value = str_replace(['{', '}', '/'], '', $value);
-                $k = str_replace(['{', '}', '/'], '', $k);
-                if ($k == $value) {
-                    $indexes[$value] = $v;
-                }
-            }
-        });
-        return $indexes;
+        return explode($delimiter, $str);
     }
 
-    /**
-     * Return matches.
-     *
-     * @param $route
-     * @return mixed
-     */
-    public static function getMatch($route)
+    public static function replace($search, $replace, $subject)
     {
-        preg_match_all('({.+?}/?)', $route, $match);
-        return $match;
+        return str_replace($search, $replace, $subject);
     }
 
-    public static function getMatch2($route)
+    public static function removeValuesByIndex(array $array, array $indexes)
     {
-        preg_match_all('/({.+?})\/?/', $route, $match);
-        return $match;
-    }
-
-    public static function getValuesDynamics(array $indexes, array $url)
-    {
-        $data = [];
-        foreach ($indexes as $k => $v) {
-            if (isset($url[$v])) {
-                $data[$k] = $url[$v];
+        $arr = [];
+        foreach ($array as $k => $v) {
+            if (!in_array($k, $indexes)) {
+                $arr[] = $v;
             }
         }
-        return $data;
-    }
-
-    public static function removeEmptyValue(array $array)
-    {
-        return array_filter($array, function ($v) {
-            return !empty($v);
-        });
-    }
-
-    public static function returnArrayWithoutEmptyValues($str, $separator)
-    {
-        $array = explode($separator, $str);
-        return self::removeEmptyValue($array);
+        return $arr;
     }
 }

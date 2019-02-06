@@ -2,33 +2,52 @@
 
 namespace PlugRoute;
 
-use PlugRoute\Routes\ManagerRoute;
-
 class PlugRoute
 {
-    private $routes = [
-        'GET' => [],
-        'POST' => [],
-        'PUT' => [],
-        'DELETE' => [],
-        'PATCH' => []
-    ];
+    private $routes;
 
-    private $prefix = '';
+    private $routeError;
+
+    private $prefix;
 
     private $name;
 
-    private $middleware = [];
+    private $middleware;
 
     private $index;
 
     private $typeMethod;
 
-    private $methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+    private $methods;
+
+    public function __construct()
+	{
+		$this->routes = [
+			'GET' 		=> [],
+			'POST' 		=> [],
+			'PUT' 		=> [],
+			'DELETE' 	=> [],
+			'PATCH' 	=> []
+		];
+		$this->routeError 	= [];
+		$this->prefix 		= '';
+		$this->methods		= ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+		$this->middleware	= [];
+	}
+
+	public function setRouteError($callback)
+	{
+		$this->routeError = ['callback' => $callback];
+	}
+
+	public function getRoutes()
+	{
+		return $this->routes;
+	}
 
 	public function get(string $route, $callback)
     {
-        $this->addRoutes('GET', [$route, $callback]);
+        $this->addRoutes('GET', [$this->prefix.$route, $callback]);
         return $this;
     }
 
@@ -110,7 +129,7 @@ class PlugRoute
 
         if (!$exists) {
             $this->routes[$typeRequest][] = [
-                'route' 	    => $this->prefix.$callback[0],
+                'route' 	    => $callback[0],
                 'callback' 	    => $callback[1],
                 'name'		    => $this->name,
                 'middleware'	=> [],
@@ -130,7 +149,7 @@ class PlugRoute
 	private function removeDuplicateRoutes($typeRequest, $callback)
 	{
 		$exists = false;
-		foreach ($this->routes[$typeRequest] as $k => $v) {
+        foreach ($this->routes[$typeRequest] as $k => $v) {
 			if ($v['route'] === $callback[0]) {
 				$this->routes[$typeRequest][$k] = [
 					'route' 	=> $callback[0],
@@ -157,6 +176,6 @@ class PlugRoute
 
     public function on()
     {
-		(new ManagerRoute($this->routes))->manipulateRoutes();
+		(new RouteProcessor($this->routes, $this->routeError))->run();
     }
 }

@@ -2,9 +2,9 @@
 
 class OtherMiddleware implements \PlugRoute\Middleware\PlugRouteMiddleware
 {
-    public function handle($request, \Closure $next): callable
-    {
-        $request->setBody(['middleware' => 'settting value']);
-        return $next($request);
-    }
+	public function handle($request): \PlugRoute\Http\Request
+	{
+		$request->setBody(['middleware' => 'settting value']);
+		return $request;
+	}
 }

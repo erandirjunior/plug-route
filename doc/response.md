@@ -1,6 +1,6 @@
 # Working with response
 
-## Methods
+>Methods
 > $response->setHeader(array $headers) - Receives a header array.
 ```php
 $route->put('/people/{id}', function ($request, $response) {
@@ -31,9 +31,11 @@ $route->put('/people/{id}', function ($request, $response) {
 });
 ```
 
-## Manipulating response
+>Manipulating responses
 ```php
 $route->put('/people/{id}', function ($request, $response) {
     echo $response->setStatusCode(404)->response->json(['error' => 'Page not found']);
 });
 ```
+
+[previous](request.md)
