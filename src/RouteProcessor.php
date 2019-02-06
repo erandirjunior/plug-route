@@ -102,7 +102,10 @@ class RouteProcessor
             $v                              = PlugHelper::replace(['{', '}'], '', $v);
             $strToArray                     = PlugHelper::stringToArray($v, ':');
             $value                          = $strToArray ? $strToArray[0] : $v;
-            $this->urlParameters[$value]    = $matches[$k];
+
+            if (!empty($matches[$k])) {
+				$this->urlParameters[$value] = $matches[$k];
+			}
         }
     }
 
