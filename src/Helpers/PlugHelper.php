@@ -4,79 +4,38 @@ namespace PlugRoute\Helpers;
 
 class PlugHelper
 {
-    /**
-     * Remove caracteres of match.
-     *
-     * @param $matches
-     * @return mixed
-     */
-    public static function clearArrayValues($matches)
+    public static function getMatchAll($route, $pattern = '{(.*?)}')
     {
-        foreach ($matches[0] as $k => $v) {
-            $matches[$k] = str_replace(['/{', '{', '}', '}/', '/'], '', $v);
-        }
-        return $matches;
-    }
-
-    public static function removeCaracterKey($string)
-	{
-		return preg_replace('/[{}]/', '', $string);
-	}
-
-    /**
-     * Return array of indexes where url parts are dynamics.
-     *
-     * @param array $routes
-     * @param array $matches
-     * @return mixed
-     */
-    public static function getIndexDynamicOnRoute(array $routes, array $matches)
-    {
-        array_walk($routes, function ($k, $v) use ($matches, &$indexes) {
-            foreach ($matches as $j => $value) {
-                $value = str_replace(['{', '}', '/'], '', $value);
-                $k = str_replace(['{', '}', '/'], '', $k);
-                if ($k == $value) {
-                    $indexes[$value] = $v;
-                }
-            }
-        });
-        return $indexes;
-    }
-
-    /**
-     * Return matches.
-     *
-     * @param $route
-     * @return mixed
-     */
-    public static function getMatch($route)
-    {
-        preg_match_all('/{(.*?)}/', $route, $match);
+        preg_match_all("/{$pattern}/", $route, $match);
         return $match[0];
     }
 
-    public static function getValuesDynamics(array $indexes, array $url)
-    {
-        $data = [];
-        foreach ($indexes as $k => $v) {
-            if (isset($url[$v])) {
-                $data[$k] = $url[$v];
-            }
-        }
-        return $data;
+	public static function getMatch($route, $pattern = '{(.*?)}')
+	{
+		$pattern = "/{$pattern}/";
+		preg_match($pattern, $route, $matches);
+		return !empty($matches[1]) ? $matches[1] : null;
     }
 
-    public static function removeEmptyValue(array $array)
+    public static function removeEmptyValueFromArray(array $array)
     {
-        return array_filter($array, function ($v) {
-            return !empty($v);
-        });
+        return array_filter($array);
     }
 
-    public static function returnArrayWithoutEmptyValues($str, $separator)
+    public static function getFirstValueArrayFiltered($value, $delimiter = '/')
     {
-        $array = explode($separator, $str);
-        return self::removeEmptyValue($array);
+		$newArray 					= is_array($value) ? $value : self::stringToArray($value, $delimiter);
+		$arrayWithoutEmptyValues 	= self::removeEmptyValueFromArray($newArray);
+		return array_shift($arrayWithoutEmptyValues);
+    }
+
+	public static function stringToArray($str, $delimiter = '/')
+	{
+		return explode($delimiter, $str);
+    }
+
+	public static function replace($search, $replace, $subject)
+	{
+		return str_replace($search, $replace, $subject);
     }
 }

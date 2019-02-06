@@ -23,13 +23,13 @@ class PlugRoute
     public function __construct()
 	{
 		$this->routes = [
-			'GET' => [],
-			'POST' => [],
-			'PUT' => [],
-			'DELETE' => [],
-			'PATCH' => []
+			'GET' 		=> [],
+			'POST' 		=> [],
+			'PUT' 		=> [],
+			'DELETE' 	=> [],
+			'PATCH' 	=> []
 		];
-		$this->routeError 	= null;
+		$this->routeError 	= [];
 		$this->prefix 		= '';
 		$this->methods		= ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 		$this->middleware	= [];
@@ -38,6 +38,11 @@ class PlugRoute
 	public function setRouteError($callback)
 	{
 		$this->routeError = ['callback' => $callback];
+	}
+
+	public function getRoutes()
+	{
+		return $this->routes;
 	}
 
 	public function get(string $route, $callback)

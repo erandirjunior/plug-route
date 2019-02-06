@@ -59,25 +59,44 @@ class RouteProcessor
 
 	private function handleRoute($route, $urlPath)
 	{
-		$match 			= PlugHelper::getMatch($route);
-		$routeArray     = explode('/', $route);
-		$urlArray       = explode('/', $urlPath);
-		$sizeUrlArray   = count($routeArray);
-		$sizeRouteArray = count($urlArray);
-		return $sizeRouteArray === $sizeUrlArray && $match ? $this->mountUrlPath($routeArray, $urlArray, $match) : $route;
-	}
+		$match = PlugHelper::getMatchAll($route, '({.+?(?:\:.*?)?})');
 
-	private function mountUrlPath($route, $url, $match)
-	{
-		foreach ($route as $k => $v) {
-			if (in_array($v, $match)) {
-				$route[$k]	= $url[$k];
-				$key 		= PlugHelper::removeCaracterKey($v);
-				$this->urlParameters[$key] = $url[$k];
-			}
+		if (!$match) {
+			return $route;
 		}
 
-		return implode('/', $route);
+		return $this->manipulateRoute($route, $this->url, $match);
+	}
+
+	public function manipulateRoute($route, $url, $matches)
+	{
+		$routePrepared = $route;
+		$matchPrepared = [];
+
+		foreach ($matches as $key => $match) {
+			$identifiers[] 			= "|##{$key}##|";
+			$getMatchRoute 			= PlugHelper::getMatch($match, ':(.*?)}');
+			$matchPrepared[$key] 	= '.+';
+
+			if (!is_null($getMatchRoute)) {
+				$matchPrepared[$key] = $getMatchRoute === '?' ? '(?:.+)?' : $getMatchRoute;
+			}
+
+			$routePrepared = str_replace($match, $identifiers[$key], $routePrepared);
+		}
+
+		$route = $this->replaces($routePrepared, $identifiers, $matchPrepared);
+
+		return PlugHelper::getMatch($url, "({$route})");
+	}
+
+	private function replaces($routePrepared, $identifiers, $matchPrepared)
+	{
+		$routePrepared 	= str_replace('/', '\/', $routePrepared);
+		$routePrepared 	= str_replace($identifiers, $matchPrepared, $routePrepared);
+		$routePrepared	= preg_replace('/(\.\+)(\d|\a|\[)/', '$1?$2', $routePrepared);
+		$routePrepared	= str_replace('/(\.\+)(\d|\a|\[)/', '$1?$2', $routePrepared);
+		return $routePrepared;
 	}
 
 	private function getNamedRoutes($routes)
