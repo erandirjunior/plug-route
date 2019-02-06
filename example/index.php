@@ -12,6 +12,8 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH");
 header("Access-Control-Allow-Headers: Content-Type");
 /**** CORS ****/
 
+// If you are working without virtual host modify the file .htaccess on line 49, setting the path correct.
+
 $route = new PlugRoute();
 
 $route->setRouteError(function() {
