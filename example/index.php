@@ -14,24 +14,28 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 $route = new PlugRoute();
 
+$route->setRouteError(function() {
+	echo "The requested page does not exist.";
+});
+
 $route->get('/', function () {
 	echo 'Hello';
 });
 
-$route->post('/people', function ($request) {
-    var_dump($request->all());
+$route->post('/people/{id:\id+}', function ($request) {
+    var_dump($request->parameters());
 });
 
-$route->put('/people/{id}', function ($request, $response) {
+$route->put('/people/{id:\id+}', function ($request, $response) {
     $id = $request->parameter('id');
     echo $response->json(['id' => $id]);
 });
 
-$route->delete('/people/{id}', function ($request) {
+$route->delete('/people/{id:\d+}', function ($request) {
     echo $request->parameter('id');
 });
 
-$route->patch('/people/{id}', function ($request) {
+$route->patch('/people/{id:\d+}', function ($request) {
     echo $request->parameter('id');
 });
 
