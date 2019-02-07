@@ -1,20 +1,20 @@
 # Working Request Data
 
-## Getting values dynamics
+>Getting values dynamics
 ```php
 $route->get('/sport/{something}', function($request) {
      echo $request->parameter('something');
 });
 ```
 
-## Getting all values dynamics
+>Getting all values dynamics
 ```php
 $route->get('/sport/{something}/{name}', function($request) {
      var_dump($request->parameters());
 });
 ```
 
-## Getting specific query
+>Getting specific query
 ```php
 // /person?age=20
 $route->get('/person', function($request) {
@@ -22,7 +22,7 @@ $route->get('/person', function($request) {
 });
 ```
 
-## Getting all query
+>Getting all query
 ```php
 // /person?age=20&name=Erandir
 $route->get('/person', function($request) {
@@ -30,35 +30,35 @@ $route->get('/person', function($request) {
 });
 ```
 
-## Getting request body
+>Getting request body
 ```php
 $route->post('/people', function($request) {
      echo $request->input('id');
 });
 ```
 
-## Getting all request body
+>Getting all request body
 ```php
 $route->put('/people', function($request) {
      var_dump($request->all());
 });
 ```
 
-## Getting files sended
+>Getting files sended
 ```php
 $route->post('/people', function($request) {
      var_dump($request->files());
 });
 ```
 
-## Getting type request
+>Getting type request
 ```php
 $route->post('/people', function($request) {
      echo $request->getMethod();
 });
 ```
 
-## Redirect
+>Redirect
 ```php
 $route->get('/people', function($request) {
      $request->redirectWithName('home');
@@ -67,14 +67,14 @@ $route->get('/people', function($request) {
 });
 ```
 
-## Getting type request
+>Getting type request
 ```php
 $route->post('/people', function($request) {
      echo $request->getMethod();
 });
 ```
 
-## Setting body
+>Setting body
 ```php
 $route->post('/people', function($request) {
      $request->setBody(['id' => 10]);

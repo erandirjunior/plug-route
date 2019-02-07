@@ -21,13 +21,15 @@ class Callback
         $this->response = new Response();
     }
 
-    public function handleCallback($route, array $urlParameters)
+    public function handleCallback($route, array $urlParameters = [])
     {
 		$this->request->setUrlParameter($urlParameters);
 
-		$this->callMiddleware($route['middleware']);
+		if (!empty($route['middleware'])) {
+			$this->callMiddleware($route['middleware']);
+		}
 
-        if (is_callable($route['callback'])) {
+		if (is_callable($route['callback'])) {
             return $this->callFunction($route['callback']);
         }
 

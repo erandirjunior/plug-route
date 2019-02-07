@@ -19,13 +19,16 @@ class RouteProcessor
 
 	private $routes;
 
-	public function __construct($routes)
+	private $routeError;
+
+	public function __construct(array $routes, array $routeError = [])
 	{
 		$this->callback      	= new Callback($this->getNamedRoutes($routes));
 		$this->urlParameters 	= [];
 		$this->url           	= $this->getUrl();
 		$requestType 			= $this->getMethod();
 		$this->routes        	= $requestType !== 'OPTIONS' ? $routes[$requestType] : [];
+		$this->routeError		= $routeError;
 	}
 
 	public function run()
@@ -39,33 +42,79 @@ class RouteProcessor
 				$this->urlParameters = [];
 			}
 
-			throw new \Exception("Error: Route wasn't defined");
+			$this->callError();
 		} catch (\Exception $e) {
 			echo $e->getMessage();
 		}
 	}
 
-	private function handleRoute($route, $urlPath)
+	private function callError()
 	{
-		$match          = PlugHelper::getMatch($route);
-		$routeArray     = explode('/', $route);
-		$urlArray       = explode('/', $urlPath);
-		$sizeUrlArray   = count($routeArray);
-		$sizeRouteArray = count($urlArray);
-		return $sizeRouteArray === $sizeUrlArray ? $this->mountUrlPath($routeArray, $urlArray, $match) : $route;
-	}
-
-	private function mountUrlPath($route, $url, $match)
-	{
-		foreach ($route as $k => $v) {
-			if (in_array($v, $match)) {
-				$route[$k]             = $url[$k];
-				$key = PlugHelper::removeCaracterKey($v);
-				$this->urlParameters[$key] = $url[$k];
-			}
+		if ($this->routeError) {
+			return $this->callback->handleCallback($this->routeError);
 		}
 
-		return implode('/', $route);
+		throw new \Exception("The route could not be found");
+	}
+
+	private function handleRoute($route, $urlPath)
+	{
+		$match = PlugHelper::getMatchAll($route, '({.+?(?:\:.*?)?})');
+
+		if (!$match) {
+			return $route;
+		}
+
+		return $this->manipulateRoute($route, $match);
+	}
+
+	public function manipulateRoute($route, $matches)
+	{
+		$routePrepared = $route;
+		$matchPrepared = [];
+
+		foreach ($matches as $key => $match) {
+			$identifiers[] 			= "|##{$key}##|";
+			$getMatchRoute 			= PlugHelper::getMatch($match, ':(.*?)}');
+            $getMatchRoute          = $getMatchRoute ? $getMatchRoute[1] : null;
+			$matchPrepared[$key] 	= '(.+)';
+
+			if (!is_null($getMatchRoute)) {
+				$matchPrepared[$key] = $getMatchRoute === '?' ? '((?:.+)?)' : "({$getMatchRoute})";
+			}
+
+			$routePrepared = str_replace($match, $identifiers[$key], $routePrepared);
+		}
+
+        $route      = $this->replaces($routePrepared, $identifiers, $matchPrepared);
+		$finalMatch = PlugHelper::getMatch($this->url, "({$route})");
+
+		$this->getDynamicValues($matches, $finalMatch);
+
+		return !empty($finalMatch) ? $finalMatch[1] : null;
+	}
+
+	private function getDynamicValues($dynamicParameters, $matches)
+    {
+        $matches = PlugHelper::removeValuesByIndex($matches, [0, 1]);
+
+        foreach ($dynamicParameters as $k => $v) {
+            $v                              = PlugHelper::replace(['{', '}'], '', $v);
+            $strToArray                     = PlugHelper::stringToArray($v, ':');
+            $value                          = $strToArray ? $strToArray[0] : $v;
+
+            if (!empty($matches[$k])) {
+				$this->urlParameters[$value] = $matches[$k];
+			}
+        }
+    }
+
+	private function replaces($routePrepared, $identifiers, $matchPrepared)
+	{
+		$routePrepared 	= PlugHelper::replace('/', '\/', $routePrepared);
+		$routePrepared 	= PlugHelper::replace($identifiers, $matchPrepared, $routePrepared);
+		$routePrepared	= preg_replace('/(\.\+)(\d|\a|\[)/', '$1?$2', $routePrepared);
+		return $routePrepared;
 	}
 
 	private function getNamedRoutes($routes)
