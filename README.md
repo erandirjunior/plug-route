@@ -10,6 +10,11 @@
 
 > Use routes without virtualhost.
 
+## Install
+```bash
+composer require erandir/plug-route
+```
+
 **Using**
 ```php
 use \PlugRoute\PlugRoute;
