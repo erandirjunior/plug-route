@@ -10,6 +10,8 @@
 
 > Use routes without virtualhost.
 
+####<a href="https://github.com/erandirjunior/plug-route/blob/master/doc/installation.md">Complete documentation</a>
+
 ## Install
 ```bash
 composer require erandir/plug-route
@@ -27,5 +29,3 @@ $route->get('/', function() {
 
 $route->on();
 ```
-### Access the documentation and see much more
-<a href="https://github.com/erandirjunior/plug-route/blob/master/doc/installation.md">Access Documentation Now</a>
