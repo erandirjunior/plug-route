@@ -67,7 +67,7 @@ $route->group(['prefix' => '/products', 'middleware' => [OtherMiddleware::class]
 
     $route->get('/', function() {
         echo 'Home';
-    });//->middleware(Auth::class);
+    })->middleware(Auth::class);
 
     /*$route->get('/', function($request) {
         echo $request->parameter('something');
@@ -76,5 +76,4 @@ $route->group(['prefix' => '/products', 'middleware' => [OtherMiddleware::class]
 
 $route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
 
-//var_dump($route->getRoutes());
 $route->on();

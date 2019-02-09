@@ -47,45 +47,40 @@ class PlugRoute
 
 	public function get(string $route, $callback)
     {
-        $this->addRoutes('GET', [$this->prefix.$route, $callback]);
-        return $this;
+        return $this->addRoutes('GET', $this->prefix.$route, $callback);
     }
 
 	public function post(string $route, $callback)
     {
-        $this->addRoutes('POST', [$route, $callback]);
-        return $this;
+        return $this->addRoutes('POST', $this->prefix.$route, $callback);
     }
 
 	public function put(string $route, $callback)
     {
-        $this->addRoutes('PUT', [$route, $callback]);
-        return $this;
+        return $this->addRoutes('PUT', $this->prefix.$route, $callback);
     }
 
 	public function delete(string $route, $callback)
     {
-        $this->addRoutes('DELETE', [$route, $callback]);
-        return $this;
+        return $this->addRoutes('DELETE', $this->prefix.$route, $callback);
     }
 
 	public function patch(string $route, $callback)
     {
-        $this->addRoutes('PATCH', [$route, $callback]);
-        return $this;
+        return $this->addRoutes('PATCH', $this->prefix.$route, $callback);
     }
 
     public function any(string $route, $callback)
     {
         foreach ($this->methods as $typeRequest) {
-            $this->addRoutes($typeRequest, [$route, $callback]);
+            $this->addRoutes($typeRequest, $this->prefix.$route, $callback);
         }
     }
 
     public function group(array $route, $callback)
 	{
-	    $this->prefixExists($route);
-        $this->middlewareExists($route);
+	    $this->addPrefixIfExist($route);
+        $this->addMiddlewareIfExist($route);
 
 		$callback($this);
 
@@ -105,55 +100,54 @@ class PlugRoute
         return $this;
 	}
 
-    private function prefixExists($route)
+    private function addPrefixIfExist($route)
     {
-        if (!empty($route['prefix'])) {
-            $this->prefix = $route['prefix'];
-        }
+		$this->prefix = !empty($route['prefix']) ? $route['prefix'] : '';
 	}
 
-    private function middlewareExists($route)
+    private function addMiddlewareIfExist($route)
     {
-        if (!empty($route['middleware']) && is_array($route['middleware'])) {
-            $this->middleware = $route['middleware'];
-        }
+		$this->middleware = !empty($route['middleware']) && is_array($route['middleware']) ? $route['middleware'] : '';
 	}
 
-    private function addRoutes(string $typeRequest, array $callback)
+    private function addRoutes(string $typeRequest, string $route, $callback)
     {
         $exists = false;
 
         if ($this->routes[$typeRequest]) {
-            $exists = $this->removeDuplicateRoutes($typeRequest, $callback);
+            $exists = $this->removeDuplicateRoutes($typeRequest, $route, $callback);
         }
 
         if (!$exists) {
             $this->routes[$typeRequest][] = [
-                'route' 	    => $callback[0],
-                'callback' 	    => $callback[1],
+                'route' 	    => $route,
+                'callback' 	    => $callback,
                 'name'		    => $this->name,
                 'middleware'	=> [],
             ];
             $this->setLastRoute($typeRequest, $this->getIndex($typeRequest));
             $this->addMiddleware();
         }
+        return $this;
     }
 
     private function addMiddleware()
     {
-        foreach ($this->middleware as $middleware) {
-            $this->middleware($middleware);
-        }
+    	if (is_array($this->middleware)) {
+			foreach ($this->middleware as $middleware) {
+				$this->middleware($middleware);
+			}
+		}
     }
 
-	private function removeDuplicateRoutes($typeRequest, $callback)
+	private function removeDuplicateRoutes($typeRequest, $route, $callback)
 	{
 		$exists = false;
         foreach ($this->routes[$typeRequest] as $k => $v) {
-			if ($v['route'] === $callback[0]) {
+			if ($v['route'] === $route) {
 				$this->routes[$typeRequest][$k] = [
-					'route' 	=> $callback[0],
-					'callback' 	=> $callback[1],
+					'route' 	=> $route,
+					'callback' 	=> $callback,
 					'name' 		=> null
 				];
 				$exists 			= true;
