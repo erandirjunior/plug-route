@@ -2,8 +2,7 @@
 
 namespace PlugRoute\Callback;
 
-use PlugRoute\Exceptions\ClassException;
-use PlugRoute\Exceptions\MethodException;
+use PlugRoute\Error;
 use PlugRoute\Helpers\ValidateHelper;
 use PlugRoute\Http\Request;
 use PlugRoute\Http\Response;
@@ -42,7 +41,7 @@ class Callback
             $obj = new $middleware();
 
             if (!($obj instanceof PlugRouteMiddleware)) {
-                throw new \Exception('Error: your class should implement PlugRouteMiddleware');
+            	Error::showError('Error: your class should implement PlugRouteMiddleware');
             }
 
             $this->request = $obj->handle($this->request);
@@ -62,7 +61,7 @@ class Callback
 			return new $class;
 		}
 
-		throw new ClassException("Error: class don't exist.");
+		Error::showError("Error: class don't exist.");
     }
 
     private function callMethod($instance, $method)
@@ -71,7 +70,7 @@ class Callback
             return $instance->$method($this->request, $this->response);
         }
 
-        throw new MethodException("Error: method don't exist.");
+		Error::showError("Error: method don't exist.");
     }
 
     private function callFunction($function)

@@ -54,7 +54,7 @@ class RouteProcessor
 			return $this->callback->handleCallback($this->routeError);
 		}
 
-		throw new \Exception("The route could not be found");
+		Error::showError("The route could not be found");
 	}
 
 	private function handleRoute($route, $urlPath)
