@@ -53,24 +53,27 @@ class Callback
 
     private function createObject($class)
     {
-        if (ValidateHelper::classExist($class)) {
-			$reflection = new \ReflectionMethod($class, "__construct");
-			$args 		= $this->getParameters($reflection);
-			return new $class(...$args);
+        if (ValidateHelper::classExists($class)) {
+			$args = [];
+            if (ValidateHelper::methodExists($class, '__construct')) {
+                $reflection = new \ReflectionMethod($class, "__construct");
+                $args       = $this->getParameters($reflection);
+            }
+            return new $class(...$args);
 		}
 
-		Error::showError("Error: class don't exist.");
+		Error::showError("Error: class don't exists.");
     }
 
     private function callMethod($instance, $method)
     {
-        if (ValidateHelper::methodExist($instance, $method)) {
+        if (ValidateHelper::methodExists($instance, $method)) {
 			$reflection = new \ReflectionMethod($instance, $method);
 			$args 		= $this->getParameters($reflection);
             return $instance->$method(...$args);
         }
 
-		Error::showError("Error: method don't exist.");
+		Error::showError("Error: method don't exists.");
     }
 
     private function callFunction($function)
