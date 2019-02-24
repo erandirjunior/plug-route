@@ -79,8 +79,8 @@ class PlugRoute
 
     public function group(array $route, $callback)
 	{
-	    $this->addPrefixIfExist($route);
-        $this->addMiddlewareIfExist($route);
+	    $this->addPrefixIfExists($route);
+        $this->addMiddlewareIfExists($route);
 
 		$callback($this);
 
@@ -100,12 +100,12 @@ class PlugRoute
         return $this;
 	}
 
-    private function addPrefixIfExist($route)
+    private function addPrefixIfExists($route)
     {
 		$this->prefix = !empty($route['prefix']) ? $route['prefix'] : '';
 	}
 
-    private function addMiddlewareIfExist($route)
+    private function addMiddlewareIfExists($route)
     {
 		$this->middleware = !empty($route['middleware']) && is_array($route['middleware']) ? $route['middleware'] : '';
 	}

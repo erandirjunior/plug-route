@@ -26,7 +26,7 @@ class ValidateHelper
      * @param $class
      * @return bool
      */
-    public static function classExist($class)
+    public static function classExists($class)
     {
         return class_exists($class) ? true : false;
     }
@@ -38,7 +38,7 @@ class ValidateHelper
      * @param $method
      * @return bool
      */
-    public static function methodExist($class, $method)
+    public static function methodExists($class, $method)
     {
         return method_exists($class, $method) ? true : false;
     }
