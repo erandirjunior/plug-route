@@ -13,6 +13,8 @@ $route->get('/', function() {
 $route->on();
 ``` 
 
+**PlugRoute supports dependency injection**
+
 >Working Classes
 ```php
 $route->get('/', '\Path\To\Class@method');
@@ -38,14 +40,14 @@ $route->any($route, $callback);
 
 >Defining dynamic routes
 ```php
-$route->get('product/{name}', function($request) {
+$route->get('product/{name}', function(\PlugRoute\Http\Request $request) {
     echo $request->parameter('id');
 });
 ```
 
 >You can pass a regex to set the route parameter
 ```php
-$route->get('people/{id:\d+}', function($request) {
+$route->get('people/{id:\d+}', function(\PlugRoute\Http\Request $request) {
     echo $request->parameter('id');
 });
 ```
