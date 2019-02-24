@@ -5,19 +5,15 @@ namespace PlugRoute\Callback;
 use PlugRoute\Error;
 use PlugRoute\Helpers\ValidateHelper;
 use PlugRoute\Http\Request;
-use PlugRoute\Http\Response;
 use PlugRoute\Middleware\PlugRouteMiddleware;
 
 class Callback
 {
     private $request;
 
-    private $response;
-
     public function __construct($name)
     {
         $this->request 	= new Request($name);
-        $this->response = new Response();
     }
 
     public function handleCallback($route, array $urlParameters = [])
@@ -58,7 +54,9 @@ class Callback
     private function createObject($class)
     {
         if (ValidateHelper::classExist($class)) {
-			return new $class;
+			$reflection = new \ReflectionMethod($class, "__construct");
+			$args 		= $this->getParameters($reflection);
+			return new $class(...$args);
 		}
 
 		Error::showError("Error: class don't exist.");
@@ -67,7 +65,9 @@ class Callback
     private function callMethod($instance, $method)
     {
         if (ValidateHelper::methodExist($instance, $method)) {
-            return $instance->$method($this->request, $this->response);
+			$reflection = new \ReflectionMethod($instance, $method);
+			$args 		= $this->getParameters($reflection);
+            return $instance->$method(...$args);
         }
 
 		Error::showError("Error: method don't exist.");
@@ -75,6 +75,29 @@ class Callback
 
     private function callFunction($function)
     {
-        return $function($this->request, $this->response);
+		$reflection	= new \ReflectionFunction($function);
+		$args 		= $this->getParameters($reflection);
+        return $function(...$args);
+    }
+
+	private function getParameters($reflection)
+	{
+		$params = $reflection->getParameters();
+		$args 	= [];
+
+		foreach ($params as $param) {
+			$type = $param->getType();
+
+			if (!$type->isBuiltin()) {
+				$class 			= new \ReflectionClass((string) $type);
+				$namespace[] 	= $class->getNamespaceName();
+				$namespace[] 	= $class->getShortName();
+				$object 		= implode('\\', $namespace);
+				$namespace 		= [];
+				$args[] 		= $object === 'PlugRoute\Http\Request' ? $this->request : new $object();
+			}
+		}
+
+		return $args;
     }
 }

@@ -35,7 +35,7 @@ class RouteProcessor
 	{
 		try {
 			foreach ($this->routes as $route) {
-				if (ValidateHelper::isEqual($this->handleRoute($route['route'], $this->url), $this->url)) {
+				if (ValidateHelper::isEqual($this->handleRoute($route['route']), $this->url)) {
 					return $this->callback->handleCallback($route, $this->urlParameters);
 				}
 
@@ -57,7 +57,7 @@ class RouteProcessor
 		Error::showError("The route could not be found");
 	}
 
-	private function handleRoute($route, $urlPath)
+	private function handleRoute($route)
 	{
 		$match = PlugHelper::getMatchAll($route, '({.+?(?:\:.*?)?})');
 
@@ -70,28 +70,31 @@ class RouteProcessor
 
 	public function manipulateRoute($route, $matches)
 	{
-		$routePrepared = $route;
+		$routeReplaced = $route;
 		$matchPrepared = [];
 
 		foreach ($matches as $key => $match) {
 			$identifiers[] 			= "|##{$key}##|";
 			$getMatchRoute 			= PlugHelper::getMatch($match, ':(.*?)}');
-            $getMatchRoute          = $getMatchRoute ? $getMatchRoute[1] : null;
-			$matchPrepared[$key] 	= '(.+)';
-
-			if (!is_null($getMatchRoute)) {
-				$matchPrepared[$key] = $getMatchRoute === '?' ? '((?:.+)?)' : "({$getMatchRoute})";
-			}
-
-			$routePrepared = str_replace($match, $identifiers[$key], $routePrepared);
+			$getMatchRoute          = $getMatchRoute ? $getMatchRoute[1] : null;
+			$matchPrepared[$key] 	= $this->getRegex($getMatchRoute, $match, $route);
+			$routeReplaced 			= str_replace($match, $identifiers[$key], $routeReplaced);
 		}
 
-        $route      = $this->replaces($routePrepared, $identifiers, $matchPrepared);
+        $route      = $this->replaces($routeReplaced, $identifiers, $matchPrepared);
 		$finalMatch = PlugHelper::getMatch($this->url, "({$route})");
-
 		$this->getDynamicValues($matches, $finalMatch);
-
 		return !empty($finalMatch) ? $finalMatch[1] : null;
+	}
+
+	private function getRegex($matchRoute, $index, $route)
+	{
+		if (is_null($matchRoute)) {
+			$lengthHaystack = strstr($route, $index);
+			return strlen($lengthHaystack) > strlen($index) ? '(.+?)' : '(.+)';
+		}
+
+		return $matchRoute === '?' ? '((?:.+)?)' : "({$matchRoute})";
 	}
 
 	private function getDynamicValues($dynamicParameters, $matches)
@@ -99,9 +102,9 @@ class RouteProcessor
         $matches = PlugHelper::removeValuesByIndex($matches, [0, 1]);
 
         foreach ($dynamicParameters as $k => $v) {
-            $v                              = PlugHelper::replace(['{', '}'], '', $v);
-            $strToArray                     = PlugHelper::stringToArray($v, ':');
-            $value                          = $strToArray ? $strToArray[0] : $v;
+            $v          = PlugHelper::replace(['{', '}'], '', $v);
+            $strToArray	= PlugHelper::stringToArray($v, ':');
+            $value      = $strToArray ? $strToArray[0] : $v;
 
             if (!empty($matches[$k])) {
 				$this->urlParameters[$value] = $matches[$k];

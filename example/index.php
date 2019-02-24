@@ -20,24 +20,24 @@ $route->setRouteError(function() {
     echo "The requested page does not exist.";
 });
 
-$route->get('/', function () {
-    echo 'Hello';
+$route->get('/', function (\PlugRoute\Http\Response $response) {
+	echo $response->response()->json(['values' => [10, 20]]);
 });
 
-$route->post('/people/{id:\d+}', function ($request) {
+$route->post('/people/{id:\d+}', function (\PlugRoute\Http\Request $request) {
     var_dump($request->parameters());
 });
 
-$route->put('/people/{id:\d+}', function ($request, $response) {
+$route->put('/people/{id:\d+}', function (\PlugRoute\Http\Request $request, \PlugRoute\Http\Response $response) {
     $id = $request->parameter('id');
     echo $response->json(['id' => $id]);
 });
 
-$route->delete('/people/{id:\d+}', function ($request) {
+$route->delete('/people/{id:\d+}', function (\PlugRoute\Http\Request $request) {
     echo $request->parameter('id');
 });
 
-$route->patch('/people/{id:\d+}', function ($request) {
+$route->patch('/people/{id:\d+}', function (\PlugRoute\Http\Request $request) {
     echo $request->parameter('id');
 });
 
@@ -55,7 +55,7 @@ $route->get('/sports', function() {
     echo 'Sports';
 })->name('sports');
 
-$route->get('/sports/{something}', function($request) {
+$route->get('/sports/{something}', function(\PlugRoute\Http\Request $request) {
     $request->redirectToRoute('sports');
 
     // If you use this library without virtualhost or php server built-in
@@ -69,7 +69,7 @@ $route->group(['prefix' => '/products', 'middleware' => [OtherMiddleware::class]
         echo 'Home';
     })->middleware(Auth::class);
 
-    /*$route->get('/', function($request) {
+    /*$route->get('/', function(\PlugRoute\Http\Request $request) {
         echo $request->parameter('something');
     });*/
 });
