@@ -18,6 +18,11 @@
             "PlugRoute\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "PlugRoute\\Test\\": "tests/"
+        }
+    },
     "require-dev": {
         "phpunit/phpunit": "^7.2"
     }

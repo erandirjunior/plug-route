@@ -1,15 +1,22 @@
 <?php
 
-use \PHPUnit\Framework\TestCase;
-use \PlugRoute\PlugRoute;
+namespace PlugRoute\Test;
+
+use PHPUnit\Framework\TestCase;
+use PlugRoute\PlugRoute;
 
 class PlugRouteTest extends TestCase
 {
+    private $instance;
+
+    public function setUp()
+    {
+        $this->instance = new PlugRoute();
+    }
+
     public function testRoutes()
     {
-        $route = new PlugRoute();
-
-        $route->get('/','Teste@teste');
+        $route = $this->instance->get('/','Teste@teste');
 
         $expected = [
         	'GET' => [
@@ -31,9 +38,7 @@ class PlugRouteTest extends TestCase
 
     public function testRouteGroup()
     {
-        $route = new PlugRoute();
-
-        $route->group(['prefix'=> 'home'], function($route) {
+        $this->instance->group(['prefix'=> 'home'], function($route) {
            $route->get('/test', 'Namespace@method');
            $route->post('/test', 'Namespace@method');
         });
@@ -60,14 +65,12 @@ class PlugRouteTest extends TestCase
 			'PATCH' => [],
 		];
 
-        $this->assertEquals($expected, $route->getRoutes());
+        $this->assertEquals($expected, $this->instance->getRoutes());
     }
 
     public function testAnyRoute()
     {
-        $route = new PlugRoute();
-
-        $route->any('/', 'Namespace@method');
+        $this->instance->any('/', 'Namespace@method');
 
 		$expected = [
 			'GET' => [
@@ -112,6 +115,6 @@ class PlugRouteTest extends TestCase
 			],
 		];
 
-        $this->assertEquals($expected, $route->getRoutes());
+        $this->assertEquals($expected, $this->instance->getRoutes());
     }
 }
