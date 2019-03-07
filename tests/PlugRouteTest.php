@@ -5,7 +5,7 @@ namespace PlugRoute\Test;
 use PHPUnit\Framework\TestCase;
 use PlugRoute\PlugRoute;
 
-class PlugRouteTest extends TestCase
+final class PlugRouteTest extends TestCase
 {
     private $instance;
 
@@ -16,54 +16,54 @@ class PlugRouteTest extends TestCase
 
     public function testRoutes()
     {
-        $route = $this->instance->get('/','Teste@teste');
+        $this->instance->get('/', 'Teste@teste');
 
         $expected = [
-        	'GET' => [
-        		0 => [
-        			'route' => '/',
-        			'callback' => 'Teste@teste',
-        			'name' => null,
-        			'middleware' => [],
-				]
-			],
-        	'POST' => [],
-        	'PUT' => [],
-        	'DELETE' => [],
-        	'PATCH' => [],
-		];
+            'GET' => [
+                0 => [
+                    'route' => '/',
+                    'callback' => 'Teste@teste',
+                    'name' => null,
+                    'middleware' => [],
+                ]
+            ],
+            'POST' => [],
+            'PUT' => [],
+            'DELETE' => [],
+            'PATCH' => [],
+        ];
 
-        $this->assertEquals($expected, $route->getRoutes());
+        $this->assertEquals($expected, $this->instance->getRoutes());
     }
 
     public function testRouteGroup()
     {
-        $this->instance->group(['prefix'=> 'home'], function($route) {
-           $route->get('/test', 'Namespace@method');
-           $route->post('/test', 'Namespace@method');
+        $this->instance->group(['prefix' => 'home'], function ($route) {
+            $route->get('/test', 'Namespace@method');
+            $route->post('/test', 'Namespace@method');
         });
 
-		$expected = [
-			'GET' => [
-				0 => [
-					'route' => 'home/test',
-					'callback' => 'Namespace@method',
-					'name' => null,
-					'middleware' => [],
-				]
-			],
-			'POST' => [
-				0 => [
-					'route' => 'home/test',
-					'callback' => 'Namespace@method',
-					'name' => null,
-					'middleware' => [],
-				]
-			],
-			'PUT' => [],
-			'DELETE' => [],
-			'PATCH' => [],
-		];
+        $expected = [
+            'GET' => [
+                0 => [
+                    'route' => 'home/test',
+                    'callback' => 'Namespace@method',
+                    'name' => null,
+                    'middleware' => [],
+                ]
+            ],
+            'POST' => [
+                0 => [
+                    'route' => 'home/test',
+                    'callback' => 'Namespace@method',
+                    'name' => null,
+                    'middleware' => [],
+                ]
+            ],
+            'PUT' => [],
+            'DELETE' => [],
+            'PATCH' => [],
+        ];
 
         $this->assertEquals($expected, $this->instance->getRoutes());
     }
@@ -72,48 +72,48 @@ class PlugRouteTest extends TestCase
     {
         $this->instance->any('/', 'Namespace@method');
 
-		$expected = [
-			'GET' => [
-				0 => [
-					'route' => '/',
-					'callback' => 'Namespace@method',
-					'name' => null,
-					'middleware' => [],
-				]
-			],
-			'POST' => [
-				0 => [
-					'route' => '/',
-					'callback' => 'Namespace@method',
-					'name' => null,
-					'middleware' => [],
-				]
-			],
-			'PUT' => [
-				0 => [
-					'route' => '/',
-					'callback' => 'Namespace@method',
-					'name' => null,
-					'middleware' => [],
-				]
-			],
-			'DELETE' => [
-				0 => [
-					'route' => '/',
-					'callback' => 'Namespace@method',
-					'name' => null,
-					'middleware' => [],
-				]
-			],
-			'PATCH' => [
-				0 => [
-					'route' => '/',
-					'callback' => 'Namespace@method',
-					'name' => null,
-					'middleware' => [],
-				]
-			],
-		];
+        $expected = [
+            'GET' => [
+                0 => [
+                    'route' => '/',
+                    'callback' => 'Namespace@method',
+                    'name' => null,
+                    'middleware' => [],
+                ]
+            ],
+            'POST' => [
+                0 => [
+                    'route' => '/',
+                    'callback' => 'Namespace@method',
+                    'name' => null,
+                    'middleware' => [],
+                ]
+            ],
+            'PUT' => [
+                0 => [
+                    'route' => '/',
+                    'callback' => 'Namespace@method',
+                    'name' => null,
+                    'middleware' => [],
+                ]
+            ],
+            'DELETE' => [
+                0 => [
+                    'route' => '/',
+                    'callback' => 'Namespace@method',
+                    'name' => null,
+                    'middleware' => [],
+                ]
+            ],
+            'PATCH' => [
+                0 => [
+                    'route' => '/',
+                    'callback' => 'Namespace@method',
+                    'name' => null,
+                    'middleware' => [],
+                ]
+            ],
+        ];
 
         $this->assertEquals($expected, $this->instance->getRoutes());
     }
