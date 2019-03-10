@@ -4,7 +4,7 @@
 
 ###### Powerful library for PHP routes
 
-> Use the system to work with GET, POST, PUT, DELETE and PATCH requests.
+> Use the system to work with GET, POST, PUT, DELETE, PATCH and OPTIONS requests.
 
 > Work with json, form-data and x-www-form-urlencoded body requests.
 
