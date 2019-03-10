@@ -21,14 +21,15 @@ class RouteProcessor
 
 	private $routeError;
 
-	public function __construct(array $routes, array $routeError = [])
+	public function __construct(Route $plugRoute)
 	{
+		$routes 				= $plugRoute->getRoutes();
 		$this->callback      	= new Callback($this->getNamedRoutes($routes));
 		$this->urlParameters 	= [];
 		$this->url           	= $this->getUrl();
 		$requestType 			= $this->getMethod();
-		$this->routes        	= $requestType !== 'OPTIONS' ? $routes[$requestType] : [];
-		$this->routeError		= $routeError;
+		$this->routes        	= $routes[$requestType];
+		$this->routeError		= $plugRoute->getRouteError();
 	}
 
 	public function run()
