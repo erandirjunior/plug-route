@@ -55,11 +55,6 @@ class Route
 		$this->routeError = ['callback' => $callback];
 	}
 
-	public function setPrefix(string $prefix)
-	{
-		$this->prefix = $prefix;
-	}
-
 	public function setName($name)
 	{
 		$this->routes[$this->typeMethod][$this->index]['name'] = $name;
@@ -68,16 +63,6 @@ class Route
 	public function setMiddleware($middleware)
 	{
 		$this->routes[$this->typeMethod][$this->index]['middleware'][] = $middleware;
-	}
-
-	public function setIndex($index)
-	{
-		$this->index = $index;
-	}
-
-	public function setTypeMethod($typeMethod)
-	{
-		$this->typeMethod = $typeMethod;
 	}
 
 	public function addGroup($plugRoute, array $route, $callback)
@@ -165,7 +150,8 @@ class Route
 		$this->routes[$typeRequest][$k] = [
 			'route' => $route,
 			'callback' => $callback,
-			'name' => null
+			'name'		    => $this->name,
+			'middleware'	=> [],
 		];
 	}
 
