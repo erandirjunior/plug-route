@@ -58,7 +58,7 @@ $route->get('/sports', function() {
 $route->get('/sports/{something}', function(\PlugRoute\Http\Request $request) {
     $request->redirectToRoute('sports');
 
-    // If you use this library without virtualhost or php server built-in
+    // If you use this library without name a route, without virtualhost or php server built-in
     // use the redirect method
     //$request->redirect('http://localhost/plug-route/example/sports');
 });
@@ -69,9 +69,9 @@ $route->group(['prefix' => '/products', 'middleware' => [OtherMiddleware::class]
         echo 'Home';
     })->middleware(Auth::class);
 
-    /*$route->get('/', function(\PlugRoute\Http\Request $request) {
+    $route->get('/{something}', function(\PlugRoute\Http\Request $request) {
         echo $request->parameter('something');
-    });*/
+    });
 });
 
 $route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
