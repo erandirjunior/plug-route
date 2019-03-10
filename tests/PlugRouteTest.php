@@ -31,6 +31,7 @@ final class PlugRouteTest extends TestCase
             'PUT' => [],
             'DELETE' => [],
             'PATCH' => [],
+            'OPTIONS' => [],
         ];
 
         $this->assertEquals($expected, $this->instance->getRoutes());
@@ -63,6 +64,7 @@ final class PlugRouteTest extends TestCase
             'PUT' => [],
             'DELETE' => [],
             'PATCH' => [],
+            'OPTIONS' => []
         ];
 
         $this->assertEquals($expected, $this->instance->getRoutes());
@@ -106,6 +108,14 @@ final class PlugRouteTest extends TestCase
                 ]
             ],
             'PATCH' => [
+                0 => [
+                    'route' => '/',
+                    'callback' => 'Namespace@method',
+                    'name' => null,
+                    'middleware' => [],
+                ]
+            ],
+            'OPTIONS' => [
                 0 => [
                     'route' => '/',
                     'callback' => 'Namespace@method',
