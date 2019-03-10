@@ -35,7 +35,14 @@ $route->delete($route, $callback);
 
 $route->patch($route, $callback);
 
-$route->any($route, $callback);
+$route->options($route, $callback);
+```
+
+>Routes that responds to multiple HTTP verbs
+```php
+$route->any('/', $callback);
+
+$route->match(['GET', 'POST'],'/', $callback);
 ```
 
 >Defining dynamic routes
