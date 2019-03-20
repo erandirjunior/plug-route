@@ -4,178 +4,90 @@ namespace PlugRoute;
 
 class PlugRoute
 {
-    private $routes;
+	private $route;
 
     private $routeError;
 
-    private $prefix;
-
-    private $name;
-
-    private $middleware;
-
-    private $index;
-
-    private $typeMethod;
-
-    private $methods;
-
     public function __construct()
 	{
-		$this->routes = [
-			'GET' 		=> [],
-			'POST' 		=> [],
-			'PUT' 		=> [],
-			'DELETE' 	=> [],
-			'PATCH' 	=> []
-		];
+		$this->route = new Route();
 		$this->routeError 	= [];
-		$this->prefix 		= '';
-		$this->methods		= ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-		$this->middleware	= [];
 	}
 
 	public function setRouteError($callback)
 	{
-		$this->routeError = ['callback' => $callback];
+		$this->route->setRouteError($callback);
 	}
 
 	public function getRoutes()
 	{
-		return $this->routes;
+		return $this->route->getRoutes();
+	}
+
+	private function addRoute($type, $route, $callback)
+	{
+		$this->route->addRoute($type, $route, $callback);
+		return $this;
 	}
 
 	public function get(string $route, $callback)
     {
-        $this->addRoutes('GET', [$this->prefix.$route, $callback]);
-        return $this;
+        return $this->addRoute('GET', $route, $callback);
     }
 
 	public function post(string $route, $callback)
     {
-        $this->addRoutes('POST', [$route, $callback]);
-        return $this;
+        return $this->addRoute('POST', $route, $callback);
     }
 
 	public function put(string $route, $callback)
     {
-        $this->addRoutes('PUT', [$route, $callback]);
-        return $this;
+        return $this->addRoute('PUT', $route, $callback);
     }
 
 	public function delete(string $route, $callback)
     {
-        $this->addRoutes('DELETE', [$route, $callback]);
-        return $this;
+        return $this->addRoute('DELETE', $route, $callback);
     }
 
 	public function patch(string $route, $callback)
     {
-        $this->addRoutes('PATCH', [$route, $callback]);
-        return $this;
+        return $this->addRoute('PATCH', $route, $callback);
+    }
+
+	public function options(string $route, $callback)
+	{
+		return $this->addRoute('OPTIONS', $route, $callback);
+	}
+
+	public function match(array $types, string $route, $callback)
+	{
+		$this->route->addMultipleRoutes($types, $route, $callback);
     }
 
     public function any(string $route, $callback)
     {
-        foreach ($this->methods as $typeRequest) {
-            $this->addRoutes($typeRequest, [$route, $callback]);
-        }
-    }
+		$this->route->addMultipleRoutes([], $route, $callback);
+	}
 
-    public function group(array $route, $callback)
+    public function group(array $route, callable $callback)
 	{
-	    $this->prefixExists($route);
-        $this->middlewareExists($route);
-
-		$callback($this);
-
-		$this->prefix       = '';
-		$this->middleware   = [];
+	    $this->route->addGroup($this, $route, $callback);
 	}
 
     public function name(string $name)
 	{
-		$this->routes[$this->typeMethod][$this->index]['name'] = $name;
+		$this->route->setName($name);
         return $this;
 	}
 
     public function middleware($middleware)
 	{
-        $this->routes[$this->typeMethod][$this->index]['middleware'][] = $middleware;
+		$this->route->setMiddleware($middleware);
         return $this;
 	}
-
-    private function prefixExists($route)
-    {
-        if (!empty($route['prefix'])) {
-            $this->prefix = $route['prefix'];
-        }
-	}
-
-    private function middlewareExists($route)
-    {
-        if (!empty($route['middleware']) && is_array($route['middleware'])) {
-            $this->middleware = $route['middleware'];
-        }
-	}
-
-    private function addRoutes(string $typeRequest, array $callback)
-    {
-        $exists = false;
-
-        if ($this->routes[$typeRequest]) {
-            $exists = $this->removeDuplicateRoutes($typeRequest, $callback);
-        }
-
-        if (!$exists) {
-            $this->routes[$typeRequest][] = [
-                'route' 	    => $callback[0],
-                'callback' 	    => $callback[1],
-                'name'		    => $this->name,
-                'middleware'	=> [],
-            ];
-            $this->setLastRoute($typeRequest, $this->getIndex($typeRequest));
-            $this->addMiddleware();
-        }
-    }
-
-    private function addMiddleware()
-    {
-        foreach ($this->middleware as $middleware) {
-            $this->middleware($middleware);
-        }
-    }
-
-	private function removeDuplicateRoutes($typeRequest, $callback)
-	{
-		$exists = false;
-        foreach ($this->routes[$typeRequest] as $k => $v) {
-			if ($v['route'] === $callback[0]) {
-				$this->routes[$typeRequest][$k] = [
-					'route' 	=> $callback[0],
-					'callback' 	=> $callback[1],
-					'name' 		=> null
-				];
-				$exists 			= true;
-				$this->setLastRoute($typeRequest, $k);
-			}
-		}
-		return $exists;
-	}
-
-	private function getIndex($typeMethod)
-	{
-		return count($this->routes[$typeMethod]) - 1;
-	}
-
-	private function setLastRoute($typeMethod, $index)
-	{
-		$this->index 		= $index;
-		$this->typeMethod 	= $typeMethod;
-	}
-
     public function on()
-    {
+  {
 		echo (new RouteProcessor($this->routes, $this->routeError))->run();
-    }
+  }
 }

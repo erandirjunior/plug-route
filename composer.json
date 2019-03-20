@@ -9,13 +9,18 @@
             "email": "aefs12junior@gmail.com"
         }
     ],
-    "version" : "v2.7",
+    "version" : "v3.0",
     "require": {
         "php": ">=7.0"
     },
     "autoload": {
         "psr-4": {
             "PlugRoute\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PlugRoute\\Test\\": "tests/"
         }
     },
     "require-dev": {
