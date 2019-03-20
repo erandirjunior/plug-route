@@ -86,9 +86,8 @@ class PlugRoute
 		$this->route->setMiddleware($middleware);
         return $this;
 	}
-
-	public function on()
-	{
-		(new RouteProcessor($this->route))->run();
-	}
+    public function on()
+  {
+		echo (new RouteProcessor($this->routes, $this->routeError))->run();
+  }
 }
