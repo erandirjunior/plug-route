@@ -176,6 +176,6 @@ class PlugRoute
 
     public function on()
     {
-		(new RouteProcessor($this->routes, $this->routeError))->run();
+		echo (new RouteProcessor($this->routes, $this->routeError))->run();
     }
 }
