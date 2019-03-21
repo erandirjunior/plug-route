@@ -11,15 +11,13 @@ class Callback
 {
     private $request;
 
-    public function __construct($name)
+    public function __construct(Request $request)
     {
-        $this->request 	= new Request($name);
+        $this->request 	= $request;
     }
 
-    public function handleCallback($route, array $urlParameters = [])
+    public function handleCallback($route)
     {
-		$this->request->setUrlParameter($urlParameters);
-
 		if (!empty($route['middleware'])) {
 			$this->callMiddleware($route['middleware']);
 		}
@@ -55,8 +53,9 @@ class Callback
     {
         if (ValidateHelper::classExists($class)) {
 			$args = [];
-            if (ValidateHelper::methodExists($class, '__construct')) {
-                $reflection = new \ReflectionMethod($class, "__construct");
+			$construct = '__construct';
+            if (ValidateHelper::methodExists($class, $construct)) {
+                $reflection = new \ReflectionMethod($class, $construct);
                 $args       = $this->getParameters($reflection);
             }
             return new $class(...$args);
