@@ -5,12 +5,11 @@ namespace PlugRoute;
 use PlugRoute\Callback\Callback;
 use PlugRoute\Helpers\PlugHelper;
 use PlugRoute\Helpers\ValidateHelper;
-use PlugRoute\Http\Data\DataServer;
+use PlugRoute\Http\Request;
+use PlugRoute\Http\Response;
 
 class RouteProcessor
 {
-	use DataServer;
-
 	private $callback;
 
 	private $urlParameters;
@@ -21,15 +20,19 @@ class RouteProcessor
 
 	private $routeError;
 
-	public function __construct(Route $plugRoute)
+	private $request;
+
+	public function __construct(Route $plugRoute, Request $request)
 	{
+		$this->request = $request;
+		$request->setRouteName($plugRoute->getNamedRoute());
 		$routes 				= $plugRoute->getRoutes();
-		$this->callback      	= new Callback($this->getNamedRoutes($routes));
+		$this->callback      	= new Callback($this->request);
 		$this->urlParameters 	= [];
-		$this->url           	= $this->getUrl();
-		$requestType 			= $this->getMethod();
+		$this->url           	= $this->request->getUrl();
+		$requestType 			= $this->request->getMethod();
 		$this->routes        	= $routes[$requestType];
-		$this->routeError		= $plugRoute->getRouteError();
+		$this->routeError		= $plugRoute->getErrorRoute();
 	}
 
 	public function run()
@@ -37,7 +40,8 @@ class RouteProcessor
 		try {
 			foreach ($this->routes as $route) {
 				if (ValidateHelper::isEqual($this->handleRoute($route['route']), $this->url)) {
-					return $this->callback->handleCallback($route, $this->urlParameters);
+					$this->request->setUrlParameter($this->urlParameters);
+					return $this->callback->handleCallback($route);
 				}
 
 				$this->urlParameters = [];
@@ -55,7 +59,9 @@ class RouteProcessor
 			return $this->callback->handleCallback($this->routeError);
 		}
 
-		Error::showError("The route could not be found");
+		$response = new Response();
+		$response->setStatusCode(404)->response();
+		Error::showError("The route could not be founda");
 	}
 
 	private function handleRoute($route)
