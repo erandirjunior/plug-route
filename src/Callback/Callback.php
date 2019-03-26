@@ -35,7 +35,7 @@ class Callback
             $obj = new $middleware();
 
             if (!($obj instanceof PlugRouteMiddleware)) {
-            	Error::showError('Error: your class should implement PlugRouteMiddleware');
+            	Error::throwException('Error: your class should implement PlugRouteMiddleware');
             }
 
             $this->request = $obj->handle($this->request);
@@ -61,7 +61,7 @@ class Callback
             return new $class(...$args);
 		}
 
-		Error::showError("Error: class don't exists.");
+		Error::throwException("Error: class don't exists.");
     }
 
     private function callMethod($instance, $method)
@@ -72,7 +72,7 @@ class Callback
             return $instance->$method(...$args);
         }
 
-		Error::showError("Error: method don't exists.");
+		Error::throwException("Error: method don't exists.");
     }
 
     private function callFunction($function)
