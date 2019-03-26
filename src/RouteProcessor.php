@@ -24,14 +24,13 @@ class RouteProcessor
 
 	public function __construct(Route $plugRoute, Request $request)
 	{
-		$this->request = $request;
+		$this->request 			= $request;
 		$request->setRouteName($plugRoute->getNamedRoute());
 		$routes 				= $plugRoute->getRoutes();
 		$this->callback      	= new Callback($this->request);
 		$this->urlParameters 	= [];
 		$this->url           	= $this->request->getUrl();
-		$requestType 			= $this->request->getMethod();
-		$this->routes        	= $routes[$requestType];
+		$this->routes        	= $routes[$this->request->getMethod()];
 		$this->routeError		= $plugRoute->getErrorRoute();
 	}
 
@@ -61,7 +60,7 @@ class RouteProcessor
 
 		$response = new Response();
 		$response->setStatusCode(404)->response();
-		Error::showError("The route could not be founda");
+		Error::throwException("The route could not be found.");
 	}
 
 	private function handleRoute($route)
