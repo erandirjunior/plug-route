@@ -17,7 +17,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 $route = new PlugRoute();
 
 $route->setRouteError(function() {
-    echo "The requested page does not exist.";
+    echo "The requested page does not exists.";
 });
 
 $route->get('/', function (\PlugRoute\Http\Response $response) {

@@ -1,5 +1,6 @@
 # Working Request Data
 
+#### Url values
 >Getting values dynamics
 ```php
 $route->get('/sport/{something}', function(\PlugRoute\Http\Request $request) {
@@ -30,6 +31,7 @@ $route->get('/person', function(\PlugRoute\Http\Request $request) {
 });
 ```
 
+#### Body request
 >Getting request body
 ```php
 $route->post('/people', function(\PlugRoute\Http\Request $request) {
@@ -44,6 +46,14 @@ $route->put('/people', function(\PlugRoute\Http\Request $request) {
 });
 ```
 
+>Setting body
+```php
+$route->post('/people', function(\PlugRoute\Http\Request $request) {
+     $request->setBody(['id' => 10]);
+});
+```
+
+#### Files
 >Getting files sended
 ```php
 $route->post('/people', function(\PlugRoute\Http\Request $request) {
@@ -51,6 +61,7 @@ $route->post('/people', function(\PlugRoute\Http\Request $request) {
 });
 ```
 
+#### Others
 >Getting type request
 ```php
 $route->post('/people', function(\PlugRoute\Http\Request $request) {
@@ -71,13 +82,6 @@ $route->get('/people', function(\PlugRoute\Http\Request $request) {
 ```php
 $route->post('/people', function(\PlugRoute\Http\Request $request) {
      echo $request->getMethod();
-});
-```
-
->Setting body
-```php
-$route->post('/people', function(\PlugRoute\Http\Request $request) {
-     $request->setBody(['id' => 10]);
 });
 ```
 

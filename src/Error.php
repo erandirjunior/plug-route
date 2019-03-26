@@ -4,7 +4,7 @@ namespace PlugRoute;
 
 class Error
 {
-	public static function showError(string $message)
+	public static function throwException(string $message)
 	{
 		throw new \Exception($message);
 	}

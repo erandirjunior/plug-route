@@ -1,6 +1,6 @@
 # Working with response
 
->Methods
+### Methods
 > $response->setHeader(array $headers) - Receives a header array.
 ```php
 $route->put('/people/{id}', function (\PlugRoute\Http\Response $response) {

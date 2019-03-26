@@ -12,6 +12,8 @@ class Route
 
 	private $name;
 
+	private $namespace;
+
 	private $middleware;
 
 	private $index;
@@ -28,6 +30,7 @@ class Route
 			'PATCH' 	=> [],
 			'OPTIONS' 	=> []
 		];
+		$this->middleware = [];
 	}
 
 	public function getRoutes()
@@ -39,13 +42,13 @@ class Route
 	{
 		$this->routes[$requestType][] = [
 			'route' 	    => $route,
-			'callback' 	    => $callback,
+			'callback' 	    => is_string($callback) ? $this->namespace.$callback : $callback,
 			'name'		    => $this->name,
 			'middleware'	=> [],
 		];
 	}
 
-	public function getRouteError()
+	public function getErrorRoute()
 	{
 		return $this->routeError;
 	}
@@ -60,9 +63,11 @@ class Route
 		$this->routes[$this->typeMethod][$this->index]['name'] = $name;
 	}
 
-	public function setMiddleware($middleware)
+	public function setMiddleware(array $middlewares)
 	{
-		$this->routes[$this->typeMethod][$this->index]['middleware'][] = $middleware;
+		foreach ($middlewares as $middleware) {
+			$this->routes[$this->typeMethod][$this->index]['middleware'][] = $middleware;
+		}
 	}
 
 	public function addGroup($plugRoute, array $route, $callback)
@@ -72,15 +77,21 @@ class Route
 		$this->afterGroup();
 	}
 
-
-	private function addPrefixIfExists($route)
+	private function cachePrefixIfExists($route)
 	{
 		if (!empty($route['prefix'])) {
 			$this->prefix .= $route['prefix'];
 		}
 	}
 
-	private function addMiddlewareIfExists($route)
+	private function cacheNamespaceIfExists($route)
+	{
+		if (!empty($route['namespace'])) {
+			$this->namespace .= $route['namespace'];
+		}
+	}
+
+	private function cacheMiddlewareIfExists($route)
 	{
 		if (!empty($route['middleware'])) {
 			foreach ($route['middleware'] as $middleware) {
@@ -95,19 +106,10 @@ class Route
 		if (!$this->removeDuplicateRoutes($requestType, $route, $callback)) {
 			$this->setRoutes($requestType, $route, $callback);
 			$this->setLastRoute($requestType, $this->getIndex($requestType));
-			$this->addMiddleware();
+			$this->setMiddleware($this->middleware);
 		}
 
 		return $this;
-	}
-
-	private function addMiddleware()
-	{
-		if (is_array($this->middleware)) {
-			foreach ($this->middleware as $middleware) {
-				$this->setMiddleware($middleware);
-			}
-		}
 	}
 
 	private function removeDuplicateRoutes($typeRequest, $route, $callback)
@@ -148,8 +150,8 @@ class Route
 	private function replaceRoute($typeRequest, $route, $callback, $k)
 	{
 		$this->routes[$typeRequest][$k] = [
-			'route' => $route,
-			'callback' => $callback,
+			'route' 		=> $this->prefix.$route,
+			'callback' 		=> is_string($callback) ? $this->namespace.$callback : $callback,
 			'name'		    => $this->name,
 			'middleware'	=> [],
 		];
@@ -157,13 +159,28 @@ class Route
 
 	private function beforeGroup(array $route)
 	{
-		$this->addPrefixIfExists($route);
-		$this->addMiddlewareIfExists($route);
+		$this->cachePrefixIfExists($route);
+		$this->cacheMiddlewareIfExists($route);
+		$this->cacheNamespaceIfExists($route);
 	}
 
 	private function afterGroup()
 	{
-		$this->prefix     = '';
-		$this->middleware = [];
+		$this->prefix    	= '';
+		$this->namespace 	= '';
+		$this->middleware 	= [];
+	}
+
+	public function getNamedRoute()
+	{
+		$array = [];
+		foreach ($this->routes as $route) {
+			foreach ($route as $value) {
+				if (!empty($value['name'])) {
+					$array[$value['name']] = $value['route'];
+				}
+			}
+		}
+		return $array;
 	}
 }

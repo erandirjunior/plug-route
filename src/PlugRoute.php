@@ -2,6 +2,8 @@
 
 namespace PlugRoute;
 
+use PlugRoute\Http\Request;
+
 class PlugRoute
 {
 	private $route;
@@ -14,9 +16,24 @@ class PlugRoute
 		$this->routeError 	= [];
 	}
 
+	public function getErrorRoute()
+	{
+		return $this->route->getErrorRoute();
+	}
+
 	public function setRouteError($callback)
 	{
 		$this->route->setRouteError($callback);
+	}
+
+	public function error($callback)
+	{
+		$this->route->setRouteError($callback);
+	}
+	
+	public function getNamedRoute()
+	{
+		return $this->route->getNamedRoute();
 	}
 
 	public function getRoutes()
@@ -81,14 +98,19 @@ class PlugRoute
         return $this;
 	}
 
-    public function middleware($middleware)
+    public function middleware(array $middleware)
 	{
 		$this->route->setMiddleware($middleware);
         return $this;
 	}
 
+	public function namespace(string $namespace, callable $callback)
+	{
+		$this->route->addGroup($this, ['namespace' => $namespace], $callback);
+	}
+
 	public function on()
 	{
-		(new RouteProcessor($this->route))->run();
+		echo (new RouteProcessor($this->route, new Request()))->run();
 	}
 }

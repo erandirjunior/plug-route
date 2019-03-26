@@ -11,15 +11,13 @@ class Callback
 {
     private $request;
 
-    public function __construct($name)
+    public function __construct(Request $request)
     {
-        $this->request 	= new Request($name);
+        $this->request 	= $request;
     }
 
-    public function handleCallback($route, array $urlParameters = [])
+    public function handleCallback($route)
     {
-		$this->request->setUrlParameter($urlParameters);
-
 		if (!empty($route['middleware'])) {
 			$this->callMiddleware($route['middleware']);
 		}
@@ -37,7 +35,7 @@ class Callback
             $obj = new $middleware();
 
             if (!($obj instanceof PlugRouteMiddleware)) {
-            	Error::showError('Error: your class should implement PlugRouteMiddleware');
+            	Error::throwException('Error: your class should implement PlugRouteMiddleware');
             }
 
             $this->request = $obj->handle($this->request);
@@ -55,14 +53,15 @@ class Callback
     {
         if (ValidateHelper::classExists($class)) {
 			$args = [];
-            if (ValidateHelper::methodExists($class, '__construct')) {
-                $reflection = new \ReflectionMethod($class, "__construct");
+			$construct = '__construct';
+            if (ValidateHelper::methodExists($class, $construct)) {
+                $reflection = new \ReflectionMethod($class, $construct);
                 $args       = $this->getParameters($reflection);
             }
             return new $class(...$args);
 		}
 
-		Error::showError("Error: class don't exists.");
+		Error::throwException("Error: class don't exists.");
     }
 
     private function callMethod($instance, $method)
@@ -73,7 +72,7 @@ class Callback
             return $instance->$method(...$args);
         }
 
-		Error::showError("Error: method don't exists.");
+		Error::throwException("Error: method don't exists.");
     }
 
     private function callFunction($function)

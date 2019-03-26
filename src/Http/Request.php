@@ -16,9 +16,8 @@ class Request
 
 	private $route;
 
-	public function __construct($route)
+	public function __construct()
     {
-    	$this->route    = $route;
     	$this->urlBody  = [];
     	$this->body     = [];
         $requestService = $this->getRequisitionBody($this->getMethod());
@@ -27,6 +26,11 @@ class Request
             $this->body = RequestHelper::returnArrayFormated($this->body, $requestService);
         }
     }
+
+	public function setRouteName($route)
+	{
+		$this->route = $route;
+	}
 
     public function setUrlParameter($urlBody = null)
     {
