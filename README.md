@@ -10,6 +10,8 @@
 
 > Use routes without virtualhost.
 
+> Simple and fast.
+
 #### <a href="https://github.com/erandirjunior/plug-route/blob/master/doc/installation.md">Complete documentation</a>
 
 ## Install
@@ -17,7 +19,7 @@
 composer require erandir/plug-route
 ```
 
-**Usage**
+**Basic usage**
 ```php
 use \PlugRoute\PlugRoute;
 
