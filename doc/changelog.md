@@ -2,7 +2,7 @@
 
 ### v3.1
 * Added namespace method
-* Improvements in the route flux
+* Improvements in the route flow
 * Added new method to set route error
 * Now, you can return values
 * More tests
