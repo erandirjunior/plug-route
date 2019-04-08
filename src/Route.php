@@ -74,7 +74,7 @@ class Route
 	{
 		$this->beforeGroup($route);
 		$callback($plugRoute);
-		$this->afterGroup();
+		$this->afterGroup($route);
 	}
 
 	private function cachePrefixIfExists($route)
@@ -164,11 +164,34 @@ class Route
 		$this->cacheNamespaceIfExists($route);
 	}
 
-	private function afterGroup()
+	private function afterGroup($route)
 	{
-		$this->prefix    	= '';
-		$this->namespace 	= '';
-		$this->middleware 	= [];
+		$this->removeActualPrefix($route);
+		$this->removeActualNamespace($route);
+		$this->removeActualMiddleware($route);
+	}
+
+	private function removeActualPrefix($route)
+	{
+		if (!empty($route['prefix'])) {
+			$this->prefix = str_replace($route['prefix'], '', $this->prefix);
+		}
+	}
+
+	private function removeActualNamespace($route)
+	{
+		if (!empty($route['namespace'])) {
+			$this->namespace = str_replace($route['namespace'], '', $this->namespace);
+		}
+	}
+
+	private function removeActualMiddleware($route)
+	{
+		if (!empty($route['middleware'])) {
+			foreach ($route['middleware'] as $middleware) {
+				array_pop($this->middleware);
+			}
+		}
 	}
 
 	public function getNamedRoute()
