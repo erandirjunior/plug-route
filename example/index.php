@@ -52,7 +52,7 @@ $route->group(['prefix' => '/news'], function($route) {
 });
 
 $route->get('/sports', function() {
-    echo 'Sports';
+    echo 'Sport';
 })->name('sports');
 
 $route->get('/sports/{something}', function(\PlugRoute\Http\Request $request) {
@@ -67,11 +67,9 @@ $route->group(['prefix' => '/products', 'middleware' => [OtherMiddleware::class]
 
     $route->get('/', function() {
         echo 'Home';
-    })->middleware(Auth::class);
+    })->middleware([Auth::class]);
 
-    $route->get('/{something}', function(\PlugRoute\Http\Request $request) {
-        echo $request->parameter('something');
-    });
+    $route->redirect('/{something}', '/products/');
 });
 
 $route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
