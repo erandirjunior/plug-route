@@ -1,5 +1,9 @@
 #Changelog
 
+### v3.2
+* Added redirect route
+
+
 ### v3.1
 * Added namespace method
 * Improvements in the route flux

@@ -1,88 +1,73 @@
 # Working Request Data
 
 #### Url values
->Getting values dynamics
+> Getting values dynamics
 ```php
-$route->get('/sport/{something}', function(\PlugRoute\Http\Request $request) {
-     echo $request->parameter('something');
-});
+$request->parameter('something');
 ```
 
->Getting all values dynamics
+> Getting all values dynamics
 ```php
-$route->get('/sport/{something}/{name}', function(\PlugRoute\Http\Request $request) {
-     var_dump($request->parameters());
-});
+$request->parameters();
 ```
 
->Getting specific query
+> Getting specific query
 ```php
 // /person?age=20
-$route->get('/person', function(\PlugRoute\Http\Request $request) {
-     var_dump($request->queryWith('age));
-});
+$request->queryWith('age);
 ```
 
->Getting all query
+> Getting all query
 ```php
 // /person?age=20&name=Erandir
-$route->get('/person', function(\PlugRoute\Http\Request $request) {
-     var_dump($request->query());
-});
+$request->query();
 ```
 
 #### Body request
->Getting request body
+> Getting request body
 ```php
-$route->post('/people', function(\PlugRoute\Http\Request $request) {
-     echo $request->input('id');
-});
+$request->input('id');
 ```
 
->Getting all request body
+> Getting all request body
 ```php
-$route->put('/people', function(\PlugRoute\Http\Request $request) {
-     var_dump($request->all());
-});
+$request->all());
 ```
 
->Setting body
+> Setting body
 ```php
-$route->post('/people', function(\PlugRoute\Http\Request $request) {
-     $request->setBody(['id' => 10]);
-});
+$request->setBody(['id' => 10]);
 ```
 
 #### Files
->Getting files sended
+> Getting files sended
 ```php
-$route->post('/people', function(\PlugRoute\Http\Request $request) {
-     var_dump($request->files());
-});
+$request->files();
 ```
 
 #### Others
->Getting type request
+> Getting type request
 ```php
-$route->post('/people', function(\PlugRoute\Http\Request $request) {
-     echo $request->getMethod();
-});
+echo $request->getMethod();
 ```
 
->Redirect
+> Redirect
 ```php
-$route->get('/people', function(\PlugRoute\Http\Request $request) {
-     $request->redirectWithName('home');
-     // or
-     $request->redirect('/home');
-});
+$request->redirect('/home');
+// or
+$request->redirect('/home', 301);
 ```
 
->Getting type request
+> Redirect to named route
 ```php
-$route->post('/people', function(\PlugRoute\Http\Request $request) {
-     echo $request->getMethod();
-});
+$request->redirectWithName('home');
+// or
+$request->redirectWithName('/home', 301);
+```
+
+> Getting type request
+```php
+$request->getMethod();
 ```
 
 [previous](defining-routes.md) | [next](response.md)
