@@ -74,14 +74,14 @@ trait DataRequest
 
     public function getBodyFormData()
     {
-		preg_match_all('/"(.+)"+\s+(.*)/', $this->getValuePhpInput(), $matches);
+		preg_match_all('/"(.+)"+\s+(.+(?:-{5,})?)/', $this->getValuePhpInput(), $matches);
 
 		$array = [];
 
 		foreach ($matches[1] as $key => $match) {
 			$matchKey = RouteHelper::removeCaractersOfString($match, ['\'', "\""]);
-			$matchValue = RouteHelper::removeCaractersOfString($matches[2][$key], ['\'', "\""]);
-			$array[$matchKey] = $matchValue;
+
+            $array[$matchKey] = $this->getValueFormData($matches[2][$key]);
 		}
 
 		return $array;
@@ -103,5 +103,13 @@ trait DataRequest
 			$arrayFormated[$aux[0]] = $aux[1];
 		}
 		return $arrayFormated;
+    }
+
+    public function getValueFormData($value)
+    {
+        $valueCleared   = RouteHelper::removeCaractersOfString($value, ['\'', "\""]);
+        var_dump($valueCleared);
+        $onlyHasTraces  = preg_split("/-{20,}/", $valueCleared, PREG_SPLIT_OFFSET_CAPTURE);
+        return count($onlyHasTraces) > 1 ? '' : $valueCleared;
     }
 }
