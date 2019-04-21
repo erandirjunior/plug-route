@@ -5,6 +5,8 @@ require_once 'Auth.php';
 require_once 'OtherMiddleware.php';
 
 use \PlugRoute\PlugRoute;
+use \PlugRoute\Http\Request;
+use \PlugRoute\Http\Response;
 
 /**** CORS ****/
 header('Access-Control-Allow-Origin: *');
@@ -14,30 +16,30 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 // If you are working without virtual host modify the file .htaccess on line 49, setting the path correct.
 
-$route = new PlugRoute();
+$route = new PlugRoute(new Request());
 
 $route->setRouteError(function() {
     echo "The requested page does not exists.";
 });
 
-$route->get('/', function (\PlugRoute\Http\Response $response) {
+$route->get('/', function (Response $response) {
 	echo $response->response()->json(['values' => [10, 20]]);
 });
 
-$route->post('/people/{id:\d+}', function (\PlugRoute\Http\Request $request) {
+$route->post('/people/{id:\d+}', function (Response $request) {
     var_dump($request->parameters());
 });
 
-$route->put('/people/{id:\d+}', function (\PlugRoute\Http\Request $request, \PlugRoute\Http\Response $response) {
+$route->put('/people/{id:\d+}', function (Response $request, Response $response) {
     $id = $request->parameter('id');
     echo $response->json(['id' => $id]);
 });
 
-$route->delete('/people/{id:\d+}', function (\PlugRoute\Http\Request $request) {
+$route->delete('/people/{id:\d+}', function (Response $request) {
     echo $request->parameter('id');
 });
 
-$route->patch('/people/{id:\d+}', function (\PlugRoute\Http\Request $request) {
+$route->patch('/people/{id:\d+}', function (Response $request) {
     echo $request->parameter('id');
 });
 
@@ -55,7 +57,7 @@ $route->get('/sports', function() {
     echo 'Sport';
 })->name('sports');
 
-$route->get('/sports/{something}', function(\PlugRoute\Http\Request $request) {
+$route->get('/sports/{something}', function(Response $request) {
     $request->redirectToRoute('sports');
 
     // If you use this library without name a route, without virtualhost or php server built-in
