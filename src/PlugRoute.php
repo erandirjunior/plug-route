@@ -8,12 +8,12 @@ class PlugRoute
 {
 	private $route;
 
-    private $routeError;
+	private $request;
 
     public function __construct()
 	{
 		$this->route = new Route();
-		$this->routeError 	= [];
+		$this->request = new Request();
 	}
 
 	public function getErrorRoute()
@@ -109,8 +109,15 @@ class PlugRoute
 		$this->route->addGroup($this, ['namespace' => $namespace], $callback);
 	}
 
+	public function redirect($from, $to, $code = 301)
+    {
+        $this->route->addRoute('GET', $from, function (Request $request) use ($to, $code) {
+            $this->request->redirect($to, $code);
+        });
+    }
+
 	public function on()
 	{
-		echo (new RouteProcessor($this->route, new Request()))->run();
+		echo (new RouteProcessor($this->route, $this->request))->run();
 	}
 }

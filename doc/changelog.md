@@ -1,4 +1,9 @@
-#Changelog
+# Changelog
+
+### v3.2
+* Added redirect route
+* Improvement when obtaining data of the formdata type
+
 
 ### v3.1
 * Added namespace method
