@@ -1,11 +1,12 @@
 # Starting:
 
 #### Configuration:
->Here we will configure PlugRoute with the basic example
+> Here we will configure PlugRoute with the basic example
 ```php
 use \PlugRoute\PlugRoute;
+use \PlugRoute\Http\Request;
 
-$route = new PlugRoute();
+$route = new PlugRoute(new Request);
 
 $route->get('/', function() {
     echo 'basic route';
@@ -15,7 +16,7 @@ $route->on();
 ``` 
 
 #### Route types
->Other route types
+> Other route types
 ```php
 $route->get($route, $callback);
 
@@ -37,7 +38,7 @@ $route->get('/', '\Path\To\Class@method');
 **PlugRoute supports dependency injection**
 
 #### Request error
->Set an action if a route was not found
+> Set an action if a route was not found
 ```php
 $route->setRouteError($callback); // DEPRECATED
 
@@ -45,7 +46,7 @@ $route->error($callback);
 ```
 
 #### Accept multiple HTTP verbs
->Routes that responds to multiple HTTP verbs
+> Routes that responds to multiple HTTP verbs
 ```php
 $route->any('/', $callback);
 
@@ -53,22 +54,27 @@ $route->match(['GET', 'POST'],'/', $callback);
 ```
 
 #### Dynamic values
->Defining dynamic routes
+> Defining dynamic routes
 ```php
 $route->get('product/{name}', function(\PlugRoute\Http\Request $request) {
     echo $request->parameter('id');
 });
 ```
 
->You can pass a regex to set the route parameter
+> You can pass a regex to set the route parameter
 ```php
 $route->get('people/{id:\d+}', function(\PlugRoute\Http\Request $request) {
     echo $request->parameter('id');
 });
 ```
 
+#### Redirecting
+```php
+$route->redirect($from, $to, $code);
+```
+
 #### Route groups
->Route group
+> Route group
 ```php
 $route->group(['prefix' => '/news'], function($route) {
     $route->get('/', function() {
@@ -81,7 +87,7 @@ $route->group(['prefix' => '/news'], function($route) {
 });
 ```
 
->Namespace
+> Namespace
 ```php
 $route->group('MyNamespace', function($route) {
     $route->get('/', '\Example\MyClass@method'); 
@@ -89,7 +95,7 @@ $route->group('MyNamespace', function($route) {
 });
 ```
 
->Route group with namespace
+> Route group with namespace
 ```php
 $route->group(['namespace' => 'MyNamespace'], function($route) {
     $route->get('/', '\Example\MyClass@method');
@@ -97,13 +103,13 @@ $route->group(['namespace' => 'MyNamespace'], function($route) {
 ```
 
 #### Named Routes
->Named routes
+> Named routes
 ```php
 $route->get($route, $callback)->name('home');
 ``` 
 
 #### Middlewares
->Implementing a simple middleware
+> Implementing a simple middleware
 ```php
 $route->get($route, $callback)->middleware([\Namespace\YOUR_MIDDLWARE::class]);
 
@@ -112,7 +118,7 @@ $route->get($route, $callback)->middleware([\Namespace\YOUR_MIDDLWARE::class]);
 $route->get($route, $callback)->middleware(['\Namespace\YOUR_MIDDLWARE']);
 ``` 
 
->Route group with middlewares
+> Route group with middlewares
 ```php
 $route->group(['prefix' => '/news', 'middleware' => [\Namespace\YOUR_MIDDLWARE::class], function($route) {
     $route->get($callback, $route);

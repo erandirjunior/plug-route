@@ -5,6 +5,7 @@ namespace PlugRoute\Test;
 use function foo\func;
 use PHPUnit\Framework\TestCase;
 use PlugRoute\PlugRoute;
+use PlugRoute\Test\Classes\Request;
 
 final class PlugRouteTest extends TestCase
 {
@@ -135,7 +136,7 @@ final class PlugRouteTest extends TestCase
 
     public function setUp()
     {
-        $this->instance = new PlugRoute();
+        $this->instance = new PlugRoute(new Request());
     }
 
     public function testRoutes()
