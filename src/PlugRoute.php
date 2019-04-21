@@ -10,10 +10,10 @@ class PlugRoute
 
 	private $request;
 
-    public function __construct()
+    public function __construct(Request $request)
 	{
 		$this->route = new Route();
-		$this->request = new Request();
+		$this->request = $request;
 	}
 
 	public function getErrorRoute()
