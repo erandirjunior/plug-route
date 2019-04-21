@@ -111,21 +111,18 @@ $route->get($route, $callback)->name('home');
 #### Middlewares
 > Implementing a simple middleware
 ```php
-$route->get($route, $callback)->middleware([\Namespace\YOUR_MIDDLWARE::class]);
-
-// or
-
-$route->get($route, $callback)->middleware(['\Namespace\YOUR_MIDDLWARE']);
-``` 
+$route->get($route, $callback)->middleware(['\Namespace\YOUR_MIDDLEWARE']);
+```
 
 > Route group with middlewares
 ```php
-$route->group(['prefix' => '/news', 'middleware' => [\Namespace\YOUR_MIDDLWARE::class], function($route) {
+$route->group(['middleware' => [\Namespace\YOUR_MIDDLWARE::class], function($route) {
     $route->get($callback, $route);
 
     $route->get($callback, $route);
 });
 ``` 
+
 **The middlewares should implement the PlugRoute\Middleware\PlugRouteMiddleware interface and can return a Request data type** 
 
 **Important: see the more examples [here](../example)**
