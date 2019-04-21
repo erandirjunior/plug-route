@@ -4,6 +4,7 @@
 * Improvements in the route group
 * Added redirect route
 * Improvement when obtaining data of the formdata type
+* Added parameter on construct
 
 ### v3.1
 * Added namespace method
