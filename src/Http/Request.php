@@ -78,18 +78,20 @@ class Request
 		return $_FILES;
 	}
 
-	public function redirectToRoute($name)
+	public function redirectToRoute(string $name, int $code = 301)
 	{
 		if (empty($this->route[$name])) {
 			throw new \Exception("Name wasn't defined.");
 		}
 
+        header("HTTP/1.0 {$code}");
 		header("Location: {$this->route[$name]}");
 		$this->kill();
 	}
 
-	public function redirect($path)
+	public function redirect(string $path, int $code = 301)
 	{
+        header("HTTP/1.0 {$code}");
 		header("Location: {$path}");
         $this->kill();
 	}

@@ -2,6 +2,8 @@
 
 ### v3.2
 * Improvements in the route group
+* Added redirect route
+* Improvement when obtaining data of the formdata type
 
 ### v3.1
 * Added namespace method
