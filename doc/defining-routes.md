@@ -4,8 +4,9 @@
 > Here we will configure PlugRoute with the basic example
 ```php
 use \PlugRoute\PlugRoute;
+use \PlugRoute\Http\Request;
 
-$route = new PlugRoute();
+$route = new PlugRoute(new Request);
 
 $route->get('/', function() {
     echo 'basic route';
