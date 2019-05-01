@@ -108,7 +108,6 @@ trait DataRequest
     public function getValueFormData($value)
     {
         $valueCleared   = RouteHelper::removeCaractersOfString($value, ['\'', "\""]);
-        var_dump($valueCleared);
         $onlyHasTraces  = preg_split("/-{20,}/", $valueCleared, PREG_SPLIT_OFFSET_CAPTURE);
         return count($onlyHasTraces) > 1 ? '' : $valueCleared;
     }
