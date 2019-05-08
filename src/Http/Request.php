@@ -2,102 +2,58 @@
 
 namespace PlugRoute\Http;
 
-use PlugRoute\Helpers\RequestHelper;
-use PlugRoute\Http\Data\DataRequest;
-use PlugRoute\Http\Data\DataServer;
+use PlugHttp\Globals\GlobalFile;
+use PlugHttp\Globals\GlobalGet;
+use PlugHttp\Globals\GlobalServer;
 
-class Request
+class Request extends \PlugHttp\Globals\GlobalRequest
 {
-	use DataRequest;//, DataServer;
+	private $parameter;
 
-	private $body;
+	private $routeNamed;
 
-	private $urlBody;
-
-	private $route;
-
-	public function __construct()
-    {
-    	$this->urlBody  = [];
-    	$this->body     = [];
-        $requestService = $this->getRequisitionBody($this->getMethod());
-
-        if ($requestService) {
-            $this->body = RequestHelper::returnArrayFormated($this->body, $requestService);
-        }
-    }
-
-	public function setRouteName($route)
+	public function __construct($body, GlobalGet $get, GlobalFile $file, GlobalServer $server)
 	{
-		$this->route = $route;
+		parent::__construct($body, $get, $file, $server);
+		$this->parameter = [];
+		$this->routeNamed = [];
 	}
 
-    public function setUrlParameter($urlBody = null)
-    {
-        if (!is_null($urlBody)) {
-            $this->urlBody = RequestHelper::returnArrayFormated($this->urlBody, $urlBody);
-        }
-    }
-
-    public function parameters()
-    {
-        return $this->urlBody;
-    }
-
-    public function parameter($parameter)
-    {
-        return $this->urlBody[$parameter];
-    }
-
-    public function query()
-    {
-        return $_GET;
-    }
-
-    public function queryWith($parameter)
-    {
-        return $_GET[$parameter];
-    }
-
-	public function all()
+	public function parameter($key)
 	{
-        return $this->body;
+		return $this->parameter[$key];
 	}
 
-	public function input($index) {
-        return $this->body[$index];
-    }
-
-	public function setBody(array $body)
+	public function parameters()
 	{
-		$this->body = RequestHelper::returnArrayFormated($this->body, $body);
-    }
+		return $this->parameter;
+	}
 
-	public function files()
+	public function setParameter($key, $value)
 	{
-		return $_FILES;
+		$this->parameter[$key] = $value;
+
+		return $this;
 	}
 
 	public function redirectToRoute(string $name, int $code = 301)
 	{
-		if (empty($this->route[$name])) {
+		if (empty($this->routeNamed[$name])) {
 			throw new \Exception("Name wasn't defined.");
 		}
 
-        header("HTTP/1.0 {$code}");
-		header("Location: {$this->route[$name]}");
-		$this->kill();
+		return $this->redirect($this->routeNamed[$name], $code);
 	}
 
-	public function redirect(string $path, int $code = 301)
+	public function setRouteName(array $routeNamed)
 	{
-        header("HTTP/1.0 {$code}");
-		header("Location: {$path}");
-        $this->kill();
+		$this->routeNamed = $routeNamed;
+
+		return $this;
 	}
 
-	private function kill()
-    {
-        die;
-    }
+	public function getRouteNamed()
+	{
+		return $this->routeNamed;
+	}
 }
