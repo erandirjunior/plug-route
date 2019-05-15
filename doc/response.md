@@ -3,7 +3,7 @@
 ### Methods
 >  Adding headers
 ```php
-$response->setHeader(['Content-Type', 'application/json');
+$response->setHeader(['Content-Type' => 'application/json']);
 ```
 
 > Set status code header.
@@ -15,7 +15,7 @@ $response->setStatusCode('200 OK');
 
 > execute all header.
 ```php
-$response->setHeader(['Content-Type', 'application/json')->reponse();
+$response->setHeader(['Content-Type' => 'application/json'])->reponse();
 ```
 
 > Return a response in json format. This method set Content-Type to application/json automatically.
