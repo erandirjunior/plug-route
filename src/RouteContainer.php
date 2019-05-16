@@ -48,12 +48,12 @@ class RouteContainer
 		];
 	}
 
-	public function getErrorRoute()
+	public function getErrorRouteNotFound()
 	{
 		return $this->routeError;
 	}
 
-	public function setRouteError($callback)
+	public function setErrorRouteNotFound($callback)
 	{
 		$this->routeError = ['callback' => $callback];
 	}

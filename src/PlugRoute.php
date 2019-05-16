@@ -16,19 +16,14 @@ class PlugRoute
 		$this->request 	= $request;
 	}
 
-	public function getErrorRoute()
+	public function getNotFound()
 	{
-		return $this->route->getErrorRoute();
+		return $this->route->getErrorRouteNotFound();
 	}
 
-	public function setRouteError($callback)
+	public function notFound($callback)
 	{
-		$this->route->setRouteError($callback);
-	}
-
-	public function error($callback)
-	{
-		$this->route->setRouteError($callback);
+		$this->route->setErrorRouteNotFound($callback);
 	}
 	
 	public function getNamedRoute()
@@ -118,7 +113,7 @@ class PlugRoute
 
     private function addNamedRoute()
 	{
-		$this->request->setRouteName($this->getNamedRoute());
+		$this->request->setRouteNamed($this->getNamedRoute());
 	}
 
 	public function on()

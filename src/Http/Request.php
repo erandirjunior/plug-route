@@ -45,7 +45,7 @@ class Request extends \PlugHttp\Globals\GlobalRequest
 		return $this->redirect($this->routeNamed[$name], $code);
 	}
 
-	public function setRouteName(array $routeNamed)
+	public function setRouteNamed(array $routeNamed)
 	{
 		$this->routeNamed = $routeNamed;
 
