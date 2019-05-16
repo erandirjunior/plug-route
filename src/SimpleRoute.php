@@ -20,6 +20,6 @@ class SimpleRoute implements Router
 
 	public function route()
 	{
-		$this->route;
+		return $this->route;
 	}
 }
