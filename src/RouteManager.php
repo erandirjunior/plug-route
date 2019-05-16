@@ -2,6 +2,7 @@
 
 namespace PlugRoute;
 
+use PlugHttp\Response;
 use PlugRoute\Callback\Callback;
 use PlugRoute\Helpers\ValidateHelper;
 use PlugRoute\Http\Request;
@@ -33,6 +34,7 @@ class RouteManager
 		$this->routes       = $routes[$this->request->method()];
 		$this->simpleRoute	= $simpleRoute;
 		$this->dynamicRoute	= $dynamicRoute;
+		$this->errorRoute	= $plugRoute->getErrorRouteNotFound();
 	}
 
 	public function run()
@@ -49,6 +51,19 @@ class RouteManager
 				return $this->callback->handleCallback($route);
 			}
 		}
+
+		return $this->routeNotFound();
+	}
+
+	private function routeNotFound()
+	{
+		if ($this->errorRoute) {
+			return $this->callback->handleCallback($this->errorRoute);
+		}
+
+		$response = new Response();
+		$response->setStatusCode(404)->response();
+		return Error::throwException("The route could not be found.");
 	}
 
 	private function setParameters($parameters)
