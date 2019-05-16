@@ -12,6 +12,8 @@ class DynamicRoute implements Router
 
 	private $indentifiers;
 
+	private $router;
+
 	public function __construct()
 	{
 		$this->route			= '';
