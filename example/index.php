@@ -6,6 +6,8 @@ require_once 'OtherMiddleware.php';
 
 use \PlugRoute\PlugRoute;
 use \PlugRoute\Http\Request;
+use \PlugRoute\RouteContainer;
+use \PlugRoute\Http\RequestCreator;
 
 /**** CORS ****/
 header('Access-Control-Allow-Origin: *');
@@ -15,7 +17,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 // If you are working without virtual host modify the file .htaccess on line 49, setting the path correct.
 
-$route = new PlugRoute(new \PlugRoute\RouteContainer(), \PlugRoute\Http\RequestCreator::create());
+$route = new PlugRoute(new RouteContainer(), RequestCreator::create());
 
 $route->notFound(function() {
 	echo 'Error Page';
@@ -53,13 +55,19 @@ $route->match(['GET', 'POST'], '/products', function() {
 	echo "Match route";
 });
 
-$route->group(['prefix' => '/departament', 'middlewares' => [OtherMiddleware::class]], function($route) {
+$route->redirect('/test/redirect', '/');
+
+$route->group(['prefix' => '/department', 'middlewares' => [OtherMiddleware::class]], function($route) {
 	$route->get('/it', function(\PlugRoute\Http\Response $response) {
 		echo $response->json(['departament' => 'IT Departament']);
 	})->name('ti');
 
 	$route->get('/tecnology', function(Request $request) {
 		$request->redirectToRoute('ti');
+
+		// If you use this library without name a route, without virtualhost or php server built-in
+		// use the redirect method
+		//$request->redirect('http://localhost/plug-route/example/department/it');
 	});
 });
 
