@@ -1,5 +1,23 @@
 # Changelog
 
+### v3.3
+* Added redirect route
+* Rename Route class to RouteContainer
+* Created DynamicRoute class to handle dynamic routes
+* Created SimpleRoute class to handle simple routes
+* Created RouteManager to manager routes
+* Created Router interface to standardize route handlers
+* Added parameters on PlugRoute constructor
+* Created addNamedRoute method to get routes with name defined
+* Added return on exceptions throwers
+* Rename method setRouteNamed to setRouteNamed in Request class
+* Rename method getErrorRoute to getNotFound on PlugRoute class
+* Rename method error to notFound on PlugRoute class
+* Rename method getErrorRoute to getErrorRouteNotFound on RouteContainer class
+* Request class extends Request from PlugHttp lib
+* Response class extends Response from PlugHttp lib
+* Created RequestCreator class to create Request class
+
 ### v3.2
 * Improvements in the route group
 * Added redirect route
