@@ -4,9 +4,10 @@
 > Here we will configure PlugRoute with the basic example
 ```php
 use \PlugRoute\PlugRoute;
-use \PlugRoute\Http\Request;
+use \PlugRoute\RouteContainer;
+use \PlugRoute\Http\RequestCreator;
 
-$route = new PlugRoute(new Request());
+$route = new PlugRoute(new RouteContainer(), RequestCreator::create());
 
 $route->get('/', function() {
     echo 'basic route';
@@ -37,12 +38,10 @@ $route->get('/', '\Path\To\Class@method');
 ```
 **PlugRoute supports dependency injection**
 
-#### Request error
+#### Route error
 > Set an action if a route was not found
 ```php
-$route->setRouteError($callback); // DEPRECATED
-
-$route->error($callback);
+$route->notFound($callback);
 ```
 
 #### Accept multiple HTTP verbs
@@ -57,7 +56,7 @@ $route->match(['GET', 'POST'],'/', $callback);
 > Defining dynamic routes
 ```php
 $route->get('product/{name}', function(\PlugRoute\Http\Request $request) {
-    echo $request->parameter('id');
+    echo $request->parameter('name');
 });
 ```
 
@@ -89,7 +88,7 @@ $route->group(['prefix' => '/news'], function($route) {
 
 > Namespace
 ```php
-$route->group('MyNamespace', function($route) {
+$route->namespace('MyNamespace', function($route) {
     $route->get('/', '\Example\MyClass@method'); 
     // Final namespace: MyNamespace\Example\MyClass
 });
@@ -107,6 +106,11 @@ $route->group(['namespace' => 'MyNamespace'], function($route) {
 ```php
 $route->get($route, $callback)->name('home');
 ``` 
+
+#### Redirect route
+```php
+$route->redirect('/test/redirect', '/');
+```
 
 #### Middlewares
 > Implementing a simple middleware
