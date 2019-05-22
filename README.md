@@ -1,6 +1,10 @@
 # plug-route
 
-[![Latest Stable Version](https://poser.pugx.org/erandir/plug-route/version)](https://packagist.org/packages/erandir/plug-route) [![Latest Unstable Version](https://poser.pugx.org/erandir/plug-route/v/unstable)](//packagist.org/packages/erandir/plug-route) [![License](https://poser.pugx.org/erandir/plug-route/license)](https://packagist.org/packages/erandir/plug-route)
+[![Latest Stable Version](https://poser.pugx.org/erandir/plug-route/version)](https://packagist.org/packages/erandir/plug-route)
+[![License](https://poser.pugx.org/erandir/plug-route/license)](https://packagist.org/packages/erandir/plug-route)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/erandirjunior/plug-route/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/erandirjunior/plug-route/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/erandirjunior/plug-route/badges/build.png?b=master)](https://scrutinizer-ci.com/g/erandirjunior/plug-route/build-status/master)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/erandirjunior/plug-route/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
 
 ###### Powerful library for PHP routes
 
