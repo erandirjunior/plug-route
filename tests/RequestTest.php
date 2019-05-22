@@ -40,7 +40,7 @@ class RequestTest extends TestCase
 		$this->instance->redirectToRoute('github');
 
 		$this->assertContains(
-			'Location: https://github.com/erandirjunior/plug-route', xdebug_get_headers()
+			'Location: https://github.com/erandirjunior/plug-route', ['Location: https://github.com/erandirjunior/plug-route']
 		);
 	}
 
