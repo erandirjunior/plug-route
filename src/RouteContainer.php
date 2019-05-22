@@ -2,7 +2,7 @@
 
 namespace PlugRoute;
 
-class Route
+class RouteContainer
 {
 	private $routes;
 
@@ -48,12 +48,12 @@ class Route
 		];
 	}
 
-	public function getErrorRoute()
+	public function getErrorRouteNotFound()
 	{
 		return $this->routeError;
 	}
 
-	public function setRouteError($callback)
+	public function setErrorRouteNotFound($callback)
 	{
 		$this->routeError = ['callback' => $callback];
 	}
@@ -197,6 +197,7 @@ class Route
 	public function getNamedRoute()
 	{
 		$array = [];
+
 		foreach ($this->routes as $route) {
 			foreach ($route as $value) {
 				if (!empty($value['name'])) {
@@ -204,6 +205,7 @@ class Route
 				}
 			}
 		}
+
 		return $array;
 	}
 }

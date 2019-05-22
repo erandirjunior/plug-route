@@ -2,297 +2,103 @@
 
 namespace PlugRoute\Test;
 
-use function foo\func;
 use PHPUnit\Framework\TestCase;
+use PlugRoute\DynamicRoute;
+use PlugRoute\Http\RequestCreator;
 use PlugRoute\PlugRoute;
+use PlugRoute\RouteContainer;
+use PlugRoute\RouteManager;
+use PlugRoute\SimpleRoute;
+use PlugRoute\Test\Classes\MiddlewareMistake;
+use PlugRoute\Test\Classes\MyMiddleware;
 use PlugRoute\Test\Classes\Request;
 
 final class PlugRouteTest extends TestCase
 {
-	private $expected = [
-		'GET' => [
-			0 => [
-				'route' => '/test', 'callback' => 'Namespace\MyClass@method', 'name' => null, 'middleware' => [
-					'FirstMiddleware', 'SecondMiddleware',
-				],
-			]
-		],
-		'POST' => [
-			0 => [
-				'route' => '/test', 'callback' => 'Namespace\MyClass@method', 'name' => null, 'middleware' => [
-					'FirstMiddleware', 'SecondMiddleware',
-				],
-			]
-		],
-		'PUT' => [],
-		'DELETE' => [],
-		'PATCH' => [],
-		'OPTIONS' => []
-	];
-
-	private $simpleTest = [
-		'GET' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-		'POST' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-		'PUT' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-		'DELETE' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-		'PATCH' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-		'OPTIONS' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-	];
-
-	private $any = [
-		'GET' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Namespace@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-		'POST' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Namespace@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-		'PUT' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Namespace@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-		'DELETE' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Namespace@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-		'PATCH' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Namespace@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-		'OPTIONS' => [
-			0 => [
-				'route' => '/',
-				'callback' => 'Namespace@method',
-				'name' => null,
-				'middleware' => [],
-			]
-		],
-	];
-
     private $instance;
 
     public function setUp()
     {
-        $this->instance = new PlugRoute(new Request());
+        $this->instance = new PlugRoute(new RouteContainer(), \PlugRoute\Test\Classes\RequestCreator::create());
     }
 
-    public function testRoutes()
+	/**
+	 * @testQueryExcept
+	 * @runInSeparateProcess
+	 **/
+    public function testRouteRedirect()
     {
-        $this->instance->get('/', 'Class@method');
-        $this->instance->post('/', 'Class@method');
-        $this->instance->put('/', 'Class@method');
-        $this->instance->patch('/', 'Class@method');
-        $this->instance->delete('/', 'Class@method');
-        $this->instance->options('/', 'Class@method');
+    	$this->instance->redirect('/', 'https://github.com/erandirjunior/plug-route', 301);
 
-        $this->assertEquals($this->simpleTest, $this->instance->getRoutes());
+    	$this->instance->on();
+
+		$this->assertContains(
+			'Location: https://github.com/erandirjunior/plug-route', ['Location: https://github.com/erandirjunior/plug-route']
+		);
     }
 
-    public function testRouteGroup()
-    {
-        $this->instance->group(['prefix' => 'home'], function ($route) {
-            $route->get('/test', 'Namespace@method');
-            $route->post('/test', 'Namespace@method');
-        });
-
-        $expected = [
-            'GET' => [
-                0 => [
-                    'route' => 'home/test',
-                    'callback' => 'Namespace@method',
-                    'name' => null,
-                    'middleware' => [],
-                ]
-            ],
-            'POST' => [
-                0 => [
-                    'route' => 'home/test',
-                    'callback' => 'Namespace@method',
-                    'name' => null,
-                    'middleware' => [],
-                ]
-            ],
-            'PUT' => [],
-            'DELETE' => [],
-            'PATCH' => [],
-            'OPTIONS' => []
-        ];
-
-        $this->assertEquals($expected, $this->instance->getRoutes());
-    }
-
-    public function testAnyRoute()
-    {
-        $this->instance->any('/', 'Namespace@method');
-
-        $this->assertEquals($this->any, $this->instance->getRoutes());
-    }
-
-	public function testRouteNamed()
+	public function testEchoReturn()
 	{
-		$this->instance->get('/', 'Class@method')->name('home');
+		$route = new PlugRoute(new RouteContainer() ,\PlugRoute\Test\Classes\RequestCreator::create());
 
-		$this->assertEquals($this->instance->getNamedRoute(), ['home' => '/']);
-    }
-
-	public function testMiddleware()
-	{
-		$this->instance->get('/test', 'Namespace\MyClass@method')->middleware(['FirstMiddleware', 'SecondMiddleware']);
-		$this->instance->post('/test', 'Namespace\MyClass@method')->middleware(['FirstMiddleware', 'SecondMiddleware']);
-
-
-		$this->assertEquals($this->instance->getRoutes(), $this->expected);
-    }
-
-	public function testGroupWithMiddlewareAndNamespace()
-	{
-		$head = [
-			'namespace' => 'Namespace',
-			'middleware' => [
-				'FirstMiddleware',
-				'SecondMiddleware',
-			]
-		];
-		$this->instance->group($head, function ($route) {
-			$route->get('/test', '\MyClass@method');
-			$route->post('/test', '\MyClass@method');
+		$route->get('/', function() {
+			return  50;
 		});
 
-		$this->assertEquals($this->instance->getRoutes(), $this->expected);
-    }
+		$this->expectOutputString(50);
 
-	public function testErrorRoute()
-	{
-		$this->instance->error('MyClass@method');
-
-		$this->assertEquals($this->instance->getErrorRoute(), ['callback' => 'MyClass@method']);
-    }
-
-	public function testErrorRouteDeprecated()
-	{
-		$this->instance->setRouteError('MyClass@method');
-
-		$this->assertEquals($this->instance->getErrorRoute(), ['callback' => 'MyClass@method']);
-    }
-
-	public function testDuplicateRoute()
-	{
-		$this->instance->get('/', 'Class@method');
-		$this->instance->get('/', 'MyClass@show');
-
-		$expected = [
-			'GET' => [
-				0 => [
-					'route' => '/',
-					'callback' => 'MyClass@show',
-					'name' => null,
-					'middleware' => [],
-				]
-			],
-			'POST' => [],
-			'PUT' => [],
-			'DELETE' => [],
-			'PATCH' => [],
-			'OPTIONS' => [],
-		];
-
-		$this->assertEquals($expected, $this->instance->getRoutes());
-    }
-
-	public function testMatch()
-	{
-		$headers = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'DELETE', 'OPTIONS'];
-		$this->instance->match($headers, '/', 'Class@method');
-
-		$this->assertEquals($this->simpleTest, $this->instance->getRoutes());
+		$route->on();
 	}
 
-	public function testNamespace()
+	public function testRouteWorkingClass()
 	{
-		$content = $this->instance;
-		$this->instance->namespace('Namespace', function($content) {
-			$content->get('/', '\MyClass@myMethod');
+		$route = new PlugRoute(new RouteContainer() ,\PlugRoute\Test\Classes\RequestCreator::createDynamic());
+
+		$route->group(['middleware' => [MyMiddleware::class]], function($route) {
+			$route->get('/{test}', 'PlugRoute\Test\Classes\Home@test');
 		});
 
-		$expected = [
-			'GET' => [
-				0 => [
-					'route' => '/',
-					'callback' => 'Namespace\MyClass@myMethod',
-					'name' => null,
-					'middleware' => [],
-				]
-			],
-			'POST' => [],
-			'PUT' => [],
-			'DELETE' => [],
-			'PATCH' => [],
-			'OPTIONS' => []
-		];
+		$this->expectOutputString('test');
 
-		$this->assertEquals($expected, $this->instance->getRoutes());
+		$route->on();
+	}
+
+	public function testClassNotFound()
+	{
+		$this->expectException(\Exception::class);
+
+		$route = new PlugRoute(new RouteContainer() ,\PlugRoute\Test\Classes\RequestCreator::createDynamic());
+
+		$route->group(['middleware' => [MyMiddleware::class]], function($route) {
+			$route->get('/{test}', 'PlugRoute\Test\Classes\MistakeClass@test');
+		});
+
+		$route->on();
+	}
+
+	public function testMethodNotFound()
+	{
+		$this->expectException(\Exception::class);
+
+		$route = new PlugRoute(new RouteContainer() ,\PlugRoute\Test\Classes\RequestCreator::createDynamic());
+
+		$route->group(['middleware' => [MyMiddleware::class]], function($route) {
+			$route->get('/{test}', 'PlugRoute\Test\Classes\Home@testing');
+		});
+
+		$route->on();
+	}
+
+	public function testMiddlewareException()
+	{
+		$this->expectException(\Exception::class);
+
+		$route = new PlugRoute(new RouteContainer() ,\PlugRoute\Test\Classes\RequestCreator::createDynamic());
+
+		$route->group(['middleware' => [MiddlewareMistake::class]], function($route) {
+			$route->get('/{test}', 'PlugRoute\Test\Classes\Home@test');
+		});
+
+		$route->on();
 	}
 }

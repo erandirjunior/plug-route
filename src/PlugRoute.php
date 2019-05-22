@@ -2,7 +2,7 @@
 
 namespace PlugRoute;
 
-use PlugRoute\Http\Request;
+use \PlugRoute\Http\Request;
 
 class PlugRoute
 {
@@ -10,25 +10,20 @@ class PlugRoute
 
 	private $request;
 
-    public function __construct(Request $request)
+    public function __construct(RouteContainer $route, Request $request)
 	{
-		$this->route = new Route();
-		$this->request = $request;
+		$this->route 	= $route;
+		$this->request 	= $request;
 	}
 
-	public function getErrorRoute()
+	public function getNotFound()
 	{
-		return $this->route->getErrorRoute();
+		return $this->route->getErrorRouteNotFound();
 	}
 
-	public function setRouteError($callback)
+	public function notFound($callback)
 	{
-		$this->route->setRouteError($callback);
-	}
-
-	public function error($callback)
-	{
-		$this->route->setRouteError($callback);
+		$this->route->setErrorRouteNotFound($callback);
 	}
 	
 	public function getNamedRoute()
@@ -116,8 +111,20 @@ class PlugRoute
         });
     }
 
+    private function addNamedRoute()
+	{
+		$this->request->setRouteNamed($this->getNamedRoute());
+	}
+
 	public function on()
 	{
-		echo (new RouteProcessor($this->route, $this->request))->run();
+		$this->addNamedRoute();
+
+		$simpleRoute 	= new SimpleRoute();
+		$dynamicRoute	= new DynamicRoute();
+
+		$manager = new RouteManager($this->route, $this->request, $simpleRoute, $dynamicRoute);
+
+		echo $manager->run();
 	}
 }

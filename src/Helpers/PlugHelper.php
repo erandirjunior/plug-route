@@ -10,7 +10,7 @@ class PlugHelper
         return $match[0];
     }
 
-    public static function getMatch($route, $pattern = '{(.*?)}')
+    public static function getMatchCase(string $route, string $pattern = '{(.*?)}')
     {
         $pattern = "/{$pattern}/";
         preg_match($pattern, $route, $matches);
