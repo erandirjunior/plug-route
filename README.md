@@ -26,9 +26,10 @@ composer require erandir/plug-route
 **Basic usage**
 ```php
 use \PlugRoute\PlugRoute;
-use \PlugRoute\Http\Request;
+use \PlugRoute\RouteContainer;
+use \PlugRoute\Http\RequestCreator;
 
-$route = new PlugRoute(new Request());
+$route = new PlugRoute(new RouteContainer(), RequestCreator::create());
 
 $route->get('/', function() {
     echo 'basic route';
