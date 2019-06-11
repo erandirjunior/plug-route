@@ -75,8 +75,6 @@ $route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
 
 $route->loadFromJson('./routes.json');
 
-//var_dump($route->getRoutes());
-
 $route->on();
 
 
