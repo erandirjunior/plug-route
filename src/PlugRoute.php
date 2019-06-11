@@ -111,6 +111,11 @@ class PlugRoute
         });
     }
 
+	public function loadFromJson($json)
+	{
+		$this->route->loadRoutesFromJson($json);
+    }
+
     private function addNamedRoute()
 	{
 		$this->request->setRouteNamed($this->getNamedRoute());

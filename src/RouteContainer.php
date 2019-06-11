@@ -136,6 +136,49 @@ class RouteContainer
 		$this->typeMethod 	= $typeMethod;
 	}
 
+	public function loadRoutesFromJson($path)
+	{
+		$content = file_get_contents($path);
+
+		$json = json_decode($content, true);
+
+		foreach ($json['routes'] as $route) {
+			if (!empty($route['group'])) {
+				$this->handleGroupJsonRoutes($route);
+
+				continue;
+			}
+
+			$this->handleSimpleJsonRoutes($route);
+		}
+	}
+
+	public function handleSimpleJsonRoutes($route)
+	{
+		$this->addRoute($route['method'], $route['path'], $route['callback']);
+
+		$this->setExtrasOfRoute($route);
+	}
+
+	public function handleGroupJsonRoutes($route)
+	{
+		$this->beforeGroup($route['group']);
+
+		foreach ($route['group']['routes'] as $routeGroup) {
+			if (isset($routeGroup['group'])) {
+				$data = $this->mountRouteJson($routeGroup);
+
+				$this->handleGroupJsonRoutes($data);
+
+				continue;
+			}
+			
+			$this->handleSimpleJsonRoutes($routeGroup);
+		}
+
+		$this->afterGroup($route['group']);
+	}
+
 	public function addMultipleRoutes(array $types = [], string $route, $callback)
 	{
 		if (!$types) {
@@ -207,5 +250,41 @@ class RouteContainer
 		}
 
 		return $array;
+	}
+
+	private function mountRouteJson($array)
+	{
+		$routeMounted = [];
+
+		if (!empty($array['group']['prefix'])) {
+			$routeMounted['group']['prefix'] = $array['group']['prefix'];
+		}
+
+		if (!empty($array['group']['middlewares'])) {
+			$routeMounted['group']['middlewares'] = $array['group']['middlewares'];
+		}
+
+		if (!empty($array['group']['namespace'])) {
+			$routeMounted['group']['namespace'] = $array['group']['namespace'];
+		}
+
+		$routeMounted['group']['routes'] = [];
+
+		foreach ($array['group']['routes'][0] as $key => $value) {
+			$routeMounted['group']['routes'][0][$key] = $value;
+		}
+
+		return $routeMounted;
+	}
+
+	private function setExtrasOfRoute($extras)
+	{
+		if (!empty($extras['name'])) {
+			$this->setName($extras['name']);
+		}
+
+		if (!empty($extras['middlewares'])) {
+			$this->setMiddleware($extras['middlewares']);
+		}
 	}
 }
