@@ -1,0 +1,54 @@
+{
+  "routes": [
+    {
+      "path": "/json-test",
+      "method": "GET",
+      "callback": "PlugRoute\\Example\\Home@example"
+    },
+    {
+      "path": "/json/{anything}",
+      "method": "GET",
+      "callback": "PlugRoute\\Example\\Home@anything"
+    },
+    {
+      "group": {
+        "prefix": "/sports",
+        "middlewares": [
+          "Middleware1",
+          "Middleware2"
+        ],
+        "routes": [
+          {
+            "path": "/xadrez",
+            "method": "GET",
+            "callback": "PlugRoute\\Example\\Home@rankingXadrez"
+          },
+          {
+            "group": {
+              "prefix": "/f1",
+              "routes": [
+                {
+                  "path": "/ranking",
+                  "method": "GET",
+                  "callback": "PlugRoute\\Example\\Home@rankingF1"
+                }
+              ]
+            }
+          },
+          {
+            "group": {
+              "prefix": "/soccer",
+              "routes": [
+                {
+                  "path": "/champions-league",
+                  "method": "GET",
+                  "callback": "PlugRoute\\Example\\Home@rankingChampions"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
