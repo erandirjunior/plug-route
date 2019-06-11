@@ -1,8 +1,11 @@
 <?php
 
-class OtherMiddleware implements \PlugRoute\Middleware\PlugRouteMiddleware
+use \PlugRoute\Middleware\PlugRouteMiddleware;
+use \PlugRoute\Http\Request;
+
+class OtherMiddleware implements PlugRouteMiddleware
 {
-	public function handle(\PlugRoute\Http\Request $request): \PlugRoute\Http\Request
+	public function handle(Request $request): Request
 	{
 		$request->add('middleware', 'settting value');
 		return $request;

@@ -1,8 +1,11 @@
 <?php
 
-class Auth implements \PlugRoute\Middleware\PlugRouteMiddleware
+use \PlugRoute\Middleware\PlugRouteMiddleware;
+use \PlugRoute\Http\Request;
+
+class Auth implements PlugRouteMiddleware
 {
-	public function handle(\PlugRoute\Http\Request $request): \PlugRoute\Http\Request
+	public function handle(Request $request): Request
 	{
 		return $request;
 	}
