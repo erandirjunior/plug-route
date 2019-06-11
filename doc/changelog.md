@@ -1,5 +1,9 @@
 # Changelog
 
+### v3.4
+* Added method do load routes from json
+* Added new examples
+
 ### v3.3
 * Added redirect route
 * Rename Route class to RouteContainer
