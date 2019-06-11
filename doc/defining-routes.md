@@ -127,8 +127,47 @@ $route->group(['middleware' => [\Namespace\YOUR_MIDDLWARE::class], function($rou
 });
 ``` 
 
+#### JSON ROUTES
+
+> Simple route
+```json
+{
+    "routes": [
+        {
+            "path": "/json-test",
+            "method": "GET",
+            "callback": "PlugRoute\\Example\\Home@example"
+        }
+    ]
+}
+```
+
+> Group route
+```json
+{
+    "routes": [
+        {
+            "group": {
+                "prefix": "/sports",
+                "middlewares": [
+                    "Middleware1",
+                    "Middleware2"
+                ],
+                "routes": [
+                    {
+                        "path": "/xadrez",
+                        "method": "GET",
+                        "callback": "PlugRoute\\Example\\Home@rankingXadrez"
+                    }
+                ]
+            }
+        }
+    ]
+}
+```
+
 **The middlewares should implement the PlugRoute\Middleware\PlugRouteMiddleware interface and can return a Request data type** 
 
-**Important: see the more examples [here](../example)**
+**Important: see the more examples [here](../examples)**
 
 [previous](installation.md) | [next](request.md)
