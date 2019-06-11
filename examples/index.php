@@ -3,6 +3,7 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 
 require_once 'Auth.php';
 require_once 'OtherMiddleware.php';
+die('aqui caralho');
 
 use \PlugRoute\PlugRoute;
 use \PlugRoute\Http\Request;
@@ -17,7 +18,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 // If you are working without virtual host modify the file .htaccess on line 49, setting the path correct.
 
-$route = new PlugRoute(new RouteContainer(), RequestCreator::create());
+/*$route = new PlugRoute(new RouteContainer(), RequestCreator::create());
 
 $route->notFound(function() {
 	echo 'Error Page';
@@ -73,4 +74,8 @@ $route->group(['prefix' => '/department', 'middlewares' => [OtherMiddleware::cla
 
 $route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
 
-$route->on();
+$route->on();*/
+
+$routes = require_once 'routes.json';
+var_dump($routes);
+//json_decode('./ro')
