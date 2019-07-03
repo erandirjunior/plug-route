@@ -120,14 +120,16 @@ $route->get($route, $callback)->middleware(['\Namespace\YOUR_MIDDLEWARE']);
 
 > Route group with middlewares
 ```php
-$route->group(['middleware' => [\Namespace\YOUR_MIDDLWARE::class], function($route) {
+$route->group(['middlewares' => [\Namespace\YOUR_MIDDLWARE::class], function($route) {
     $route->get($callback, $route);
 
     $route->get($callback, $route);
 });
 ``` 
 
-#### JSON ROUTES
+**The middlewares should implement the PlugRoute\Middleware\PlugRouteMiddleware interface and can return a Request data type** 
+
+#### Json Routes
 
 > Simple route
 ```json
@@ -165,8 +167,6 @@ $route->group(['middleware' => [\Namespace\YOUR_MIDDLWARE::class], function($rou
     ]
 }
 ```
-
-**The middlewares should implement the PlugRoute\Middleware\PlugRouteMiddleware interface and can return a Request data type** 
 
 **Important: see the more examples [here](../examples)**
 
