@@ -3,11 +3,16 @@
     {
       "path": "/json-test",
       "method": "GET",
+      "name": "json",
       "callback": "PlugRoute\\Example\\Home@example"
     },
     {
       "path": "/json/{anything}",
       "method": "GET",
+      "middlewares": [
+        "Middleware1",
+        "Middleware2"
+      ],
       "callback": "PlugRoute\\Example\\Home@anything"
     },
     {
@@ -38,11 +43,15 @@
           {
             "group": {
               "prefix": "/soccer",
+              "middlewares": [
+                "MiddlewareSoccer"
+              ],
+              "namespace": "PlugRoute\\",
               "routes": [
                 {
                   "path": "/champions-league",
                   "method": "GET",
-                  "callback": "PlugRoute\\Example\\Home@rankingChampions"
+                  "callback": "Example\\Home@rankingChampions"
                 }
               ]
             }
