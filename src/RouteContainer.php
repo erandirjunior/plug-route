@@ -44,7 +44,7 @@ class RouteContainer
 			'route' 	    => $route,
 			'callback' 	    => is_string($callback) ? $this->namespace.$callback : $callback,
 			'name'		    => $this->name,
-			'middleware'	=> [],
+			'middlewares'	=> [],
 		];
 	}
 
@@ -66,7 +66,7 @@ class RouteContainer
 	public function setMiddleware(array $middlewares)
 	{
 		foreach ($middlewares as $middleware) {
-			$this->routes[$this->typeMethod][$this->index]['middleware'][] = $middleware;
+			$this->routes[$this->typeMethod][$this->index]['middlewares'][] = $middleware;
 		}
 	}
 
@@ -93,8 +93,8 @@ class RouteContainer
 
 	private function cacheMiddlewareIfExists($route)
 	{
-		if (!empty($route['middleware'])) {
-			foreach ($route['middleware'] as $middleware) {
+		if (!empty($route['middlewares'])) {
+			foreach ($route['middlewares'] as $middleware) {
 				$this->middleware[] = $middleware;
 			}
 		}
@@ -196,7 +196,7 @@ class RouteContainer
 			'route' 		=> $this->prefix.$route,
 			'callback' 		=> is_string($callback) ? $this->namespace.$callback : $callback,
 			'name'		    => $this->name,
-			'middleware'	=> [],
+			'middlewares'	=> [],
 		];
 	}
 

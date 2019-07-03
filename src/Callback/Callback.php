@@ -18,8 +18,8 @@ class Callback
 
     public function handleCallback($route)
     {
-		if (!empty($route['middleware'])) {
-			$this->callMiddleware($route['middleware']);
+		if (!empty($route['middlewares'])) {
+			$this->callMiddleware($route['middlewares']);
 		}
 
 		if (is_callable($route['callback'])) {
