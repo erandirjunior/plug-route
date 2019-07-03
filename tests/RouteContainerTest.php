@@ -15,8 +15,9 @@ final class RouteContainerTest extends TestCase
 				'route' => '/test',
                 'callback' => 'Namespace\MyClass@method',
                 'name' => null,
-                'middleware' => [
-					'FirstMiddleware', 'SecondMiddleware',
+                'middlewares' => [
+					0 => 'PlugRoute\Test\Classes\MiddlewareExample',
+					1 => 'OtherMiddleware',
 				],
 			]
 		],
@@ -25,8 +26,9 @@ final class RouteContainerTest extends TestCase
 				'route' => '/test',
                 'callback' => 'Namespace\MyClass@method',
                 'name' => null,
-                'middleware' => [
-					'FirstMiddleware', 'SecondMiddleware',
+                'middlewares' => [
+					0 => 'PlugRoute\Test\Classes\MiddlewareExample',
+					1 => 'OtherMiddleware',
 				],
 			]
 		],
@@ -42,7 +44,7 @@ final class RouteContainerTest extends TestCase
 				'route' => '/cars',
 				'callback' => 'Class@method',
 				'name' => null,
-				'middleware' => [],
+				'middlewares' => [],
 			]
 		],
 		'POST' => [
@@ -50,7 +52,7 @@ final class RouteContainerTest extends TestCase
 				'route' => '/cars',
 				'callback' => 'Class@method',
 				'name' => null,
-				'middleware' => [],
+				'middlewares' => [],
 			]
 		],
 		'PUT' => [
@@ -58,7 +60,7 @@ final class RouteContainerTest extends TestCase
 				'route' => '/cars',
 				'callback' => 'Class@method',
 				'name' => null,
-				'middleware' => [],
+				'middlewares' => [],
 			]
 		],
 		'DELETE' => [
@@ -66,7 +68,7 @@ final class RouteContainerTest extends TestCase
 				'route' => '/cars',
 				'callback' => 'Class@method',
 				'name' => null,
-				'middleware' => [],
+				'middlewares' => [],
 			]
 		],
 		'PATCH' => [
@@ -74,7 +76,7 @@ final class RouteContainerTest extends TestCase
 				'route' => '/cars',
 				'callback' => 'Class@method',
 				'name' => null,
-				'middleware' => [],
+				'middlewares' => [],
 			]
 		],
 		'OPTIONS' => [
@@ -82,7 +84,7 @@ final class RouteContainerTest extends TestCase
 				'route' => '/cars',
 				'callback' => 'Class@method',
 				'name' => null,
-				'middleware' => [],
+				'middlewares' => [],
 			]
 		],
 	];
@@ -120,101 +122,175 @@ final class RouteContainerTest extends TestCase
         $this->assertEquals($this->simpleExpectedResponse, $this->instance->getRoutes());
     }
 
-    public function testAnyRoute()
-    {
-        $this->instance->any('/cars', 'Class@method');
+	public function testAnyRoute()
+	{
+		$this->instance->any('/cars', 'Class@method');
 
-        $this->assertEquals($this->simpleExpectedResponse, $this->instance->getRoutes());
-    }
+		$this->assertEquals($this->simpleExpectedResponse, $this->instance->getRoutes());
+	}
 
-    public function testRouteNamed()
-    {
-        $this->instance->get('/', 'Class@method')->name('home');
+	public function testRouteNamed()
+	{
+		$this->instance->get('/', 'Class@method')->name('home');
 
-        $this->assertEquals($this->instance->getNamedRoute(), ['home' => '/']);
-    }
+		$this->assertEquals($this->instance->getNamedRoute(), ['home' => '/']);
+	}
 
-    public function testMiddleware()
-    {
-        $this->instance->get('/test', 'Namespace\MyClass@method')->middleware(['FirstMiddleware', 'SecondMiddleware']);
-        $this->instance->post('/test', 'Namespace\MyClass@method')->middleware(['FirstMiddleware', 'SecondMiddleware']);
+	public function testMiddleware()
+	{
+		$middlewares = [
+			'PlugRoute\Test\Classes\MiddlewareExample',
+			'OtherMiddleware',
+		];
+
+		$this->instance->get('/test', 'Namespace\MyClass@method')->middleware($middlewares);
+		$this->instance->post('/test', 'Namespace\MyClass@method')->middleware($middlewares);
 
 
-        $this->assertEquals($this->complicatedExpectedResponse, $this->instance->getRoutes());
-    }
+		$this->assertEquals($this->complicatedExpectedResponse, $this->instance->getRoutes());
+	}
 
-    public function testGroupWithMiddlewareAndNamespace()
-    {
-        $head = [
-            'namespace' => 'Namespace',
-            'middleware' => [
-                'FirstMiddleware',
-                'SecondMiddleware',
-            ]
-        ];
-        $this->instance->group($head, function ($route) {
-            $route->get('/test', '\MyClass@method');
-            $route->post('/test', '\MyClass@method');
-        });
+	public function testGroupWithMiddlewareAndNamespace()
+	{
+		$middlewares = [
+			'PlugRoute\Test\Classes\MiddlewareExample',
+			'OtherMiddleware',
+		];
 
-        $this->assertEquals($this->instance->getRoutes(), $this->complicatedExpectedResponse);
-    }
+		$head = [
+			'namespace' => 'Namespace',
+			'middlewares' => $middlewares
+		];
+		$this->instance->group($head, function ($route) {
+			$route->get('/test', '\MyClass@method');
+			$route->post('/test', '\MyClass@method');
+		});
 
-    public function testErrorRoute()
-    {
-        $this->instance->notFound('MyClass@method');
+		$this->assertEquals($this->instance->getRoutes(), $this->complicatedExpectedResponse);
+	}
 
-        $this->assertEquals($this->instance->getNotFound(), ['callback' => 'MyClass@method']);
-    }
+	public function testErrorRoute()
+	{
+		$this->instance->notFound('MyClass@method');
 
-    public function testErrorRouteDeprecated()
-    {
-        $this->instance->notFound('MyClass@method');
+		$this->assertEquals($this->instance->getNotFound(), ['callback' => 'MyClass@method']);
+	}
 
-        $this->assertEquals(['callback' => 'MyClass@method'], $this->instance->getNotFound());
-    }
+	public function testErrorRouteDeprecated()
+	{
+		$this->instance->notFound('MyClass@method');
 
-    public function testDuplicateRoute()
-    {
-        $this->instance->get('/', 'Class@method');
-        $this->instance->get('/', 'MyClass@show');
+		$this->assertEquals(['callback' => 'MyClass@method'], $this->instance->getNotFound());
+	}
 
-        $expected = [
-            'GET' => [
-                0 => [
-                    'route' => '/',
-                    'callback' => 'MyClass@show',
-                    'name' => null,
-                    'middleware' => [],
-                ]
-            ],
-            'POST' => [],
-            'PUT' => [],
-            'DELETE' => [],
-            'PATCH' => [],
-            'OPTIONS' => [],
-        ];
+	public function testDuplicateRoute()
+	{
+		$this->instance->get('/', 'Class@method');
+		$this->instance->get('/', 'MyClass@show');
 
-        $this->assertEquals($expected, $this->instance->getRoutes());
-    }
+		$expected = [
+			'GET' => [
+				0 => [
+					'route' => '/',
+					'callback' => 'MyClass@show',
+					'name' => null,
+					'middlewares' => [],
+				]
+			],
+			'POST' => [],
+			'PUT' => [],
+			'DELETE' => [],
+			'PATCH' => [],
+			'OPTIONS' => [],
+		];
 
-    public function testMatch()
-    {
-        $headers = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'DELETE', 'OPTIONS'];
-        $this->instance->match($headers, '/cars', 'Class@method');
+		$this->assertEquals($expected, $this->instance->getRoutes());
+	}
 
-        $this->assertEquals($this->simpleExpectedResponse, $this->instance->getRoutes());
-    }
+	public function testMatch()
+	{
+		$headers = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'DELETE', 'OPTIONS'];
+		$this->instance->match($headers, '/cars', 'Class@method');
 
-    public function testNamespace()
-    {
-        $this->instance->namespace('Namespace\\', function ($route) {
-            $route->group(['middleware' => ['FirstMiddleware', 'SecondMiddleware']], function($route) {
-                $route->get('/test', 'MyClass@method');
-                $route->post('/test', 'MyClass@method');
-            });
-        });
+		$this->assertEquals($this->simpleExpectedResponse, $this->instance->getRoutes());
+	}
 
-        $this->assertEquals($this->complicatedExpectedResponse, $this->instance->getRoutes());
-    }
+	public function testNamespace()
+	{
+		$middlewares = [
+			'PlugRoute\Test\Classes\MiddlewareExample',
+			'OtherMiddleware',
+		];
+
+		$this->instance->namespace('Namespace\\', function ($route) use ($middlewares) {
+			$route->group(['middlewares' => $middlewares], function($route) {
+				$route->get('/test', 'MyClass@method');
+				$route->post('/test', 'MyClass@method');
+			});
+		});
+
+		$this->assertEquals($this->complicatedExpectedResponse, $this->instance->getRoutes());
+	}
+
+	public function testJsonRoute()
+	{
+		$path = dirname(__DIR__).'/examples/routes.json';
+
+		$this->instance->loadFromJson($path);
+
+		$expected = [
+			'GET' => [
+				0 => [
+					'route' => '/json-test',
+					'callback' => 'PlugRoute\Example\Home@example',
+					'name' => 'json',
+					'middlewares' => [],
+				],
+				1 => [
+					'route' => '/json/{anything}',
+					'callback' => 'PlugRoute\Example\Home@anything',
+					'name' => null,
+					'middlewares' => [
+						"Middleware1",
+						"Middleware2"
+					]
+				],
+				2 => [
+					'route' => '/sports/xadrez',
+					'callback' => 'PlugRoute\Example\Home@rankingXadrez',
+					'name' => null,
+					'middlewares' => [
+						0 => "Middleware1",
+						1 => "Middleware2"
+					]
+				],
+				3 => [
+					'route' => '/sports/f1/ranking',
+					'callback' => 'PlugRoute\Example\Home@rankingF1',
+					'name' => null,
+					'middlewares' => [
+						0 => "Middleware1",
+						1 => "Middleware2"
+					]
+				],
+				4 => [
+					'route' => '/sports/soccer/champions-league',
+					'callback' => 'PlugRoute\Example\Home@rankingChampions',
+					'name' => null,
+					'middlewares' => [
+						0 => "Middleware1",
+						1 => "Middleware2",
+						2 => "MiddlewareSoccer"
+					]
+				]
+			],
+			'POST' => [],
+			'PUT' => [],
+			'DELETE' => [],
+			'PATCH' => [],
+			'OPTIONS' => []
+		];
+
+		$this->assertEquals($expected, $this->instance->getRoutes());
+	}
 }

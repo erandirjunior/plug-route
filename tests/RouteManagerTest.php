@@ -10,6 +10,7 @@ use PlugRoute\PlugRoute;
 use PlugRoute\RouteContainer;
 use PlugRoute\RouteManager;
 use PlugRoute\SimpleRoute;
+use PlugRoute\Test\Classes\MiddlewareExample;
 use PlugRoute\Test\Classes\Request;
 
 final class RouteManagerTest extends TestCase
@@ -53,9 +54,9 @@ final class RouteManagerTest extends TestCase
 
 		$this->instance = new RouteManager($container, $request, $simple, $dynamic);
 
-		$expected = $this->instance->run();
+		$actual = $this->instance->run();
 
-		$this->assertEquals($expected, 10);
+		$this->assertEquals(10, $actual);
     }
 
 	/**
@@ -114,5 +115,25 @@ final class RouteManagerTest extends TestCase
 		$expected = $this->instance->run();
 
 		$this->assertEquals($expected, 10);
+    }
+
+	public function testMiddlewareFLow()
+	{
+		$container = new RouteContainer();
+
+		$container->addRoute('GET', '/{test}', function(\PlugRoute\Http\Request $request) {
+			return $request->input('test');
+		})->setMiddleware([MiddlewareExample::class]);
+
+		$request = \PlugRoute\Test\Classes\RequestCreator::createDynamic();
+		$simple = new SimpleRoute();
+		$dynamic = new DynamicRoute();
+
+
+		$this->instance = new RouteManager($container, $request, $simple, $dynamic);
+
+		$actual = $this->instance->run();
+
+		$this->assertEquals('ok', $actual);
     }
 }

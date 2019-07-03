@@ -95,7 +95,7 @@ final class PlugRouteTest extends TestCase
 
 		$route = new PlugRoute(new RouteContainer() ,\PlugRoute\Test\Classes\RequestCreator::createDynamic());
 
-		$route->group(['middleware' => [MiddlewareMistake::class]], function($route) {
+		$route->group(['middlewares' => [MiddlewareMistake::class]], function($route) {
 			$route->get('/{test}', 'PlugRoute\Test\Classes\Home@test');
 		});
 
