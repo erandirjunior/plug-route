@@ -87,7 +87,7 @@ class DynamicRoute implements Router
 			$strToArray	= PlugHelper::stringToArray($v, ':');
 			$value      = $strToArray ? $strToArray[0] : $v;
 
-			if (!empty($matches[$k])) {
+			if (isset($matches[$k])) {
 				$this->urlParameters[$value] = $matches[$k];
 			}
 		}
