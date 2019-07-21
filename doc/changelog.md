@@ -6,6 +6,7 @@
 * Added new examples
 * Rename key name route group
 * Added new tests
+* Update documentation
 
 ### v3.3
 * Added redirect route
