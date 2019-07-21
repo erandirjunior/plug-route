@@ -68,6 +68,7 @@ $route->get('people/{id:\d+}', function(\PlugRoute\Http\Request $request) {
 ```
 
 #### Redirecting
+***$code*** is optional
 ```php
 $route->redirect($from, $to, $code);
 ```
@@ -107,11 +108,6 @@ $route->group(['namespace' => 'MyNamespace'], function($route) {
 $route->get($route, $callback)->name('home');
 ``` 
 
-#### Redirect route
-```php
-$route->redirect('/test/redirect', '/');
-```
-
 #### Middlewares
 > Implementing a simple middleware
 ```php
@@ -129,9 +125,13 @@ $route->group(['middlewares' => [\Namespace\YOUR_MIDDLWARE::class], function($ro
 
 **The middlewares should implement the PlugRoute\Middleware\PlugRouteMiddleware interface and can return a Request data type** 
 
-#### Json Routes
+#### JSON Route
 
 > Simple route
+```php
+$route->loadFromJson($routePath);
+```
+
 ```json
 {
     "routes": [
@@ -168,6 +168,6 @@ $route->group(['middlewares' => [\Namespace\YOUR_MIDDLWARE::class], function($ro
 }
 ```
 
-**Important: see the more examples [here](../examples)**
+**Important: access to see the more examples [here](../examples)**
 
 [previous](installation.md) | [next](request.md)
