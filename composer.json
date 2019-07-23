@@ -9,7 +9,7 @@
             "email": "aefs12junior@gmail.com"
         }
     ],
-    "version" : "v3.3",
+    "version" : "v3.4",
     "require": {
         "php": ">=7.1",
         "erandir/plug-http": "v1.6"
@@ -21,7 +21,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "PlugRoute\\Test\\": "tests/"
+            "PlugRoute\\Test\\": "tests/",
+            "PlugRoute\\Example\\": "examples/"
         }
     },
     "require-dev": {

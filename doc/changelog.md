@@ -1,5 +1,13 @@
 # Changelog
 
+### v3.4
+* Added method do load routes from json
+* Fixed bug when parameter has value equal 0
+* Added new examples
+* Rename key name route group
+* Added new tests
+* Update documentation
+
 ### v3.3
 * Added redirect route
 * Rename Route class to RouteContainer

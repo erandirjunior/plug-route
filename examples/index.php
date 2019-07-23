@@ -73,4 +73,9 @@ $route->group(['prefix' => '/department', 'middlewares' => [OtherMiddleware::cla
 
 $route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
 
+$route->loadFromJson('./routes.json');
+
 $route->on();
+
+
+
