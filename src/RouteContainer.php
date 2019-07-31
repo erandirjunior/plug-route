@@ -230,8 +230,8 @@ class RouteContainer
 
 	private function removeActualMiddleware($route)
 	{
-		if (!empty($route['middleware'])) {
-			foreach ($route['middleware'] as $middleware) {
+        if (!empty($route['middlewares'])) {
+            foreach ($route['middlewares'] as $middleware) {
 				array_pop($this->middleware);
 			}
 		}
