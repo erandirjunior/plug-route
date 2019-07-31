@@ -30,5 +30,4 @@ class RequestCreator extends \PlugHttp\Request
 	{
 		return new Request($content, $get, $file, $server);
 	}
-
 }
