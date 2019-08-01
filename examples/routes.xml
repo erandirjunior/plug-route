@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes>
+    <route>
+        <path>/xml</path>
+        <method>GET</method>
+        <callback>App\\XMLClass@xmlMethod</callback>
+    </route>
+
+    <route>
+        <group>
+            <prefix>/xml-prefix</prefix>
+            <namespace>App</namespace>
+            <middlewares>
+                <middleware>1</middleware>
+                <middleware>2</middleware>
+                <middleware>3</middleware>
+            </middlewares>
+            <route>
+                <path>/test</path>
+                <method>GET</method>
+                <callback>\\App\\MyClass@myMethod</callback>
+            </route>
+            <route>
+                <group>
+                    <prefix>/two</prefix>
+                    <namespace>\\Controller</namespace>
+                    <middlewares>
+                        <middleware>Middleware1</middleware>
+                        <middleware>Middleware1</middleware>
+                        <middleware>Middleware1</middleware>
+                    </middlewares>
+                    <route>
+                        <path>/test</path>
+                        <method>GET</method>
+                        <callback>App\\MyClass@myMethod</callback>
+                    </route>
+                </group>
+            </route>
+        </group>
+    </route>
+</routes>

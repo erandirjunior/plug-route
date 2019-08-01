@@ -153,11 +153,50 @@ class RouteContainer
 		}
 	}
 
+	public function loadRoutesFromXML($path)
+	{
+		$content = simplexml_load_file($path);
+
+		foreach ($content as $routes) {
+			if (!empty($routes->group)) {
+				$this->handleGroupXMLRoutes($routes);
+
+				continue;
+			}
+
+			$this->handleSimpleXMLRoutes($routes);
+		}
+	}
+
 	public function handleSimpleJsonRoutes($route)
 	{
 		$this->addRoute($route['method'], $route['path'], $route['callback']);
 
 		$this->setExtrasOfRoute($route);
+	}
+
+	public function handleSimpleXMLRoutes($route)
+	{
+	    $method     = $route->method->__toString();
+	    $path       = $route->path->__toString();
+	    $callback   = $route->callback->__toString();
+
+		$this->addRoute($method, $path, $callback);
+
+
+        $extras = [];
+
+        if (!empty($route->name)) {
+            $extras['name'] = $route->name->__toString();
+        }
+
+        if (!empty($route->middlewares)) {
+            foreach ($route->middlewares->middleware as $middleware) {
+                $extras['middlewares'][] = $middleware->__toString();
+            }
+        }
+
+        $this->setExtrasOfRoute($extras);
 	}
 
 	public function handleGroupJsonRoutes($route)
@@ -177,6 +216,41 @@ class RouteContainer
 		}
 
 		$this->afterGroup($route['group']);
+	}
+
+	public function handleGroupXMLRoutes($route)
+	{
+	    $group = [];
+
+	    if (!empty($route->group->prefix)) {
+            $group['prefix'] = $route->group->prefix->__toString();
+        }
+
+	    if (!empty($route->group->namespace)) {
+            $group['namespace'] = $route->group->namespace->__toString();
+        }
+
+	    if (!empty($route->group->middlewares)) {
+            foreach ($route->group->middlewares->middleware as $middleware) {
+                $group['middlewares'][] = $middleware->__toString();
+            }
+        }
+
+		$this->beforeGroup($group);
+
+        foreach ($route->group->route as $routeGroup) {
+            if (isset($routeGroup->group)) {
+                $data = $this->mountRouteXML($routeGroup->group);
+
+                $this->handleGroupXMLRoutes($data);
+
+                continue;
+            }
+
+            $this->handleSimpleXMLRoutes($routeGroup);
+        }
+
+        $this->afterGroup($group);
 	}
 
 	public function addMultipleRoutes(array $types = [], string $route, $callback)
@@ -270,9 +344,69 @@ class RouteContainer
 
 		$routeMounted['group']['routes'] = [];
 
-		foreach ($array['group']['routes'][0] as $key => $value) {
-			$routeMounted['group']['routes'][0][$key] = $value;
+		foreach ($array['group']['routes'] as $key => $value) {
+			$routeMounted['group']['routes'][$key] = $value;
 		}
+
+		return $routeMounted;
+	}
+
+	private function mountRouteXML($array)
+	{
+		$routeMounted = new \stdClass();
+
+		if (!empty($array->prefix)) {
+			$routeMounted->group->prefix = $array->prefix;
+		}
+
+		if (!empty($array->middlewares)) {
+		    foreach ($array->middlewares->middleware as $middleware) {
+                $routeMounted->group->middlewares->middleware = $middleware;
+            }
+		}
+
+		if (!empty($array->namespace)) {
+			$routeMounted->group->namespace = $array->namespace;
+		}
+
+		if (is_array($array->route)) {
+            $middlewares = [];
+
+            if ($array->route->middlewares) {
+                foreach ($array->route->middlewares->middleware as $middleware) {
+                    $middlewares[] = $middleware;
+                }
+            }
+
+		    foreach ($array->route as $key => $route) {
+                $routeMounted->group->route[$key]->path = $route->path;
+                $routeMounted->group->route[$key]->method = $route->method;
+                $routeMounted->group->route[$key]->callback = $route->callback;
+                $routeMounted->group->route[$key]->middlewares->middleware = $route->middlewares;
+            }
+        }
+
+		if (is_object($array->route)) {
+            $middlewares = [];
+
+            if ($array->route->middlewares) {
+                foreach ($array->route->middlewares->middleware as $middleware) {
+                    $middlewares[] = $middleware;
+                }
+            }
+
+            $routeMounted->group->route->path = $array->route->path;
+            $routeMounted->group->route->method = $array->route->method;
+            $routeMounted->group->route->callback = $array->route->callback;
+            $routeMounted->group->route->middlewares->middleware = $array->route->middlewares;
+
+            /*$routeMounted->group->routes[] =  [
+                'path' => $array->route->path->__toString(),
+                'method' => $array->route->method->__toString(),
+                'callback' => $array->route->callback->__toString(),
+                'middlewares' => $middlewares,*/
+            //];
+        }
 
 		return $routeMounted;
 	}
