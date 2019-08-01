@@ -8,6 +8,7 @@ use \PlugRoute\PlugRoute;
 use \PlugRoute\Http\Request;
 use \PlugRoute\RouteContainer;
 use \PlugRoute\Http\RequestCreator;
+use \PlugRoute\Example\{A, B, C, D, E};
 
 /**** CORS ****/
 header('Access-Control-Allow-Origin: *');
@@ -75,7 +76,8 @@ $route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
 
 $route->loadFromJson('./routes.json');
 
+$route->get('/injection', function () {
+    return (new A(new B(new C())))->method(new D(new E()));
+});
+
 $route->on();
-
-
-

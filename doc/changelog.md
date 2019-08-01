@@ -1,5 +1,11 @@
 # Changelog
 
+### v3.5
+* Added new example
+* Update dependencies
+* Fix bug on clear middlewares
+* Fix bug on json routes
+
 ### v3.4
 * Added method do load routes from json
 * Fixed bug when parameter has value equal 0
