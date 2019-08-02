@@ -270,8 +270,10 @@ class RouteContainer
 
 		$routeMounted['group']['routes'] = [];
 
-		foreach ($array['group']['routes'][0] as $key => $value) {
-			$routeMounted['group']['routes'][0][$key] = $value;
+		foreach ($array['group']['routes'] as $key => $value) {
+			foreach ($value as $k => $v) {
+				$routeMounted['group']['routes'][$key][$k] = $v;
+			}
 		}
 
 		return $routeMounted;
