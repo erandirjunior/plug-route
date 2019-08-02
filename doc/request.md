@@ -20,4 +20,4 @@ $request->redirectWithName('/home', 301);
 
 ### See complete methods [HERE](https://github.com/erandirjunior/plug-http/blob/master/doc/request.md)
 
-[previous](defining-routes.md)
+[previous](defining-routes.md) | [next](response.md)

@@ -205,9 +205,7 @@ class RouteContainer
 
 		foreach ($route['group']['routes'] as $routeGroup) {
 			if (isset($routeGroup['group'])) {
-				$data = $this->mountRouteJson($routeGroup);
-
-				$this->handleGroupJsonRoutes($data);
+				$this->handleGroupJsonRoutes($routeGroup);
 
 				continue;
 			}
@@ -329,31 +327,6 @@ class RouteContainer
 		}
 
 		return $array;
-	}
-
-	private function mountRouteJson($array)
-	{
-		$routeMounted = [];
-
-		if (!empty($array['group']['prefix'])) {
-			$routeMounted['group']['prefix'] = $array['group']['prefix'];
-		}
-
-		if (!empty($array['group']['middlewares'])) {
-			$routeMounted['group']['middlewares'] = $array['group']['middlewares'];
-		}
-
-		if (!empty($array['group']['namespace'])) {
-			$routeMounted['group']['namespace'] = $array['group']['namespace'];
-		}
-
-		$routeMounted['group']['routes'] = [];
-
-		foreach ($array['group']['routes'] as $key => $value) {
-			$routeMounted['group']['routes'][$key] = $value;
-		}
-
-		return $routeMounted;
 	}
 
 	private function setExtrasOfRoute($extras)
