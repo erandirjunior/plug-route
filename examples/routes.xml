@@ -11,28 +11,33 @@
             <prefix>/xml-prefix</prefix>
             <namespace>App</namespace>
             <middlewares>
-                <middleware>1</middleware>
-                <middleware>2</middleware>
-                <middleware>3</middleware>
+                <middleware>MiddlewareExampleOne</middleware>
+                <middleware>MiddlewareExampleTwo</middleware>
+                <middleware>MiddlewareExampleThree</middleware>
             </middlewares>
             <route>
                 <path>/test</path>
                 <method>GET</method>
-                <callback>\\App\\MyClass@myMethod</callback>
+                <callback>\\Controllers\\MyClass@myMethod</callback>
             </route>
             <route>
                 <group>
-                    <prefix>/two</prefix>
-                    <namespace>\\Controller</namespace>
+                    <prefix>/categories</prefix>
+                    <namespace>\\Controllers</namespace>
                     <middlewares>
-                        <middleware>Middleware1</middleware>
-                        <middleware>Middleware1</middleware>
-                        <middleware>Middleware1</middleware>
+                        <middleware>MiddlewareOne</middleware>
+                        <middleware>MiddlewareTwo</middleware>
+                        <middleware>MiddlewareThree</middleware>
                     </middlewares>
                     <route>
-                        <path>/test</path>
+                        <path>/a</path>
                         <method>GET</method>
                         <callback>App\\MyClass@myMethod</callback>
+                    </route>
+                    <route>
+                        <path>/b</path>
+                        <method>GET</method>
+                        <callback>App\\MyClass@myMethod2</callback>
                     </route>
                 </group>
             </route>
