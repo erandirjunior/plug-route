@@ -116,6 +116,11 @@ class PlugRoute
 		$this->route->loadRoutesFromJson($json);
     }
 
+	public function loadFromXML($xml)
+	{
+		$this->route->loadRoutesFromXML($xml);
+    }
+
     private function addNamedRoute()
 	{
 		$this->request->setRouteNamed($this->getNamedRoute());
