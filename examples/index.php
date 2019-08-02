@@ -77,24 +77,13 @@ $route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
 $route->loadFromJson('./routes.json');
 
 $route->get('/contracts', '\NAMESPACE\YOUR_CLASS@method');
-/*$route->get('/injection', function () {
+
+$route->get('/injection', function () {
     return (new A(new B(new C())))->method(new D(new E()));
-});*/
-
-//$route->on();
-
-$xml = simplexml_load_file('routes.xml');
-
-/*var_dump($xml[0]->route->path);
-
-foreach ($xml[0] as $x) {
-    foreach ($x as $a) {
-        var_dump($a->{0});
-    }
-}*/
+});
 
 $route->loadFromXML('routes.xml');
 
 $route->get('/groups', '\NAMESPACE\YOUR_CLASS@method');
 
-var_dump($route->getRoutes());
+$route->on();

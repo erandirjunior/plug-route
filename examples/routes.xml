@@ -3,36 +3,37 @@
     <route>
         <path>/xml</path>
         <method>GET</method>
-        <callback>App\\XMLClass@xmlMethod</callback>
+        <callback>PlugRoute\Example\Home@example</callback>
     </route>
 
     <route>
         <group>
-            <prefix>/xml-prefix</prefix>
-            <namespace>App</namespace>
+            <prefix>/sports</prefix>
+            <namespace>PlugRoute</namespace>
             <middlewares>
-                <middleware>1</middleware>
-                <middleware>2</middleware>
-                <middleware>3</middleware>
+                <middleware>OtherMiddleware</middleware>
             </middlewares>
             <route>
-                <path>/test</path>
+                <path>/boxe</path>
                 <method>GET</method>
-                <callback>\\App\\MyClass@myMethod</callback>
+                <callback>\Example\Home@boxe</callback>
             </route>
             <route>
                 <group>
-                    <prefix>/two</prefix>
-                    <namespace>\\Controller</namespace>
+                    <prefix>/olympics</prefix>
+                    <namespace>\Example</namespace>
                     <middlewares>
-                        <middleware>Middleware1</middleware>
-                        <middleware>Middleware1</middleware>
-                        <middleware>Middleware1</middleware>
+                        <middleware>OtherMiddleware</middleware>
                     </middlewares>
                     <route>
-                        <path>/test</path>
+                        <path>/golf</path>
                         <method>GET</method>
-                        <callback>App\\MyClass@myMethod</callback>
+                        <callback>\Home@golf</callback>
+                    </route>
+                    <route>
+                        <path>/judo</path>
+                        <method>GET</method>
+                        <callback>\Home@judo</callback>
                     </route>
                 </group>
             </route>

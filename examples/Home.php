@@ -8,7 +8,7 @@ class Home
 {
 	public function example()
 	{
-		echo 'Teste route json!';
+		echo 'Teste route!';
 	}
 
 	public function anything(Request $request)
@@ -29,5 +29,20 @@ class Home
 	public function rankingXadrez()
 	{
 		echo 'Ranking Xadrez!';
+	}
+
+	public function boxe()
+	{
+		echo 'Boxe method!';
+	}
+
+	public function golf()
+	{
+		echo 'Golf method!';
+	}
+
+	public function judo()
+	{
+		echo 'Judo method!';
 	}
 }
