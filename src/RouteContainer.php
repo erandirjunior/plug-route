@@ -183,7 +183,6 @@ class RouteContainer
 
 		$this->addRoute($method, $path, $callback);
 
-
         $extras = [];
 
         if (!empty($route->name)) {
