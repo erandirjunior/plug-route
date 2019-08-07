@@ -153,11 +153,49 @@ class RouteContainer
 		}
 	}
 
+	public function loadRoutesFromXML($path)
+	{
+		$content = simplexml_load_file($path);
+
+		foreach ($content as $routes) {
+			if (!empty($routes->group)) {
+				$this->handleGroupXMLRoutes($routes);
+
+				continue;
+			}
+
+			$this->handleSimpleXMLRoutes($routes);
+		}
+	}
+
 	public function handleSimpleJsonRoutes($route)
 	{
 		$this->addRoute($route['method'], $route['path'], $route['callback']);
 
 		$this->setExtrasOfRoute($route);
+	}
+
+	public function handleSimpleXMLRoutes($route)
+	{
+	    $method     = $route->method->__toString();
+	    $path       = $route->path->__toString();
+	    $callback   = $route->callback->__toString();
+
+		$this->addRoute($method, $path, $callback);
+
+        $extras = [];
+
+        if (!empty($route->name)) {
+            $extras['name'] = $route->name->__toString();
+        }
+
+        if (!empty($route->middlewares)) {
+            foreach ($route->middlewares->middleware as $middleware) {
+                $extras['middlewares'][] = $middleware->__toString();
+            }
+        }
+
+        $this->setExtrasOfRoute($extras);
 	}
 
 	public function handleGroupJsonRoutes($route)
@@ -166,9 +204,7 @@ class RouteContainer
 
 		foreach ($route['group']['routes'] as $routeGroup) {
 			if (isset($routeGroup['group'])) {
-				$data = $this->mountRouteJson($routeGroup);
-
-				$this->handleGroupJsonRoutes($data);
+				$this->handleGroupJsonRoutes($routeGroup);
 
 				continue;
 			}
@@ -177,6 +213,46 @@ class RouteContainer
 		}
 
 		$this->afterGroup($route['group']);
+	}
+
+	public function handleGroupXMLRoutes($route)
+	{
+	    $group = $this->mountXMLGroupParameters($route);
+
+		$this->beforeGroup($group);
+
+        foreach ($route->group->route as $routeGroup) {
+            if (isset($routeGroup->group)) {
+                $this->handleGroupXMLRoutes($routeGroup);
+
+                continue;
+            }
+
+            $this->handleSimpleXMLRoutes($routeGroup);
+        }
+
+        $this->afterGroup($group);
+	}
+
+    private function mountXMLGroupParameters($route)
+    {
+        $group = [];
+
+        if (!empty($route->group->prefix)) {
+            $group['prefix'] = $route->group->prefix->__toString();
+        }
+
+        if (!empty($route->group->namespace)) {
+            $group['namespace'] = $route->group->namespace->__toString();
+        }
+
+        if (!empty($route->group->middlewares)) {
+            foreach ($route->group->middlewares->middleware as $middleware) {
+                $group['middlewares'][] = $middleware->__toString();
+            }
+        }
+
+        return $group;
 	}
 
 	public function addMultipleRoutes(array $types = [], string $route, $callback)
@@ -250,33 +326,6 @@ class RouteContainer
 		}
 
 		return $array;
-	}
-
-	private function mountRouteJson($array)
-	{
-		$routeMounted = [];
-
-		if (!empty($array['group']['prefix'])) {
-			$routeMounted['group']['prefix'] = $array['group']['prefix'];
-		}
-
-		if (!empty($array['group']['middlewares'])) {
-			$routeMounted['group']['middlewares'] = $array['group']['middlewares'];
-		}
-
-		if (!empty($array['group']['namespace'])) {
-			$routeMounted['group']['namespace'] = $array['group']['namespace'];
-		}
-
-		$routeMounted['group']['routes'] = [];
-
-		foreach ($array['group']['routes'] as $key => $value) {
-			foreach ($value as $k => $v) {
-				$routeMounted['group']['routes'][$key][$k] = $v;
-			}
-		}
-
-		return $routeMounted;
 	}
 
 	private function setExtrasOfRoute($extras)

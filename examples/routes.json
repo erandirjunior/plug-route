@@ -52,6 +52,11 @@
                   "path": "/champions-league",
                   "method": "GET",
                   "callback": "Example\\Home@rankingChampions"
+                },
+                {
+                  "path": "/europe-league",
+                  "method": "GET",
+                  "callback": "Example\\Home@rankingEurope"
                 }
               ]
             }
