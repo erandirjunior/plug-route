@@ -3,7 +3,11 @@
     <route>
         <path>/xml</path>
         <method>GET</method>
+        <name>xml</name>
         <callback>PlugRoute\Example\Home@example</callback>
+        <middlewares>
+            <middleware>OtherMiddleware</middleware>
+        </middlewares>
     </route>
 
     <route>
