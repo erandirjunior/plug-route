@@ -282,6 +282,69 @@ final class RouteContainerTest extends TestCase
 						1 => "Middleware2",
 						2 => "MiddlewareSoccer"
 					]
+				],
+				5 => [
+					'route' => '/sports/soccer/europe-league',
+					'callback' => 'PlugRoute\Example\Home@rankingEurope',
+					'name' => null,
+					'middlewares' => [
+						0 => "Middleware1",
+						1 => "Middleware2",
+						2 => "MiddlewareSoccer"
+					]
+				]
+			],
+			'POST' => [],
+			'PUT' => [],
+			'DELETE' => [],
+			'PATCH' => [],
+			'OPTIONS' => []
+		];
+
+		$this->assertEquals($expected, $this->instance->getRoutes());
+	}
+
+	public function testXMLRoutes()
+	{
+		$path = dirname(__DIR__).'/examples/routes.xml';
+
+		$this->instance->loadFromXML($path);
+
+		$expected = [
+			'GET' => [
+				0 => [
+					'route' => '/xml',
+					'callback' => 'PlugRoute\Example\Home@example',
+					'name' => 'xml',
+					'middlewares' => [
+						"OtherMiddleware"
+					],
+				],
+				1 => [
+					'route' => '/sports/boxe',
+					'callback' => 'PlugRoute\Example\Home@boxe',
+					'name' => null,
+					'middlewares' => [
+						"OtherMiddleware"
+					]
+				],
+				2 => [
+					'route' => '/sports/olympics/golf',
+					'callback' => 'PlugRoute\Example\Home@golf',
+					'name' => null,
+					'middlewares' => [
+						0 => "OtherMiddleware",
+						1 => "OtherMiddleware"
+					]
+				],
+				3 => [
+					'route' => '/sports/olympics/judo',
+					'callback' => 'PlugRoute\Example\Home@judo',
+					'name' => null,
+					'middlewares' => [
+						0 => "OtherMiddleware",
+						1 => "OtherMiddleware"
+					]
 				]
 			],
 			'POST' => [],
