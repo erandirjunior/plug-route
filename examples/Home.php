@@ -8,7 +8,7 @@ class Home
 {
 	public function example()
 	{
-		echo 'Teste route!';
+		echo 'Test route!';
 	}
 
 	public function anything(Request $request)
