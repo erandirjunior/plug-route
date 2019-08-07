@@ -181,7 +181,7 @@ class RouteContainer
 
 	public function addMultipleRoutes(array $types = [], string $route, $callback)
 	{
-		if (!$types) {
+		if (empty($types)) {
 			$types = array_keys($this->routes);
 		}
 
