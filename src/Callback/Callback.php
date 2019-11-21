@@ -35,7 +35,9 @@ class Callback
             $obj = new $middleware();
 
             if (!($obj instanceof PlugRouteMiddleware)) {
-            	return Error::throwException('Error: your class should implement PlugRouteMiddleware');
+                $message = "Error: the class {$middleware} should implement PlugRouteMiddleware.";
+
+                return Error::throwException($message);
             }
 
             $this->request = $obj->handle($this->request);
