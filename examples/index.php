@@ -12,7 +12,7 @@ use \PlugRoute\Example\{A, B, C, D, E};
 
 /**** CORS ****/
 header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 /**** CORS ****/
 
@@ -66,9 +66,9 @@ $route->group(['prefix' => '/department', 'middlewares' => [OtherMiddleware::cla
 	$route->get('/tecnology', function(Request $request) {
 		$request->redirectToRoute('ti');
 
-		// If you use this library without name a route, without v'irtualhost or php server built-in
+		// If you use this library without name a route, without virtualhost or php server built-in
 		// use the redirect method
-		//$request->redirect('http://localhost/plug-route/example/department/it');
+		//$request->redirect('http://localhost/plug-route/example/department/ti');
 	});
 });
 
