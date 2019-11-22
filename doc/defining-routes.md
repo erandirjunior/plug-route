@@ -73,6 +73,18 @@ $route->get('people/{id:\d+}', function(\PlugRoute\Http\Request $request) {
 $route->redirect($from, $to, $code);
 ```
 
+#### Named Routes
+> Named routes
+```php
+$route->get($route, $callback)->name('home');
+``` 
+
+#### Middlewares
+> Implementing a simple middleware
+```php
+$route->get($route, $callback)->middleware(['\Namespace\YOUR_MIDDLEWARE']);
+```
+
 #### Route groups
 > Route group
 ```php
@@ -102,18 +114,6 @@ $route->group(['namespace' => 'MyNamespace'], function($route) {
 });
 ```
 
-#### Named Routes
-> Named routes
-```php
-$route->get($route, $callback)->name('home');
-``` 
-
-#### Middlewares
-> Implementing a simple middleware
-```php
-$route->get($route, $callback)->middleware(['\Namespace\YOUR_MIDDLEWARE']);
-```
-
 > Route group with middlewares
 ```php
 $route->group(['middlewares' => [\Namespace\YOUR_MIDDLWARE::class], function($route) {
@@ -129,7 +129,7 @@ $route->group(['middlewares' => [\Namespace\YOUR_MIDDLWARE::class], function($ro
 
 > Simple route
 ```php
-$route->loadFromJson($routePath);
+$route->loadFromJson('route.json');
 ```
 
 ```json
@@ -166,6 +166,47 @@ $route->loadFromJson($routePath);
         }
     ]
 }
+```
+
+#### XML Route
+
+> Simple route
+```php
+$route->loadFromXML('route.xml');
+```
+
+```xml
+<routes>
+    <route>
+        <path>/xml-test</path>
+        <method>GET</method>
+        <name>xml</name>
+        <callback>PlugRoute\Example\Home@example</callback>
+        <middlewares>
+            <middleware>OtherMiddleware</middleware>
+        </middlewares>
+    </route>
+</routes>
+```
+
+> Group route
+```xml
+<routes>
+    <route>
+        <group>
+            <prefix>/sports</prefix>
+            <namespace>PlugRoute</namespace>
+            <middlewares>
+                <middleware>OtherMiddleware</middleware>
+            </middlewares>
+            <route>
+                <path>/boxe</path>
+                <method>GET</method>
+                <callback>\Example\Home@boxe</callback>
+            </route>
+        </group>
+    </route>
+</routes>
 ```
 
 **Important: access to see the more examples [here](../examples)**

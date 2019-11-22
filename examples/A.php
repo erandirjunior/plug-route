@@ -15,6 +15,7 @@ class A
 
     public function method(D $d)
     {
-        echo 'method 1';
+    	echo $this->dependecy->show();
+        echo $d->show();
     }
 }

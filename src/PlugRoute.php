@@ -106,7 +106,7 @@ class PlugRoute
 
 	public function redirect($from, $to, $code = 301)
     {
-        $this->route->addRoute('GET', $from, function (Request $request) use ($to, $code) {
+        $this->route->addRoute('GET', $from, function () use ($to, $code) {
             $this->request->redirect($to, $code);
         });
     }
@@ -114,6 +114,11 @@ class PlugRoute
 	public function loadFromJson($json)
 	{
 		$this->route->loadRoutesFromJson($json);
+    }
+
+	public function loadFromXML($xml)
+	{
+		$this->route->loadRoutesFromXML($xml);
     }
 
     private function addNamedRoute()

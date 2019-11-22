@@ -12,4 +12,9 @@ class D
     {
         $this->dependecy = $e;
     }
+
+	public function show()
+	{
+		echo $this->dependecy->show();
+    }
 }

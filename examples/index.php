@@ -12,7 +12,7 @@ use \PlugRoute\Example\{A, B, C, D, E};
 
 /**** CORS ****/
 header('Access-Control-Allow-Origin: *');
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 /**** CORS ****/
 
@@ -66,9 +66,9 @@ $route->group(['prefix' => '/department', 'middlewares' => [OtherMiddleware::cla
 	$route->get('/tecnology', function(Request $request) {
 		$request->redirectToRoute('ti');
 
-		// If you use this library without name a route, without v'irtualhost or php server built-in
+		// If you use this library without name a route, without virtualhost or php server built-in
 		// use the redirect method
-		//$request->redirect('http://localhost/plug-route/example/department/it');
+		//$request->redirect('http://localhost/plug-route/example/department/ti');
 	});
 });
 
@@ -76,8 +76,14 @@ $route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
 
 $route->loadFromJson('./routes.json');
 
+$route->get('/contracts', '\NAMESPACE\YOUR_CLASS@method');
+
 $route->get('/injection', function () {
     return (new A(new B(new C())))->method(new D(new E()));
 });
+
+$route->loadFromXML('routes.xml');
+
+$route->get('/groups', '\NAMESPACE\YOUR_CLASS@method');
 
 $route->on();

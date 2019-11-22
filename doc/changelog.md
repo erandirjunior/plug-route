@@ -1,5 +1,9 @@
 # Changelog
 
+### v3.6
+* Added xml route
+* Improvements on error messages
+
 ### v3.5
 * Added new example
 * Update dependencies

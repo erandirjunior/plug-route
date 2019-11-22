@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes>
+    <route>
+        <path>/xml</path>
+        <method>GET</method>
+        <name>xml</name>
+        <callback>PlugRoute\Example\Home@example</callback>
+        <middlewares>
+            <middleware>OtherMiddleware</middleware>
+        </middlewares>
+    </route>
+
+    <route>
+        <group>
+            <prefix>/sports</prefix>
+            <namespace>PlugRoute</namespace>
+            <middlewares>
+                <middleware>OtherMiddleware</middleware>
+            </middlewares>
+            <route>
+                <path>/boxe</path>
+                <method>GET</method>
+                <callback>\Example\Home@boxe</callback>
+            </route>
+            <route>
+                <group>
+                    <prefix>/olympics</prefix>
+                    <namespace>\Example</namespace>
+                    <middlewares>
+                        <middleware>OtherMiddleware</middleware>
+                    </middlewares>
+                    <route>
+                        <path>/golf</path>
+                        <method>GET</method>
+                        <callback>\Home@golf</callback>
+                    </route>
+                    <route>
+                        <path>/judo</path>
+                        <method>GET</method>
+                        <callback>\Home@judo</callback>
+                    </route>
+                </group>
+            </route>
+        </group>
+    </route>
+</routes>
