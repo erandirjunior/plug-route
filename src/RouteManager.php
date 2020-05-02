@@ -44,7 +44,7 @@ class RouteManager
 
 		foreach ($this->routes as $route) {
 			$routerObject = $this->dynamicRoute->handle($route['route'], $url);
-			$routeHandled = $routerObject->route();
+			$routeHandled = $routerObject->getRoute();
 			if (ValidateHelper::isEqual($routeHandled, $url)) {
 				$this->setParameters($routerObject->getParameters());
 
