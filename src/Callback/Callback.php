@@ -11,13 +11,17 @@ class Callback
 {
     private $request;
 
+    private $dependencies;
+
     public function __construct(Request $request)
     {
         $this->request 	= $request;
     }
 
-    public function handleCallback($route)
+    public function handleCallback($route, array $dependencies = [])
     {
+        $this->dependencies = $dependencies;
+
 		if (!empty($route['middlewares'])) {
 			$this->callMiddleware($route['middlewares']);
 		}
@@ -101,10 +105,28 @@ class Callback
 				$namespace[] 	= $class->getShortName();
 				$object 		= implode('\\', $namespace);
 				$namespace 		= [];
-				$args[] 		= $object === 'PlugRoute\Http\Request' ? $this->request : new $object();
+				$args[] 		= $this->getInstanceIfNamespaceIsRequest($object);
 			}
 		}
 
 		return $args;
+    }
+
+    private function getInstanceIfNamespaceIsRequest($namespace)
+    {
+        if ($namespace === 'PlugRoute\Http\Request') {
+            return $this->request;
+        }
+
+        return $this->getInstance($namespace);
+    }
+
+    private function getInstance($namespace)
+    {
+        if (array_key_exists($namespace, $this->dependencies)) {
+            return $this->dependencies[$namespace];
+        }
+
+        return new $namespace();
     }
 }
