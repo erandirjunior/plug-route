@@ -3,4 +3,3 @@ composer.phar
 .idea
 composer.lock
 tests/codeCoverage
-docker-compose.yml
