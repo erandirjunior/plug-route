@@ -1,5 +1,12 @@
 # Changelog
 
+### v3.7
+* Added sending injection values
+* Refactory in Dynamic route class
+* Replaced interface Router with abstract class RouterAnalyzer
+* Replaced class name PlugHelper with MatchHelper
+* Removed unnecessary method
+
 ### v3.6
 * Added xml route
 * Improvements on error messages

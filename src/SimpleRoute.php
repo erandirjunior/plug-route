@@ -2,24 +2,20 @@
 
 namespace PlugRoute;
 
-class SimpleRoute implements Router
+class SimpleRoute extends RouteAnalyzer
 {
-	private $route;
+    public function __construct()
+    {
+        $this->parameters = [];
+    }
 
-	public function handle(string $route, string $url)
-	{
-		$this->route = $route;
+    protected function checkIfCanHandleRoute(string $route, string $url)
+    {
+        return true;
+    }
 
-		return $this;
-	}
-
-	public function getParameters()
-	{
-		return [];
-	}
-
-	public function route()
-	{
-		return $this->route;
-	}
+    protected function handleRoute(string $route, string $url)
+    {
+        $this->route = $route;
+    }
 }

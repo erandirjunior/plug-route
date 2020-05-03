@@ -32,11 +32,23 @@ $route->patch($route, $callback);
 $route->options($route, $callback);
 ```
 
-### Working Classes
+#### Working Classes
 ```php
 $route->get('/', '\Path\To\Class@method');
 ```
-**PlugRoute supports dependency injection**
+
+#### Sending dependencies
+> PlugRoute supports dependency injection. But if you wanna define dependencies, you can do it:
+```php
+$myDependencies = [
+    'Namespace\Dependency' => new Namespace\Dependency(
+        new Namespace\OutherDependency();
+    );
+];
+
+$route->on($myDependencies);
+``` 
+**See more in the example folder**
 
 #### Route error
 > Set an action if a route was not found

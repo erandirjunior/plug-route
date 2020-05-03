@@ -126,7 +126,7 @@ class PlugRoute
 		$this->request->setRouteNamed($this->getNamedRoute());
 	}
 
-	public function on()
+	public function on(array $dependencies = [])
 	{
 		$this->addNamedRoute();
 
@@ -135,6 +135,6 @@ class PlugRoute
 
 		$manager = new RouteManager($this->route, $this->request, $simpleRoute, $dynamicRoute);
 
-		echo $manager->run();
+		echo $manager->run($dependencies);
 	}
 }

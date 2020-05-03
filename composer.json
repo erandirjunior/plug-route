@@ -9,7 +9,7 @@
             "email": "aefs12junior@gmail.com"
         }
     ],
-    "version" : "v3.6",
+    "version" : "v3.7",
     "require": {
         "php": ">=7.1",
         "erandir/plug-http": "v1.7"

@@ -2,102 +2,144 @@
 
 namespace PlugRoute;
 
-use PlugRoute\Helpers\PlugHelper;
+use PlugRoute\Helpers\MatchHelper;
 
-class DynamicRoute implements Router
+class DynamicRoute extends RouteAnalyzer
 {
-	private $route;
-
-	private $urlParameters;
+    private $matches;
 
 	private $indentifiers;
 
-	private $router;
+    protected function checkIfCanHandleRoute(string $route, string $url)
+    {
+        $pattern        = '({.+?(?:\:.*?)?})';
+        $this->matches  = MatchHelper::getMatchAll($route, $pattern, 0);
 
-	public function __construct()
-	{
-		$this->route			= '';
-		$this->urlParameters 	= [];
-		$this->indentifiers		= [];
+        return $this->matches;
+    }
+
+    /**
+     * Replace all dynamic values by regex.
+     * @see organizeMatches
+     * @see replace
+     *
+     * set route
+     * @see setRoute
+     *
+     * set dynamic values.
+     * @see getDynamicValues
+     *
+     * @param $route
+     * @param $url
+     * @param $matches
+     */
+    protected function handleRoute(string $route, string $url)
+    {
+        $this->indentifiers = [];
+        $this->route        = $route;
+        $organizedMatches   = $this->organizeMatches($this->matches);
+        $route              = $this->prepareRoute($route, $organizedMatches);
+        $matchCase          = MatchHelper::getMatchCase($url, $route);
+
+        $this->setRouteAndDynamicValuesIfMatchCase($matchCase);
+    }
+
+    private function organizeMatches($matches)
+    {
+        $matchesOrganized = $this->getArrayMatch();
+
+        foreach ($matches as $value) {
+            $valueWithoutKeys       = str_replace(['{', '}'], '', $value);
+            $arrayMatch             = explode(':', $valueWithoutKeys);
+            $this->indentifiers[]   = $arrayMatch[0];
+
+            $this->setRegexIfValueIsOptional(
+                $matchesOrganized,
+                $value,
+                $arrayMatch[1]
+            );
+        }
+
+        return $matchesOrganized;
 	}
 
-	public function handle(string $route, string $url)
-	{
-		$matches = PlugHelper::getMatchAll($route, '({.+?(?:\:.*?)?})');
+    protected function prepareRoute(string $route, $organizedMatches)
+    {
+        $route = $this->replace('regex', $organizedMatches, $route);
+        $route = $this->replace('all', $organizedMatches, $route);
+        $route = $this->replace('optional', $organizedMatches, $route);
+        $route = str_replace('/', '\/', $route);
 
-		if ($matches) {
-			$this->manipulateRoute($route, $url, $matches);
+        return $route;
+    }
 
-			return $this;
-		}
+    private function replace($key, $data, $route)
+    {
+        return str_replace($data[$key]['value'], $data[$key]['match'], $route);
+    }
 
-		return $this->router->handle($route, $url);
-	}
+    private function setRoute(&$matchCase)
+    {
+        $this->route = array_shift($matchCase);
+    }
 
-	public function getParameters()
-	{
-		return $this->urlParameters;
-	}
+    private function getDynamicValues($matchCase): void
+    {
+        foreach ($this->indentifiers as $key => $value) {
+            $this->parameters[$value] = $matchCase[$key];
+        }
+    }
 
-	public function next(Router $router)
-	{
-		$this->router = $router;
-	}
+    private function getRegexForValuesWithoutRegex($index)
+    {
+        $lengthHaystack = strstr($this->route, $index);
 
-	public function route()
-	{
-		return $this->route;
-	}
+        return strlen($lengthHaystack) > strlen($index) ? '(.+?)' : '(.+)';
+    }
 
-	public function manipulateRoute($route, $url, $matches)
-	{
-		$routeReplaced = $route;
-		$matchPrepared = [];
+    private function setRegexIfValueIsOptional(&$matchesOrganized, $value, $match)
+    {
+        if ($match !== '?') {
+            return $this->setRegexIfValueNotHasRegex($matchesOrganized, $value, $match);
+        }
 
-		foreach ($matches as $key => $match) {
-			$identifiers[] 			= "|##{$key}##|";
-			$getMatchRoute 			= PlugHelper::getMatchCase($match, ':(.*?)}');
-			$getMatchRoute          = $getMatchRoute ? $getMatchRoute[1] : null;
-			$matchPrepared[$key] 	= $this->getRegex($getMatchRoute, $match, $route);
-			$routeReplaced 			= str_replace($match, $identifiers[$key], $routeReplaced);
-		}
+        $matchesOrganized['optional']['value'][] = $value;
+        $matchesOrganized['optional']['match'][] = '((?:.+)?)';
+    }
 
-		$route      	= $this->replaces($routeReplaced, $identifiers, $matchPrepared);
-		$finalMatch 	= PlugHelper::getMatchCase($url, "({$route})");
-		$this->route 	= !empty($finalMatch) ? $finalMatch[1] : null;
-		$this->getDynamicValues($matches, $finalMatch);
-	}
+    private function setRegexIfValueNotHasRegex(&$matchesOrganized, $value, $match)
+    {
+        if (!empty($match)) {
+            return $this->setRegexIfValueHasRegex($matchesOrganized, $value, $match);
+        }
 
-	private function getRegex($matchRoute, $index, $route)
-	{
-		if (is_null($matchRoute)) {
-			$lengthHaystack = strstr($route, $index);
-			return strlen($lengthHaystack) > strlen($index) ? '(.+?)' : '(.+)';
-		}
+        $matchesOrganized['all']['value'][] = $value;
+        $matchesOrganized['all']['match'][] = $this->getRegexForValuesWithoutRegex($value);
+    }
 
-		return $matchRoute === '?' ? '((?:.+)?)' : "({$matchRoute})";
-	}
+    private function setRegexIfValueHasRegex(&$matchesOrganized, $value, $match)
+    {
+        $matchesOrganized['regex']['value'][] = $value;
+        $matchesOrganized['regex']['match'][] = "({$match})";
+    }
 
-	private function getDynamicValues($dynamicParameters, $matches)
-	{
-		$matches = PlugHelper::removeValuesByIndex($matches, [0, 1]);
+    private function getArrayMatch()
+    {
+        foreach (['optional', 'regex', 'all'] as $value) {
+            $matchesOrganized[$value] = [
+                'match' => [],
+                'value' => [],
+            ];
+        }
 
-		foreach ($dynamicParameters as $k => $v) {
-			$v          = PlugHelper::replace(['{', '}'], '', $v);
-			$strToArray	= PlugHelper::stringToArray($v, ':');
-			$value      = $strToArray ? $strToArray[0] : $v;
+        return $matchesOrganized;
+    }
 
-			if (isset($matches[$k])) {
-				$this->urlParameters[$value] = $matches[$k];
-			}
-		}
-	}
-
-	private function replaces($routePrepared, $identifiers, $matchPrepared)
-	{
-		$routePrepared 	= PlugHelper::replace('/', '\/', $routePrepared);
-		$routePrepared 	= PlugHelper::replace($identifiers, $matchPrepared, $routePrepared);
-		$routePrepared	= preg_replace('/(\.\+)(\d|\a|\[)/', '$1?$2', $routePrepared);
-		return $routePrepared;
-	}
+    protected function setRouteAndDynamicValuesIfMatchCase($matchCase)
+    {
+        if ($matchCase) {
+            $this->setRoute($matchCase);
+            $this->getDynamicValues($matchCase);
+        }
+    }
 }

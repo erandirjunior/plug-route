@@ -22,14 +22,12 @@ class RouteContainer
 
 	public function __construct()
 	{
-		$this->routes = [
-			'GET' 		=> [],
-			'POST' 		=> [],
-			'PUT' 		=> [],
-			'DELETE' 	=> [],
-			'PATCH' 	=> [],
-			'OPTIONS' 	=> []
-		];
+	    $keys = ['GET' , 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'];
+
+	    foreach ($keys as $value) {
+	        $this->routes[$value] = [];
+        }
+
 		$this->middleware = [];
 	}
 

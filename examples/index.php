@@ -18,11 +18,12 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 // If you are working without virtual host modify the file .htaccess on line 49, setting the path correct.
 
-$route = new PlugRoute(new RouteContainer(), RequestCreator::create());
+$route          = new PlugRoute(new RouteContainer(), RequestCreator::create());
+$dependencies   = require_once 'dependencies.php';
 
-$route->notFound(function() {
+/*$route->notFound(function() {
 	echo 'Error Page';
-});
+});*/
 
 $route->get('/', function() {
 	echo "Basic route";
@@ -86,4 +87,6 @@ $route->loadFromXML('routes.xml');
 
 $route->get('/groups', '\NAMESPACE\YOUR_CLASS@method');
 
-$route->on();
+$route->get('/contract/{id:\d+}/item', 'PlugRoute\Example\Dependency\MyService@apresentation');
+
+$route->on($dependencies);

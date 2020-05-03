@@ -37,18 +37,19 @@ class RouteManager
 		$this->errorRoute	= $plugRoute->getErrorRouteNotFound();
 	}
 
-	public function run()
+	public function run(array $dependencies = [])
 	{
 		$this->dynamicRoute->next($this->simpleRoute);
 		$url = $this->request->getUrl();
 
 		foreach ($this->routes as $route) {
 			$routerObject = $this->dynamicRoute->handle($route['route'], $url);
-			$routeHandled = $routerObject->route();
+			$routeHandled = $routerObject->getRoute();
+
 			if (ValidateHelper::isEqual($routeHandled, $url)) {
 				$this->setParameters($routerObject->getParameters());
 
-				return $this->callback->handleCallback($route);
+				return $this->callback->handleCallback($route, $dependencies);
 			}
 		}
 
