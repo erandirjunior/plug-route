@@ -16,6 +16,6 @@ class SimpleRoute extends RouteAnalyzer
 
     protected function handleRoute(string $route, string $url)
     {
-        return $url;
+        $this->route = $route;
     }
 }
