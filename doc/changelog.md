@@ -1,7 +1,7 @@
 # Changelog
 
 ### v3.8
-* Update depency version
+* Update dependency version
 
 ### v3.7
 * Added sending injection values
