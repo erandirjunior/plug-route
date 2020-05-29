@@ -1,5 +1,8 @@
 # Changelog
 
+### v3.8
+* Update dependency version
+
 ### v3.7
 * Added sending injection values
 * Refactory in Dynamic route class
