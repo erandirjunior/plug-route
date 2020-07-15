@@ -52,11 +52,12 @@ class DynamicRoute extends RouteAnalyzer
             $valueWithoutKeys       = str_replace(['{', '}'], '', $value);
             $arrayMatch             = explode(':', $valueWithoutKeys);
             $this->indentifiers[]   = $arrayMatch[0];
+            $match = count($arrayMatch) > 1 ? $arrayMatch[1] : $arrayMatch[0];
 
             $this->setRegexIfValueIsOptional(
                 $matchesOrganized,
                 $value,
-                $arrayMatch[1]
+                $match
             );
         }
 
