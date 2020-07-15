@@ -23,7 +23,7 @@ final class RouteContainerTest extends TestCase
 		],
 		'POST' => [
 			0 => [
-				'route' => '/test',
+				'route' => '/test/{id}',
                 'callback' => 'Namespace\MyClass@method',
                 'name' => null,
                 'middlewares' => [
@@ -144,7 +144,7 @@ final class RouteContainerTest extends TestCase
 		];
 
 		$this->instance->get('/test', 'Namespace\MyClass@method')->middleware($middlewares);
-		$this->instance->post('/test', 'Namespace\MyClass@method')->middleware($middlewares);
+		$this->instance->post('/test/{id}', 'Namespace\MyClass@method')->middleware($middlewares);
 
 
 		$this->assertEquals($this->complicatedExpectedResponse, $this->instance->getRoutes());
@@ -163,7 +163,7 @@ final class RouteContainerTest extends TestCase
 		];
 		$this->instance->group($head, function ($route) {
 			$route->get('/test', '\MyClass@method');
-			$route->post('/test', '\MyClass@method');
+			$route->post('/test/{id}', '\MyClass@method');
 		});
 
 		$this->assertEquals($this->instance->getRoutes(), $this->complicatedExpectedResponse);
@@ -225,7 +225,7 @@ final class RouteContainerTest extends TestCase
 		$this->instance->namespace('Namespace\\', function ($route) use ($middlewares) {
 			$route->group(['middlewares' => $middlewares], function($route) {
 				$route->get('/test', 'MyClass@method');
-				$route->post('/test', 'MyClass@method');
+				$route->post('/test/{id}', 'MyClass@method');
 			});
 		});
 

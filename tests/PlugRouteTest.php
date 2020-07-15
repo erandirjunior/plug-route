@@ -42,7 +42,7 @@ final class PlugRouteTest extends TestCase
 		$route = new PlugRoute(new RouteContainer() ,\PlugRoute\Test\Classes\RequestCreator::create());
 
 		$route->get('/', function() {
-			return  50;
+			return 50;
 		});
 
 		$this->expectOutputString(50);
@@ -60,7 +60,9 @@ final class PlugRouteTest extends TestCase
 
 		$this->expectOutputString('test');
 
-		$route->on();
+		$dependencies = require 'Dependency/dependencies.php';
+
+		$route->on($dependencies);
 	}
 
 	public function testClassNotFound()
@@ -89,6 +91,19 @@ final class PlugRouteTest extends TestCase
 		$route->on();
 	}
 
+	/*public function testDependencyMethd()
+	{
+		$this->expectException(\Exception::class);
+
+		$route = new PlugRoute(new RouteContainer() ,\PlugRoute\Test\Classes\RequestCreator::createDynamic());
+
+		$route->group(['middleware' => [MyMiddleware::class]], function($route) {
+			$route->get('/{test}', 'PlugRoute\Test\Classes\Home@testing');
+		});
+
+		$route->on();
+	}*/
+
 	public function testMiddlewareException()
 	{
 		$this->expectException(\Exception::class);
@@ -101,4 +116,17 @@ final class PlugRouteTest extends TestCase
 
 		$route->on();
 	}
+
+    /*public function testRouteOptionalParameter()
+    {
+        $route = new PlugRoute(new RouteContainer() ,\PlugRoute\Test\Classes\RequestCreator::create());
+
+        $route->get('/people/{id:?}/', function() {
+            echo '';
+        });
+
+        $this->expectOutputString('');
+
+        $route->on();
+    }*/
 }
