@@ -4,8 +4,10 @@ namespace PlugRoute;
 
 class RouteContainer
 {
+    /** @var RouteStorage */
 	private $routes;
 
+    /** @var RouteStorage */
 	private $routeError;
 
 	private $prefix;
@@ -22,28 +24,26 @@ class RouteContainer
 
 	public function __construct()
 	{
-	    $keys = ['GET' , 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'];
+        $this->routes = new RouteStorage();
+        $this->routeError = new Route();
+        $this->name = '';
 
-	    foreach ($keys as $value) {
-	        $this->routes[$value] = [];
-        }
-
-		$this->middleware = [];
+        $this->middleware = [];
 	}
 
 	public function getRoutes()
 	{
-		return $this->routes;
+		return $this->routes->getAllRoutes();
 	}
 
 	private function setRoutes(string $requestType, string $route, $callback)
 	{
-		$this->routes[$requestType][] = [
-			'route' 	    => $route,
-			'callback' 	    => is_string($callback) ? $this->namespace.$callback : $callback,
-			'name'		    => $this->name,
-			'middlewares'	=> [],
-		];
+	    if (is_string($callback)) {
+	        $callback = $this->namespace.$callback;
+        }
+
+	    $newRoute = new Route($route, $callback, $this->name);
+	    $this->routes->addRoute($requestType, $newRoute);
 	}
 
 	public function getErrorRouteNotFound()
@@ -53,19 +53,19 @@ class RouteContainer
 
 	public function setErrorRouteNotFound($callback)
 	{
-		$this->routeError = ['callback' => $callback];
+		$this->routeError->setCallback($callback);
 	}
 
 	public function setName($name)
 	{
-		$this->routes[$this->typeMethod][$this->index]['name'] = $name;
+		$this->routes->getRouteTypeByTypeAndIndex($this->typeMethod, $this->index)
+        ->setName($name);
 	}
 
 	public function setMiddleware(array $middlewares)
 	{
-		foreach ($middlewares as $middleware) {
-			$this->routes[$this->typeMethod][$this->index]['middlewares'][] = $middleware;
-		}
+        $this->routes->getRouteTypeByTypeAndIndex($this->typeMethod, $this->index)
+        ->setMiddlewares($middlewares);
 	}
 
 	public function addGroup($plugRoute, array $route, $callback)
@@ -101,6 +101,7 @@ class RouteContainer
 	public function addRoute(string $requestType, string $route, $callback)
 	{
 		$route = $this->prefix.$route;
+
 		if (!$this->removeDuplicateRoutes($requestType, $route, $callback)) {
 			$this->setRoutes($requestType, $route, $callback);
 			$this->setLastRoute($requestType, $this->getIndex($requestType));
@@ -113,19 +114,21 @@ class RouteContainer
 	private function removeDuplicateRoutes($typeRequest, $route, $callback)
 	{
 		$exists = false;
-		foreach ($this->routes[$typeRequest] as $k => $v) {
-			if ($v['route'] === $route) {
+
+		foreach ($this->routes->getAllRoutes()[$typeRequest] as $k => $v) {
+			if ($v->getRoute() === $route) {
 				$this->replaceRoute($typeRequest, $route, $callback, $k);
 				$this->setLastRoute($typeRequest, $k);
 				$exists = true;
 			}
 		}
+
 		return $exists;
 	}
 
 	private function getIndex($typeMethod)
 	{
-		return count($this->routes[$typeMethod]) - 1;
+		return count($this->routes->getAllRoutes()[$typeMethod]) - 1;
 	}
 
 	private function setLastRoute($typeMethod, $index)
@@ -136,9 +139,8 @@ class RouteContainer
 
 	public function loadRoutesFromJson($path)
 	{
-		$content = file_get_contents($path);
-
-		$json = json_decode($content, true);
+		$content    = file_get_contents($path);
+		$json       = json_decode($content, true);
 
 		foreach ($json['routes'] as $route) {
 			if (!empty($route['group'])) {
@@ -256,7 +258,7 @@ class RouteContainer
 	public function addMultipleRoutes(array $types = [], string $route, $callback)
 	{
 		if (empty($types)) {
-			$types = array_keys($this->routes);
+			$types = array_keys($this->routes->getAllRoutes());
 		}
 
 		foreach ($types as $typeRequest) {
@@ -264,14 +266,14 @@ class RouteContainer
 		}
 	}
 
-	private function replaceRoute($typeRequest, $route, $callback, $k)
+	private function replaceRoute($typeRequest, $route, $callback, $index)
 	{
-		$this->routes[$typeRequest][$k] = [
-			'route' 		=> $this->prefix.$route,
-			'callback' 		=> is_string($callback) ? $this->namespace.$callback : $callback,
-			'name'		    => $this->name,
-			'middlewares'	=> [],
-		];
+	    $callback = is_string($callback) ? $this->namespace.$callback : $callback;
+
+	    $routeObject = $this->routes->getRouteTypeByTypeAndIndex($typeRequest, $index);
+	    $routeObject->setCallback($callback);
+	    $routeObject->setName($this->name);
+	    $routeObject->setMiddlewares([]);
 	}
 
 	private function beforeGroup(array $route)
@@ -315,10 +317,10 @@ class RouteContainer
 	{
 		$array = [];
 
-		foreach ($this->routes as $route) {
+		foreach ($this->routes->getAllRoutes() as $route) {
 			foreach ($route as $value) {
-				if (!empty($value['name'])) {
-					$array[$value['name']] = $value['route'];
+				if (!empty($value->getName())) {
+					$array[$value->getName()] = $value->getRoute();
 				}
 			}
 		}
