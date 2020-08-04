@@ -4,95 +4,43 @@ namespace PlugRoute\Test;
 
 use PHPUnit\Framework\TestCase;
 use PlugRoute\PlugRoute;
+use PlugRoute\Route;
 use PlugRoute\RouteContainer;
 use PlugRoute\Test\Classes\Request;
 
 final class RouteContainerTest extends TestCase
 {
-	private $complicatedExpectedResponse = [
-		'GET' => [
-			0 => [
-				'route' => '/test',
-                'callback' => 'Namespace\MyClass@method',
-                'name' => null,
-                'middlewares' => [
-					0 => 'PlugRoute\Test\Classes\MiddlewareExample',
-					1 => 'OtherMiddleware',
-				],
-			]
-		],
-		'POST' => [
-			0 => [
-				'route' => '/test',
-                'callback' => 'Namespace\MyClass@method',
-                'name' => null,
-                'middlewares' => [
-					0 => 'PlugRoute\Test\Classes\MiddlewareExample',
-					1 => 'OtherMiddleware',
-				],
-			]
-		],
-		'PUT' => [],
-		'DELETE' => [],
-		'PATCH' => [],
-		'OPTIONS' => []
-	];
+	private $complicatedExpectedResponse;
 
-	private $simpleExpectedResponse = [
-		'GET' => [
-			0 => [
-				'route' => '/cars',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middlewares' => [],
-			]
-		],
-		'POST' => [
-			0 => [
-				'route' => '/cars',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middlewares' => [],
-			]
-		],
-		'PUT' => [
-			0 => [
-				'route' => '/cars',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middlewares' => [],
-			]
-		],
-		'DELETE' => [
-			0 => [
-				'route' => '/cars',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middlewares' => [],
-			]
-		],
-		'PATCH' => [
-			0 => [
-				'route' => '/cars',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middlewares' => [],
-			]
-		],
-		'OPTIONS' => [
-			0 => [
-				'route' => '/cars',
-				'callback' => 'Class@method',
-				'name' => null,
-				'middlewares' => [],
-			]
-		],
-	];
+	private $simpleExpectedResponse;
 
     private $instance;
 
     public function setUp()
     {
+        $this->complicatedExpectedResponse = [
+            'GET' => [
+                0 => new Route('/test', 'Namespace\MyClass@method', '', [
+                    0 => 'PlugRoute\Test\Classes\MiddlewareExample',
+                    1 => 'OtherMiddleware'
+                ])
+            ],
+            'POST' => [
+                new Route('/test/{id}', 'Namespace\MyClass@method', '', [
+                    0 => 'PlugRoute\Test\Classes\MiddlewareExample',
+                    1 => 'OtherMiddleware',
+                ])
+            ],
+            'PUT' => [],
+            'DELETE' => [],
+            'PATCH' => [],
+            'OPTIONS' => []
+	    ];
+
+        foreach (['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'] as $value) {
+            $this->simpleExpectedResponse[$value][] = new Route('/cars', 'Class@method');
+        }
+
         $this->instance = new PlugRoute(new RouteContainer(), new Request());
     }
 
@@ -144,7 +92,7 @@ final class RouteContainerTest extends TestCase
 		];
 
 		$this->instance->get('/test', 'Namespace\MyClass@method')->middleware($middlewares);
-		$this->instance->post('/test', 'Namespace\MyClass@method')->middleware($middlewares);
+		$this->instance->post('/test/{id}', 'Namespace\MyClass@method')->middleware($middlewares);
 
 
 		$this->assertEquals($this->complicatedExpectedResponse, $this->instance->getRoutes());
@@ -163,7 +111,7 @@ final class RouteContainerTest extends TestCase
 		];
 		$this->instance->group($head, function ($route) {
 			$route->get('/test', '\MyClass@method');
-			$route->post('/test', '\MyClass@method');
+			$route->post('/test/{id}', '\MyClass@method');
 		});
 
 		$this->assertEquals($this->instance->getRoutes(), $this->complicatedExpectedResponse);
@@ -173,14 +121,14 @@ final class RouteContainerTest extends TestCase
 	{
 		$this->instance->notFound('MyClass@method');
 
-		$this->assertEquals($this->instance->getNotFound(), ['callback' => 'MyClass@method']);
+		$this->assertEquals('MyClass@method', $this->instance->getNotFound()->getCallback());
 	}
 
 	public function testErrorRouteDeprecated()
 	{
 		$this->instance->notFound('MyClass@method');
 
-		$this->assertEquals(['callback' => 'MyClass@method'], $this->instance->getNotFound());
+		$this->assertEquals('MyClass@method', $this->instance->getNotFound()->getCallback());
 	}
 
 	public function testDuplicateRoute()
@@ -190,12 +138,7 @@ final class RouteContainerTest extends TestCase
 
 		$expected = [
 			'GET' => [
-				0 => [
-					'route' => '/',
-					'callback' => 'MyClass@show',
-					'name' => null,
-					'middlewares' => [],
-				]
+			    new Route('/', 'MyClass@show')
 			],
 			'POST' => [],
 			'PUT' => [],
@@ -225,7 +168,7 @@ final class RouteContainerTest extends TestCase
 		$this->instance->namespace('Namespace\\', function ($route) use ($middlewares) {
 			$route->group(['middlewares' => $middlewares], function($route) {
 				$route->get('/test', 'MyClass@method');
-				$route->post('/test', 'MyClass@method');
+				$route->post('/test/{id}', 'MyClass@method');
 			});
 		});
 
@@ -238,61 +181,53 @@ final class RouteContainerTest extends TestCase
 
 		$this->instance->loadFromJson($path);
 
+		$twoMiddlewares = [
+            "Middleware1",
+            "Middleware2"
+        ];
+
+		$threeMiddlewares = [
+            0 => "Middleware1",
+            1 => "Middleware2",
+            2 => "MiddlewareSoccer"
+        ];
+
 		$expected = [
 			'GET' => [
-				0 => [
-					'route' => '/json-test',
-					'callback' => 'PlugRoute\Example\Home@example',
-					'name' => 'json',
-					'middlewares' => [],
-				],
-				1 => [
-					'route' => '/json/{anything}',
-					'callback' => 'PlugRoute\Example\Home@anything',
-					'name' => null,
-					'middlewares' => [
-						"Middleware1",
-						"Middleware2"
-					]
-				],
-				2 => [
-					'route' => '/sports/xadrez',
-					'callback' => 'PlugRoute\Example\Home@rankingXadrez',
-					'name' => null,
-					'middlewares' => [
-						0 => "Middleware1",
-						1 => "Middleware2"
-					]
-				],
-				3 => [
-					'route' => '/sports/f1/ranking',
-					'callback' => 'PlugRoute\Example\Home@rankingF1',
-					'name' => null,
-					'middlewares' => [
-						0 => "Middleware1",
-						1 => "Middleware2"
-					]
-				],
-				4 => [
-					'route' => '/sports/soccer/champions-league',
-					'callback' => 'PlugRoute\Example\Home@rankingChampions',
-					'name' => null,
-					'middlewares' => [
-						0 => "Middleware1",
-						1 => "Middleware2",
-						2 => "MiddlewareSoccer"
-					]
-				],
-				5 => [
-					'route' => '/sports/soccer/europe-league',
-					'callback' => 'PlugRoute\Example\Home@rankingEurope',
-					'name' => null,
-					'middlewares' => [
-						0 => "Middleware1",
-						1 => "Middleware2",
-						2 => "MiddlewareSoccer"
-					]
-				]
+                new Route(
+                    '/json-test',
+                    'PlugRoute\Example\Home@example',
+                    'json'
+                ),
+                new Route(
+                    '/json/{anything}',
+                    'PlugRoute\Example\Home@anything',
+                    '',
+                    $twoMiddlewares
+                ),
+                new Route(
+                    '/sports/xadrez',
+                    'PlugRoute\Example\Home@rankingXadrez',
+                    '', $twoMiddlewares
+                ),
+                new Route(
+                    '/sports/f1/ranking',
+                    'PlugRoute\Example\Home@rankingF1',
+                    '',
+                    $twoMiddlewares
+                ),
+                new Route(
+                    '/sports/soccer/champions-league',
+                    'PlugRoute\Example\Home@rankingChampions',
+                    '',
+                    $threeMiddlewares
+                ),
+                new Route(
+                    '/sports/soccer/europe-league',
+                    'PlugRoute\Example\Home@rankingEurope',
+                    '',
+                    $threeMiddlewares
+                )
 			],
 			'POST' => [],
 			'PUT' => [],
@@ -312,40 +247,30 @@ final class RouteContainerTest extends TestCase
 
 		$expected = [
 			'GET' => [
-				0 => [
-					'route' => '/xml',
-					'callback' => 'PlugRoute\Example\Home@example',
-					'name' => 'xml',
-					'middlewares' => [
-						"OtherMiddleware"
-					],
-				],
-				1 => [
-					'route' => '/sports/boxe',
-					'callback' => 'PlugRoute\Example\Home@boxe',
-					'name' => null,
-					'middlewares' => [
-						"OtherMiddleware"
-					]
-				],
-				2 => [
-					'route' => '/sports/olympics/golf',
-					'callback' => 'PlugRoute\Example\Home@golf',
-					'name' => null,
-					'middlewares' => [
-						0 => "OtherMiddleware",
-						1 => "OtherMiddleware"
-					]
-				],
-				3 => [
-					'route' => '/sports/olympics/judo',
-					'callback' => 'PlugRoute\Example\Home@judo',
-					'name' => null,
-					'middlewares' => [
-						0 => "OtherMiddleware",
-						1 => "OtherMiddleware"
-					]
-				]
+                new Route(
+                    '/xml',
+                    'PlugRoute\Example\Home@example',
+                    'xml',
+                    ['OtherMiddleware']
+                ),
+                new Route(
+                    '/sports/boxe',
+                    'PlugRoute\Example\Home@boxe',
+                    '',
+                    ['OtherMiddleware']
+                ),
+                new Route(
+                    '/sports/olympics/golf',
+                    'PlugRoute\Example\Home@golf',
+                    '',
+                    ['OtherMiddleware', 'OtherMiddleware']
+                ),
+                new Route(
+                    '/sports/olympics/judo',
+                    'PlugRoute\Example\Home@judo',
+                    '',
+                    ['OtherMiddleware', 'OtherMiddleware']
+                )
 			],
 			'POST' => [],
 			'PUT' => [],

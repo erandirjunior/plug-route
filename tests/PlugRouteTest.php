@@ -42,7 +42,7 @@ final class PlugRouteTest extends TestCase
 		$route = new PlugRoute(new RouteContainer() ,\PlugRoute\Test\Classes\RequestCreator::create());
 
 		$route->get('/', function() {
-			return  50;
+			return 50;
 		});
 
 		$this->expectOutputString(50);
@@ -60,7 +60,9 @@ final class PlugRouteTest extends TestCase
 
 		$this->expectOutputString('test');
 
-		$route->on();
+		$dependencies = require 'Dependency/dependencies.php';
+
+		$route->on($dependencies);
 	}
 
 	public function testClassNotFound()

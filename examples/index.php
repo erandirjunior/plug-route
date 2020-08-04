@@ -21,9 +21,9 @@ header("Access-Control-Allow-Headers: Content-Type");
 $route          = new PlugRoute(new RouteContainer(), RequestCreator::create());
 $dependencies   = require_once 'dependencies.php';
 
-/*$route->notFound(function() {
+$route->notFound(function() {
 	echo 'Error Page';
-});*/
+});
 
 $route->get('/', function() {
 	echo "Basic route";
@@ -31,6 +31,10 @@ $route->get('/', function() {
 
 $route->get('/people/{id:\d+}', function(Request $request) {
 	echo "ID is: {$request->parameter('id')}";
+});
+
+$route->get('/optional/{id:?}', function(Request $request) {
+	echo "Parameter sent is: {$request->parameter('id')}";
 });
 
 $route->post('/people', function() {
@@ -69,7 +73,7 @@ $route->group(['prefix' => '/department', 'middlewares' => [OtherMiddleware::cla
 
 		// If you use this library without name a route, without virtualhost or php server built-in
 		// use the redirect method
-		//$request->redirect('http://localhost/plug-route/example/department/ti');
+//		$request->redirect('http://localhost/plug-route/examples/department/it');
 	});
 });
 

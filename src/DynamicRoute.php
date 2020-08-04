@@ -52,12 +52,9 @@ class DynamicRoute extends RouteAnalyzer
             $valueWithoutKeys       = str_replace(['{', '}'], '', $value);
             $arrayMatch             = explode(':', $valueWithoutKeys);
             $this->indentifiers[]   = $arrayMatch[0];
-
-            $this->setRegexIfValueIsOptional(
-                $matchesOrganized,
-                $value,
-                $arrayMatch[1]
-            );
+            count($arrayMatch) > 1
+            ? $this->setRegex($matchesOrganized, $value, $arrayMatch[1])
+            : $this->getRegexForValuesWithoutRegex($matchesOrganized, $value);
         }
 
         return $matchesOrganized;
@@ -90,31 +87,22 @@ class DynamicRoute extends RouteAnalyzer
         }
     }
 
-    private function getRegexForValuesWithoutRegex($index)
+    private function getRegexForValuesWithoutRegex(&$matchesOrganized, $value)
     {
-        $lengthHaystack = strstr($this->route, $index);
+        $lengthHaystack = strstr($this->route, $value);
 
-        return strlen($lengthHaystack) > strlen($index) ? '(.+?)' : '(.+)';
+        $matchesOrganized['all']['value'][] = $value;
+        $matchesOrganized['all']['match'][] = strlen($lengthHaystack) > strlen($value) ? '(.+?)' : '(.+)';
     }
 
-    private function setRegexIfValueIsOptional(&$matchesOrganized, $value, $match)
+    private function setRegex(&$matchesOrganized, $value, $match)
     {
         if ($match !== '?') {
-            return $this->setRegexIfValueNotHasRegex($matchesOrganized, $value, $match);
+            return $this->setRegexIfValueHasRegex($matchesOrganized, $value, $match);;
         }
 
         $matchesOrganized['optional']['value'][] = $value;
         $matchesOrganized['optional']['match'][] = '((?:.+)?)';
-    }
-
-    private function setRegexIfValueNotHasRegex(&$matchesOrganized, $value, $match)
-    {
-        if (!empty($match)) {
-            return $this->setRegexIfValueHasRegex($matchesOrganized, $value, $match);
-        }
-
-        $matchesOrganized['all']['value'][] = $value;
-        $matchesOrganized['all']['match'][] = $this->getRegexForValuesWithoutRegex($value);
     }
 
     private function setRegexIfValueHasRegex(&$matchesOrganized, $value, $match)

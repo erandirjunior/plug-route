@@ -2,10 +2,14 @@
 
 ### v3.8
 * Update dependency version
+* Fix bug in dynamic route without regex
+* Created class Route to storage a route
+* Created class RouteStorage to storage all routes
+* Refactored DynamicRoute, RouteManager, RouteContainer and Callback classes
 
 ### v3.7
 * Added sending injection values
-* Refactory in Dynamic route class
+* Refactory in DynamicRoute class
 * Replaced interface Router with abstract class RouterAnalyzer
 * Replaced class name PlugHelper with MatchHelper
 * Removed unnecessary method

@@ -4,7 +4,7 @@ namespace PlugRoute\Test\Classes;
 
 class Home
 {
-	public function __construct(\PlugRoute\Http\Request $request)
+	public function __construct()
 	{
 	}
 

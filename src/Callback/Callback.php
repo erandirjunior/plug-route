@@ -6,6 +6,7 @@ use PlugRoute\Error;
 use PlugRoute\Helpers\ValidateHelper;
 use PlugRoute\Http\Request;
 use PlugRoute\Middleware\PlugRouteMiddleware;
+use PlugRoute\Route;
 
 class Callback
 {
@@ -18,16 +19,16 @@ class Callback
         $this->request 	= $request;
     }
 
-    public function handleCallback($route, array $dependencies = [])
+    public function handleCallback(Route $route, array $dependencies = [])
     {
         $this->dependencies = $dependencies;
 
-		if (!empty($route['middlewares'])) {
-			$this->callMiddleware($route['middlewares']);
+		if (!empty($route->getMiddlewares())) {
+			$this->callMiddleware($route->getMiddlewares());
 		}
 
-		if (is_callable($route['callback'])) {
-            return $this->callFunction($route['callback']);
+		if (is_callable($route->getCallback())) {
+            return $this->callFunction($route->getCallback());
         }
 
         return $this->handleObject($route);
@@ -50,7 +51,7 @@ class Callback
 
     private function handleObject($route)
     {
-        $callback = explode("@", $route['callback']);
+        $callback = explode("@", $route->getCallback());
         $instance = $this->createObject($callback[0]);
         return $this->callMethod($instance, $callback[1]);
     }
