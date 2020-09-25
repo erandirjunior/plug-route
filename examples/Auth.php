@@ -5,8 +5,8 @@ use \PlugRoute\Http\Request;
 
 class Auth implements PlugRouteMiddleware
 {
-	public function handle(Request $request): Request
+	public function handler(Request $request)
 	{
-		return $request;
+		// do something
 	}
 }

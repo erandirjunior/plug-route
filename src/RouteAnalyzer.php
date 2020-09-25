@@ -15,15 +15,15 @@ abstract class RouteAnalyzer
         $this->routerAnalyzer = $routeAnalyzer;
     }
 
-    public function handle(string $route, string $url)
+    public function handler(string $route, string $url)
     {
-        if ($this->checkIfCanHandleRoute($route, $url)) {
-            $this->handleRoute($route, $url);
+        if ($this->checkIfCanHandlerRoute($route, $url)) {
+            $this->routeHandler($route, $url);
 
             return $this;
         }
 
-        return $this->routerAnalyzer->handle($route, $url);
+        return $this->routerAnalyzer->handler($route, $url);
     }
 
     public function getRoute()
@@ -36,7 +36,7 @@ abstract class RouteAnalyzer
         return $this->parameters;
     }
 
-    abstract protected function checkIfCanHandleRoute(string $route, string $url);
+    abstract protected function checkIfCanHandlerRoute(string $route, string $url);
 
-    abstract protected function handleRoute(string $route, string $url);
+    abstract protected function routeHandler(string $route, string $url);
 }

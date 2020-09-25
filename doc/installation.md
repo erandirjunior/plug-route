@@ -9,7 +9,7 @@
 composer require erandir/plug-route
 ```
 
-> The PlugRoute use PlugHttp library to handle request, response, cookie, session and others values.
+> The PlugRoute use PlugHttp library to handler request, response, cookie, session and others values.
 
 > If you want to use this library without virtualhost or the embedded php server, add the **.htaccess** file that is in the example folder, at the root of the project. Modify line 49 setting the folder path.
 

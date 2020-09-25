@@ -10,7 +10,7 @@ class DynamicRoute extends RouteAnalyzer
 
 	private $indentifiers;
 
-    protected function checkIfCanHandleRoute(string $route, string $url)
+    protected function checkIfCanHandlerRoute(string $route, string $url)
     {
         $pattern        = '({.+?(?:\:.*?)?})';
         $this->matches  = MatchHelper::getMatchAll($route, $pattern, 0);
@@ -33,7 +33,7 @@ class DynamicRoute extends RouteAnalyzer
      * @param $url
      * @param $matches
      */
-    protected function handleRoute(string $route, string $url)
+    protected function routeHandler(string $route, string $url)
     {
         $this->indentifiers = [];
         $this->route        = $route;

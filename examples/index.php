@@ -51,7 +51,7 @@ $route->delete('/people/{id:\d+}', function() {
 
 $route->patch('/people/{id:\d+}', function() {
 	echo "Patch route";
-});;
+});
 
 $route->options('/people/{id:\d+}', function() {
 	echo "Options route";
@@ -64,7 +64,7 @@ $route->match(['GET', 'POST'], '/products', function() {
 $route->redirect('/test/redirect', '/');
 
 $route->group(['prefix' => '/department', 'middlewares' => [OtherMiddleware::class]], function($route) {
-	$route->get('/it', function(\PlugRoute\Http\Response $response) {
+	$route->get('/it', function(\PlugRoute\Http\Response $response, Request $request) {
 		echo $response->json(['departament' => 'IT Departament']);
 	})->name('ti');
 

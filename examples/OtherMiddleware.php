@@ -5,9 +5,8 @@ use \PlugRoute\Http\Request;
 
 class OtherMiddleware implements PlugRouteMiddleware
 {
-	public function handle(Request $request): Request
+	public function handler(Request $request)
 	{
 		$request->add('middleware', 'settting value');
-		return $request;
 	}
 }

@@ -9,12 +9,12 @@ class SimpleRoute extends RouteAnalyzer
         $this->parameters = [];
     }
 
-    protected function checkIfCanHandleRoute(string $route, string $url)
+    protected function checkIfCanHandlerRoute(string $route, string $url)
     {
         return true;
     }
 
-    protected function handleRoute(string $route, string $url)
+    protected function routeHandler(string $route, string $url)
     {
         $this->route = $route;
     }

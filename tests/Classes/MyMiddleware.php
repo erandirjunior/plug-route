@@ -7,7 +7,7 @@ use PlugRoute\Middleware\PlugRouteMiddleware;
 
 class MyMiddleware implements PlugRouteMiddleware
 {
-	public function handle(Request $request): Request
+	public function handler(Request $request)
 	{
 		return $request;
 	}
