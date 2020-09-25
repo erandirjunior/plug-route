@@ -6,5 +6,5 @@ use PlugRoute\Http\Request;
 
 interface PlugRouteMiddleware
 {
-    public function handle(Request $request) : Request;
+    public function handler(Request $request);
 }
