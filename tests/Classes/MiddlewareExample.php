@@ -7,9 +7,8 @@ use PlugRoute\Middleware\PlugRouteMiddleware;
 
 class MiddlewareExample implements PlugRouteMiddleware
 {
-	public function handle(Request $request): Request
+	public function handler(Request $request)
 	{
 		$request->add('test', 'ok');
-		return $request;
 	}
 }
