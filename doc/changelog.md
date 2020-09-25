@@ -1,6 +1,11 @@
 # Changelog
 
-### v3.8
+### v4.0
+* Refactored Callback class
+* Refactored PlugRouteMiddleware interface
+* Fix name methods
+
+### v3.9
 * Fix bug in dynamic route without regex
 * Created class Route to storage a route
 * Created class RouteStorage to storage all routes
@@ -37,8 +42,8 @@
 ### v3.3
 * Added redirect route
 * Rename Route class to RouteContainer
-* Created DynamicRoute class to handle dynamic routes
-* Created SimpleRoute class to handle simple routes
+* Created DynamicRoute class to handler dynamic routes
+* Created SimpleRoute class to handler simple routes
 * Created RouteManager to manager routes
 * Created Router interface to standardize route handlers
 * Added parameters on PlugRoute constructor
