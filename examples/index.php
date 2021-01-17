@@ -4,10 +4,7 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 require_once 'Auth.php';
 require_once 'OtherMiddleware.php';
 
-use \PlugRoute\PlugRoute;
 use \PlugRoute\Http\Request;
-use \PlugRoute\RouteContainer;
-use \PlugRoute\Http\RequestCreator;
 use \PlugRoute\Example\{A, B, C, D, E};
 
 /**** CORS ****/
@@ -16,9 +13,9 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 /**** CORS ****/
 
-// If you are working without virtual host modify the file .htaccess on line 49, setting the path correct.
+// If you are working without virtualhost modify the file .htaccess on line 49, setting the path correct.
 
-$route          = new PlugRoute(new RouteContainer(), RequestCreator::create());
+$route          = \PlugRoute\RouteFactory::create();
 $dependencies   = require_once 'dependencies.php';
 
 $route->notFound(function() {
@@ -93,4 +90,4 @@ $route->get('/groups', '\NAMESPACE\YOUR_CLASS@method');
 
 $route->get('/contract/{id:\d+}/item', 'PlugRoute\Example\Dependency\MyService@apresentation');
 
-$route->on($dependencies);
+$route->on();
