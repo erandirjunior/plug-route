@@ -17,37 +17,25 @@ class RouteManager
 
 	private $errorRoute;
 
-	private $simpleRoute;
-
-	private $dynamicRoute;
-
-	public function __construct(
-		RouteContainer $plugRoute,
-		Request $request,
-		SimpleRoute $simpleRoute,
-		DynamicRoute $dynamicRoute
-	)
+	public function __construct(RouteContainer $plugRoute, Request $request)
 	{
 		$this->request 		= $request;
 		$routes 			= $plugRoute->getRoutes();
 		$this->callback     = new Callback($this->request);
 		$this->routes       = $routes[$this->request->method()];
-		$this->simpleRoute	= $simpleRoute;
-		$this->dynamicRoute	= $dynamicRoute;
 		$this->errorRoute	= $plugRoute->getErrorRouteNotFound();
 	}
 
 	public function run(array $dependencies = [])
 	{
-		$this->dynamicRoute->next($this->simpleRoute);
 		$url = $this->request->getUrl();
+        $analyzer = new RouteAnalyzer();
 
 		foreach ($this->routes as $route) {
-			$routerObject = $this->dynamicRoute->handler($route->getRoute(), $url);
-			$routeHandled = $routerObject->getRoute();
+			$routeHandled = $analyzer->getRoute($route->getRoute(), $url);
 
 			if (ValidateHelper::isEqual($routeHandled, $url)) {
-				$this->setParameters($routerObject->getParameters());
+				$this->setParameters($analyzer->getParameters());
 
 				return $this->callback->handlerCallback($route, $dependencies);
 			}
