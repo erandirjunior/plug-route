@@ -1,5 +1,12 @@
 # Changelog
 
+### v4.1
+* Refactored RouteAnalyzer
+* Deleted DynamicRoute and SimpleRoute classes
+* Created RouteFactory class
+* Refactored RouteManager, PlugRoute and MatchHelper classes
+* Refactored tests
+
 ### v4.0
 * Refactored Callback class
 * Refactored PlugRouteMiddleware interface
