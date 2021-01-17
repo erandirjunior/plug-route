@@ -26,10 +26,7 @@ final class RouteManagerTest extends TestCase
 		});
 
     	$request = \PlugRoute\Test\Classes\RequestCreator::create();
-    	$simple = new SimpleRoute();
-    	$dynamic = new DynamicRoute();
-
-        $this->instance = new RouteManager($container, $request, $simple, $dynamic);
+        $this->instance = new RouteManager($container, $request);
     }
 
     public function testRouteReturn()
@@ -48,12 +45,7 @@ final class RouteManagerTest extends TestCase
 		});
 
 		$request = \PlugRoute\Test\Classes\RequestCreator::createDynamic();
-		$simple = new SimpleRoute();
-		$dynamic = new DynamicRoute();
-
-
-		$this->instance = new RouteManager($container, $request, $simple, $dynamic);
-
+		$this->instance = new RouteManager($container, $request);
 		$actual = $this->instance->run();
 
 		$this->assertEquals(10, $actual);
@@ -69,9 +61,7 @@ final class RouteManagerTest extends TestCase
 
 		$container 		= new RouteContainer();
 		$request 		= \PlugRoute\Test\Classes\RequestCreator::createDynamic();
-		$simple 		= new SimpleRoute();
-		$dynamic 		= new DynamicRoute();
-		$this->instance = new RouteManager($container, $request, $simple, $dynamic);
+		$this->instance = new RouteManager($container, $request);
 
 		$this->instance->run();
     }
@@ -84,14 +74,11 @@ final class RouteManagerTest extends TestCase
     {
 		$container 		= new RouteContainer();
 		$request 		= \PlugRoute\Test\Classes\RequestCreator::createDynamic();
-		$simple 		= new SimpleRoute();
-		$dynamic 		= new DynamicRoute();
-
 		$container->setErrorRouteNotFound(function() {
 			return 'There was error';
 		});
 
-		$this->instance = new RouteManager($container, $request, $simple, $dynamic);
+		$this->instance = new RouteManager($container, $request);
 		$actual = $this->instance->run();
 
 		self::assertEquals('There was error', $actual);
@@ -106,12 +93,7 @@ final class RouteManagerTest extends TestCase
 		});
 
 		$request = \PlugRoute\Test\Classes\RequestCreator::createDynamic();
-		$simple = new SimpleRoute();
-		$dynamic = new DynamicRoute();
-
-
-		$this->instance = new RouteManager($container, $request, $simple, $dynamic);
-
+		$this->instance = new RouteManager($container, $request);
 		$expected = $this->instance->run();
 
 		$this->assertEquals($expected, 10);
@@ -126,12 +108,7 @@ final class RouteManagerTest extends TestCase
 		})->setMiddleware([MiddlewareExample::class]);
 
 		$request = \PlugRoute\Test\Classes\RequestCreator::createDynamic();
-		$simple = new SimpleRoute();
-		$dynamic = new DynamicRoute();
-
-
-		$this->instance = new RouteManager($container, $request, $simple, $dynamic);
-
+		$this->instance = new RouteManager($container, $request);
 		$actual = $this->instance->run();
 
 		$this->assertEquals('ok', $actual);
