@@ -60,40 +60,52 @@ class Reflection
 
     private function getParameters($reflection)
     {
-        $params = $reflection->getParameters();
-        $args 	= [];
+        $parameters = $reflection->getParameters();
+        $args = [];
 
-        foreach ($params as $param) {
-            $type = $param->getType();
-
-            if (!$type->isBuiltin()) {
-                $class 			= new \ReflectionClass((string) $type);
-                $namespace[] 	= $class->getNamespaceName();
-                $namespace[] 	= $class->getShortName();
-                $object 		= implode('\\', $namespace);
-                $namespace 		= [];
-                $args[] 		= $this->getInstanceIfNamespaceIsRequest($object);
-            }
-        }
+        $this->getParametersValue($parameters, $args);
 
         return $args;
     }
 
-    private function getInstanceIfNamespaceIsRequest($namespace)
+    private function getInstance($namespace)
     {
         if ($namespace === 'PlugRoute\Http\Request') {
             return $this->request;
         }
 
-        return $this->getInstance($namespace);
+        return $this->createObject($namespace);
     }
 
-    private function getInstance($namespace)
+    private function createObject($namespace)
     {
         if (array_key_exists($namespace, $this->dependencies)) {
             return $this->dependencies[$namespace];
         }
 
         return new $namespace();
+    }
+
+    private function getParametersValue($parameters, array &$args): void
+    {
+        $params = $this->request->parameters();
+        $counter = 0;
+        foreach ($parameters as $parameter) {
+            $type = $parameter->getType();
+
+            if ($type && !$type->isBuiltin()) {
+                $args[] = $this->getInstance($type->getName());
+                continue;
+            }
+
+            if ($parameter->isArray()) {
+                $args[] = $this->request->parameters();
+                continue;
+            }
+
+            $values = array_values($params);
+            $args[] = $values[$counter];
+            $counter++;
+        }
     }
 }
