@@ -33,7 +33,6 @@ class RouteManager
 
 		foreach ($this->routes as $route) {
 			$routeHandled = $analyzer->getRoute($route->getRoute(), $url);
-
 			if (ValidateHelper::isEqual($routeHandled, $url)) {
 				$this->setParameters($analyzer->getParameters());
 
@@ -50,9 +49,9 @@ class RouteManager
 			return $this->callback->handlerCallback($this->errorRoute);
 		}
 
-		$response = new Response();
-		$response->setStatusCode(404)->response();
-		return Error::throwException("The route could not be found.");
+        $response = new Response();
+        $response->setStatusCode(404)->response();
+		echo "The route could not be found.";
 	}
 
 	private function setParameters($parameters)
