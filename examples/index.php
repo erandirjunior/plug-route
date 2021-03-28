@@ -1,4 +1,5 @@
 <?php
+
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
 require_once 'Auth.php';
@@ -27,7 +28,7 @@ $route->get('/', function() {
 });
 
 $route->get('/people/{id:\d+}', function(Request $request) {
-	echo "ID is: {$request->parameter('id')}";
+	echo "ID iss: {$request->parameter('id')}";
 });
 
 $route->get('/optional/{id:?}', function(Request $request) {
@@ -38,8 +39,8 @@ $route->post('/people', function() {
 	echo "Post route";
 });
 
-$route->put('/people/{id:\d+}', function() {
-	echo "Put route";
+$route->put('/people/{id:\d+}', function(int $id) {
+	echo "Put route, id: ${$id}";
 });
 
 $route->delete('/people/{id:\d+}', function() {
