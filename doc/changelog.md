@@ -1,6 +1,7 @@
 # Changelog
 
 ### v4.1
+* Now, It's possible get parameter without use Request class
 * Refactored RouteAnalyzer
 * Deleted DynamicRoute and SimpleRoute classes
 * Created RouteFactory class
