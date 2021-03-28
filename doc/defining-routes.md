@@ -3,11 +3,7 @@
 #### Configuration:
 > Here we will configure PlugRoute with the basic example
 ```php
-use \PlugRoute\PlugRoute;
-use \PlugRoute\RouteContainer;
-use \PlugRoute\Http\RequestCreator;
-
-$route = new PlugRoute(new RouteContainer(), RequestCreator::create());
+$route = \PlugRoute\RouteFactory::create();
 
 $route->get('/', function() {
     echo 'basic route';
@@ -38,17 +34,17 @@ $route->get('/', '\Path\To\Class@method');
 ```
 
 #### Sending dependencies
-> PlugRoute supports dependency injection. But if you wanna define dependencies, you can do it:
+> PlugRoute can be create dependencies, but It can't create dependency dependencies. If you need define dependencies, you can do it:
 ```php
 $myDependencies = [
     'Namespace\Dependency' => new Namespace\Dependency(
         new Namespace\OutherDependency();
-    );
+    ),
 ];
 
 $route->on($myDependencies);
 ``` 
-**See more in the example folder**
+**See more in the example folder examples**
 
 #### Route error
 > Set an action if a route was not found
@@ -67,6 +63,24 @@ $route->match(['GET', 'POST'],'/', $callback);
 #### Dynamic values
 > Defining dynamic routes
 ```php
+$route->get('product/{name}', function(){});
+```
+
+#### Getting parameters
+> Getting dynamic routes
+```php
+$route->get('product/{name}', function(string $name) {
+    echo "Product: ${$name}";
+});
+```
+
+```php
+$route->get('product/{name}', function(array $parameter) {
+	var_dump($parameter);
+});
+```
+
+```php
 $route->get('product/{name}', function(\PlugRoute\Http\Request $request) {
     echo $request->parameter('name');
 });
@@ -74,9 +88,7 @@ $route->get('product/{name}', function(\PlugRoute\Http\Request $request) {
 
 > You can pass a regex to set the route parameter
 ```php
-$route->get('people/{id:\d+}', function(\PlugRoute\Http\Request $request) {
-    echo $request->parameter('id');
-});
+$route->get('people/{id:\d+}', function() {});
 ```
 
 #### Redirecting

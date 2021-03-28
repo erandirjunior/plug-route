@@ -2,41 +2,94 @@
 
 namespace PlugRoute;
 
-abstract class RouteAnalyzer
+use PlugRoute\Helpers\MatchHelper;
+
+class RouteAnalyzer
 {
-    private $routerAnalyzer;
+    private $parameters;
 
-    protected $route;
+    private $matchCase;
 
-    protected $parameters;
+    private $route;
 
-    public function next(RouteAnalyzer $routeAnalyzer)
+    public function __construct()
     {
-        $this->routerAnalyzer = $routeAnalyzer;
+        $this->parameters = [];
+        $this->matchCase = [];
     }
 
-    public function handler(string $route, string $url)
+    public function getRoute(string $route, string $url): string
     {
-        if ($this->checkIfCanHandlerRoute($route, $url)) {
-            $this->routeHandler($route, $url);
+        $this->resetParameters();
+        $this->setRegExpDefinedInRoute($route);
 
-            return $this;
+        if (empty($this->parameters)) {
+            return $this->route;
         }
 
-        return $this->routerAnalyzer->handler($route, $url);
+        return $this->routeHandler($url);
     }
 
-    public function getRoute()
+    public function getParameters(): array
     {
+        $parameters = [];
+
+        foreach ($this->parameters as $key => $value) {
+            $parameters[$value] = $this->matchCase[$key];
+        }
+
+        return $parameters;
+    }
+
+    private function routeHandler(string $url): string
+    {
+        $this->scapeSpecialChars();
+        $this->setMatchCase($url);
+        $this->setRoute();
         return $this->route;
     }
 
-    public function getParameters()
+    private function resetParameters(): void
     {
-        return $this->parameters;
+        $this->parameters = [];
     }
 
-    abstract protected function checkIfCanHandlerRoute(string $route, string $url);
+    private function setRegExpDefinedInRoute(string $route): void
+    {
+        $pattern = '/{(.+?(?:\:.*?)?)}/';
+        $this->route = preg_replace_callback($pattern, function ($matches)
+        {
+            $matchParsed = explode(':', $matches[1]);
+            $this->parameters[] = array_shift($matchParsed);
+            $defaultMatch = '(.+)';
 
-    abstract protected function routeHandler(string $route, string $url);
+            if (!$matchParsed) {
+                return $defaultMatch;
+            }
+
+            return $this->getMatchExpression($defaultMatch, $matchParsed[0]);
+        }, $route);
+    }
+
+    private function getMatchExpression($pattern, $match): string
+    {
+        return $match === '?' ? $pattern.'?' : "({$match})";
+    }
+
+    private function scapeSpecialChars(): void
+    {
+        $this->route = preg_replace('/(\/)/', '\/', $this->route);
+    }
+
+    private function setMatchCase($url): void
+    {
+        $this->matchCase = MatchHelper::getMatchCase($url, $this->route);
+    }
+
+    private function setRoute(): void
+    {
+        if ($this->matchCase) {
+            $this->route = array_shift($this->matchCase);
+        }
+    }
 }

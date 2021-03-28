@@ -130,10 +130,7 @@ class PlugRoute
 	{
 		$this->addNamedRoute();
 
-		$simpleRoute 	= new SimpleRoute();
-		$dynamicRoute	= new DynamicRoute();
-
-		$manager = new RouteManager($this->route, $this->request, $simpleRoute, $dynamicRoute);
+		$manager = new RouteManager($this->route, $this->request);
 
 		echo $manager->run($dependencies);
 	}
