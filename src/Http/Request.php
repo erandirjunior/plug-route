@@ -2,34 +2,30 @@
 
 namespace PlugRoute\Http;
 
-use PlugHttp\Globals\GlobalFile;
-use PlugHttp\Globals\GlobalGet;
-use PlugHttp\Globals\GlobalServer;
-
-class Request extends \PlugHttp\Globals\GlobalRequest
+class Request extends \PlugHttp\Request
 {
-	private $parameter;
+	private array $parameter;
 
-	private $routeNamed;
+	private array $routeNamed;
 
-	public function __construct($body, GlobalGet $get, GlobalFile $file, GlobalServer $server)
-	{
-		parent::__construct($body, $get, $file, $server);
-		$this->parameter = [];
-		$this->routeNamed = [];
-	}
+	public function __construct()
+    {
+        parent::__construct();
+        $this->parameter = [];
+        $this->routeNamed = [];
+    }
 
-	public function parameter($key)
+    public function parameter($key)
 	{
 		return $this->parameter[$key];
 	}
 
-	public function parameters()
+	public function parameters(): array
 	{
 		return $this->parameter;
 	}
 
-	public function setParameter($key, $value)
+	public function setParameter($key, $value): Request
 	{
 		$this->parameter[$key] = $value;
 
@@ -45,14 +41,14 @@ class Request extends \PlugHttp\Globals\GlobalRequest
 		return $this->redirect($this->routeNamed[$name], $code);
 	}
 
-	public function setRouteNamed(array $routeNamed)
+	public function setRouteNamed(array $routeNamed): Request
 	{
 		$this->routeNamed = $routeNamed;
 
 		return $this;
 	}
 
-	public function getRouteNamed()
+	public function getRouteNamed(): array
 	{
 		return $this->routeNamed;
 	}

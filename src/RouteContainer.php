@@ -115,10 +115,10 @@ class RouteContainer
 	{
 		$exists = false;
 
-		foreach ($this->routes->getAllRoutes()[$typeRequest] as $k => $v) {
-			if ($v->getRoute() === $route) {
-				$this->replaceRoute($typeRequest, $route, $callback, $k);
-				$this->setLastRoute($typeRequest, $k);
+		foreach ($this->routes->getAllRoutes()[$typeRequest] as $key => $value) {
+			if ($value->getRoute() === $route) {
+				$this->replaceRoute($typeRequest, $callback, $key);
+				$this->setLastRoute($typeRequest, $key);
 				$exists = true;
 			}
 		}
@@ -266,7 +266,7 @@ class RouteContainer
 		}
 	}
 
-	private function replaceRoute($typeRequest, $route, $callback, $index)
+	private function replaceRoute($typeRequest, $callback, $index)
 	{
 	    $callback = is_string($callback) ? $this->namespace.$callback : $callback;
 

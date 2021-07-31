@@ -4,12 +4,18 @@ namespace PlugRoute\Callback;
 
 use PlugRoute\Error;
 use PlugRoute\Helpers\ValidateHelper;
+use PlugRoute\Http\Request;
 
 class Reflection
 {
-    private $request;
+    private Request $request;
 
-    private $dependencies;
+    private array $dependencies;
+
+    public function __construct()
+    {
+        $this->dependencies = [];
+    }
 
     public function setRequest($request): void
     {
@@ -72,6 +78,18 @@ class Reflection
     {
         if ($namespace === 'PlugRoute\Http\Request') {
             return $this->request;
+        }
+
+        $request = new $namespace();
+
+        if ($request instanceof Request) {
+            foreach ($this->request->parameters() as $key => $value) {
+                $request->setParameter($key, $value);
+            }
+
+            $request->setRouteNamed($this->request->getRouteNamed());
+
+            return $request;
         }
 
         return $this->createObject($namespace);
