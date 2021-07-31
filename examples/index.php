@@ -31,7 +31,7 @@ $route->get('/people/{id:\d+}', function(Request $request) {
 	echo "ID iss: {$request->parameter('id')}";
 });
 
-$route->get('/optional/{id:?}', function(Request $request) {
+$route->get('/optional/{id:?}', function(\PlugRoute\Example\Dependency\MyRequest $request) {
 	echo "Parameter sent is: {$request->parameter('id')}";
 });
 
@@ -39,8 +39,8 @@ $route->post('/people', function() {
 	echo "Post route";
 });
 
-$route->put('/people/{id:\d+}', function(int $id) {
-	echo "Put route, id: ${$id}";
+$route->put('/people/{id:\d+}', function(string $id) {
+	echo "Put route, id: {$id}";
 });
 
 $route->delete('/people/{id:\d+}', function() {

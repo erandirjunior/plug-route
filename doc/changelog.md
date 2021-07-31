@@ -1,5 +1,8 @@
 # Changelog
 
+### v4.2
+* Sending dynamic Request classes
+
 ### v4.1
 * Now, It's possible get parameter without use Request class
 * Refactored RouteAnalyzer

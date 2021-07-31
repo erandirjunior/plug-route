@@ -2,16 +2,10 @@
 
 namespace PlugRoute\Test;
 
-use function foo\func;
 use PHPUnit\Framework\TestCase;
-use PlugRoute\DynamicRoute;
-use PlugRoute\Http\RequestCreator;
-use PlugRoute\PlugRoute;
 use PlugRoute\RouteContainer;
 use PlugRoute\RouteManager;
-use PlugRoute\SimpleRoute;
 use PlugRoute\Test\Classes\MiddlewareExample;
-use PlugRoute\Test\Classes\Request;
 
 final class RouteManagerTest extends TestCase
 {

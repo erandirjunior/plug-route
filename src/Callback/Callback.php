@@ -9,9 +9,9 @@ use PlugRoute\Route;
 
 class Callback
 {
-    private $request;
+    private Request $request;
 
-    private $reflection;
+    private Reflection $reflection;
 
     public function __construct(Request $request)
     {
