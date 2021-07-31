@@ -3,15 +3,10 @@
 namespace PlugRoute\Test;
 
 use PHPUnit\Framework\TestCase;
-use PlugRoute\DynamicRoute;
-use PlugRoute\Http\RequestCreator;
 use PlugRoute\PlugRoute;
 use PlugRoute\RouteContainer;
-use PlugRoute\RouteManager;
-use PlugRoute\SimpleRoute;
 use PlugRoute\Test\Classes\MiddlewareMistake;
 use PlugRoute\Test\Classes\MyMiddleware;
-use PlugRoute\Test\Classes\Request;
 
 final class PlugRouteTest extends TestCase
 {
@@ -19,7 +14,7 @@ final class PlugRouteTest extends TestCase
 
     public function setUp()
     {
-        $this->instance = new PlugRoute(new RouteContainer(), \PlugRoute\Test\Classes\RequestCreator::create());
+        $this->instance = new PlugRoute(new RouteContainer(), new \PlugRoute\Http\Request());
     }
 
 	/**
