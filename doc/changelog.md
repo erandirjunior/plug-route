@@ -1,6 +1,10 @@
 # Changelog
 
+### v4.3
+* Update dependencies
+
 ### v4.2
+* Ending support to PHP < 7.4
 * Sending dynamic Request classes
 
 ### v4.1
