@@ -36,7 +36,7 @@ class PlugRoute
 		return $this->route->getRoutes();
 	}
 
-	private function addRoute($type, $route, $callback)
+	private function addRoute(string $type, string $route, $callback)
 	{
 		$this->route->addRoute($type, $route, $callback);
 		return $this;
@@ -74,12 +74,12 @@ class PlugRoute
 
 	public function match(array $types, string $route, $callback)
 	{
-		$this->route->addMultipleRoutes($types, $route, $callback);
+		$this->route->addMultipleRoutes($route, $callback, $types);
     }
 
     public function any(string $route, $callback)
     {
-		$this->route->addMultipleRoutes([], $route, $callback);
+		$this->route->addMultipleRoutes($route, $callback);
 	}
 
     public function group(array $route, callable $callback)
@@ -104,7 +104,7 @@ class PlugRoute
 		$this->route->addGroup($this, ['namespace' => $namespace], $callback);
 	}
 
-	public function redirect($from, $to, $code = 301)
+	public function redirect(string $from, string $to, int $code = 301)
     {
         $this->route->addRoute('GET', $from, function () use ($to, $code) {
             $this->request->redirect($to, $code);
