@@ -59,13 +59,14 @@ class RouteContainer
 	public function setName($name)
 	{
 		$this->routes->getRouteTypeByTypeAndIndex($this->typeMethod, $this->index)
-        ->setName($name);
+            ->setName($name);
 	}
 
 	public function setMiddleware(array $middlewares)
 	{
-        $this->routes->getRouteTypeByTypeAndIndex($this->typeMethod, $this->index)
-        ->setMiddlewares($middlewares);
+        $this->routes
+            ->getRouteTypeByTypeAndIndex($this->typeMethod, $this->index)
+            ->setMiddlewares($middlewares);
 	}
 
 	public function addGroup($plugRoute, array $route, $callback)
@@ -255,7 +256,7 @@ class RouteContainer
         return $group;
 	}
 
-	public function addMultipleRoutes(array $types = [], string $route, $callback)
+	public function addMultipleRoutes(string $route, $callback, array $types = [])
 	{
 		if (empty($types)) {
 			$types = array_keys($this->routes->getAllRoutes());

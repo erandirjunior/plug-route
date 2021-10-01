@@ -38,7 +38,7 @@ $route->get('/', '\Path\To\Class@method');
 ```php
 $myDependencies = [
     'Namespace\Dependency' => new Namespace\Dependency(
-        new Namespace\OutherDependency();
+        new Namespace\OtherDependency()
     ),
 ];
 
