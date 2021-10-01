@@ -1,5 +1,8 @@
 # Changelog
 
+### v4.4
+* Fixed parameters types
+
 ### v4.3
 * Update dependencies
 
