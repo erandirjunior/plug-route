@@ -2,84 +2,94 @@
 
 namespace PlugRoute;
 
+use Closure;
+use PlugRoute\Action\ClosureAction;
+use PlugRoute\Action\ControllerAction;
+use PlugRoute\Container\MiddlewareContainer;
+use PlugRoute\Container\NamespaceContainer;
+use PlugRoute\Container\PrefixContainer;
+
 class Route
 {
-    private $route;
+    private NamespaceContainer $namespaceContainer;
 
-    private $callback;
+    private Closure $callback;
 
-    private $name;
+    private string $route;
 
-    private $middlewares;
+    private string $name;
 
-    /**
-     * Route constructor.
-     * @param string $route
-     * @param string $callback
-     * @param string $name
-     * @param array $middlewares
-     */
-    public function __construct($route = '', $callback = '', $name = '', $middlewares = [])
+    private array $middlewares;
+
+    private object $action;
+
+    private array $rules;
+
+    public function __construct(
+        MiddlewareContainer $middlewareContainer,
+        NamespaceContainer $namespaceContainer,
+        PrefixContainer $prefixContainer,
+        string $route
+    )
     {
-        $this->route = $route;
-        $this->callback = $callback;
-        $this->name = $name;
-        $this->middlewares = $middlewares;
+        $this->middlewares = $middlewareContainer->getMiddlewares();
+        $this->route = $prefixContainer->getPrefix().$route;
+        $this->namespaceContainer = $namespaceContainer;
+        $this->name = '';
+        $this->rules = [];
     }
 
-    /**
-     * @return string
-     */
     public function getRoute(): string
     {
         return $this->route;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getCallback()
-    {
-        return $this->callback;
-    }
-
-    /**
-     * @param mixed $callback
-     */
-    public function setCallback($callback): void
-    {
-        $this->callback = $callback;
-    }
-
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName(string $name): void
+    public function name(string $name): Route
     {
         $this->name = $name;
+
+        return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getMiddlewares(): array
     {
         return $this->middlewares;
     }
 
-    /**
-     * @param array $middlewares
-     */
-    public function setMiddlewares($middlewares): void
+    public function callback(\Closure $closure): Route
     {
-        $this->middlewares = $middlewares;
+        $this->action = new ClosureAction($closure);
+
+        return $this;
+    }
+
+    public function controller(string $controller, string $method): Route
+    {
+        $namespaces = $this->namespaceContainer->getNamespaces();
+        $this->action = new ControllerAction($namespaces, $controller, $method);
+
+        return $this;
+    }
+
+    public function getAction(): object
+    {
+        return $this->action;
+    }
+
+    public function rule(string $parameter, string $rule): Route
+    {
+        $this->rules[$parameter] = $rule;
+
+        return $this;
+    }
+
+    public function getRules(): array
+    {
+        return $this->rules;
     }
 }
