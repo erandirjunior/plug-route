@@ -13,8 +13,6 @@ class Route
 {
     private NamespaceContainer $namespaceContainer;
 
-    private Closure $callback;
-
     private string $route;
 
     private string $name;
@@ -61,7 +59,7 @@ class Route
         return $this->middlewares;
     }
 
-    public function callback(\Closure $closure): Route
+    public function callback(Closure $closure): Route
     {
         $this->action = new ClosureAction($closure);
 
