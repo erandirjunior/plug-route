@@ -1,6 +1,6 @@
 <?php
 
-namespace PlugRoute\OLD;
+namespace PlugRoute;
 
 class Error
 {
