@@ -2,7 +2,7 @@
 
 namespace PlugRoute;
 
-use PlugRoute\Container\Container;
+use PlugRoute\Container\SettingRouteContainer;
 use PlugRoute\Container\RouteContainer;
 use PlugRoute\Http\Request;
 use PlugRoute\Load\JSON;
@@ -11,135 +11,135 @@ class PlugRoute
 {
     private RouteContainer $routeContainer;
 
-    private Container $container;
+    private SettingRouteContainer $settingRouteContainer;
 
     private JSON $json;
 
     private Request $request;
 
-    public function __construct()
+    public function __construct(Request $request)
     {
         $this->routeContainer = new RouteContainer();
-        $this->container = new Container();
+        $this->settingRouteContainer = new SettingRouteContainer();
         $this->json = new JSON($this);
-        $this->request = new Request();
+        $this->request = $request;
     }
 
     public function middleware(string ...$middleware): PlugRoute
     {
-        $this->container->addMiddleware(...$middleware);
+        $this->settingRouteContainer->addMiddleware(...$middleware);
         return $this;
     }
 
-    public function namespace(string $namespace): PlugRoute
+    public function namespace(string ...$namespace): PlugRoute
     {
-        $this->container->addNamespace($namespace);
+        $this->settingRouteContainer->addNamespace(...$namespace);
         return $this;
     }
 
-    public function prefix(string $prefix): PlugRoute
+    public function prefix(string ...$prefix): PlugRoute
     {
-        $this->container->addPrefix($prefix);
+        $this->settingRouteContainer->addPrefix(...$prefix);
         return $this;
     }
 
     public function group(callable $callback)
     {
-        $this->container->incrementIndex();
+        $this->settingRouteContainer->incrementIndex();
         $callback($this);
-        $this->container->removeLastPosition();
-    }
-
-    public function getRouteContainer(): RouteContainer
-    {
-        return $this->routeContainer;
+        $this->settingRouteContainer->removeLastPosition();
     }
 
     public function get(string $route): Route
     {
-        return $this->createAndAddNewRouteInContainer($route, RouteType::GET);
+        return $this->addRouteInContainer($route, RouteType::GET);
     }
 
     public function post(string $route): Route
     {
-        return $this->createAndAddNewRouteInContainer($route, RouteType::POST);
+        return $this->addRouteInContainer($route, RouteType::POST);
     }
 
     public function delete(string $route): Route
     {
-        return $this->createAndAddNewRouteInContainer($route, RouteType::DELETE);
+        return $this->addRouteInContainer($route, RouteType::DELETE);
     }
 
     public function put(string $route): Route
     {
-        return $this->createAndAddNewRouteInContainer($route, RouteType::PUT);
+        return $this->addRouteInContainer($route, RouteType::PUT);
     }
 
     public function options(string $route): Route
     {
-        return $this->createAndAddNewRouteInContainer($route, RouteType::OPTIONS);
+        return $this->addRouteInContainer($route, RouteType::OPTIONS);
     }
 
     public function patch(string $route): Route
     {
-        return $this->createAndAddNewRouteInContainer($route, RouteType::PATCH);
+        return $this->addRouteInContainer($route, RouteType::PATCH);
     }
 
     public function fallback(): Route
     {
-        return $this->createAndAddNewRouteInContainer('fallback', RouteType::FALLBACK);
+        return $this->addRouteInContainer('', RouteType::FALLBACK);
     }
 
     public function redirect(string $from, string $to, int $code = 301): void
     {
-        $this->createAndAddNewRouteInContainer($from, RouteType::GET)
+        $this->addRouteInContainer($from, RouteType::GET)
             ->callback(fn() => $this->request->redirect($to, $code));
     }
 
-    private function createAndAddNewRouteInContainer(string $path, string $type): Route
+    private function addRouteInContainer(string $path, string $type): Route
     {
-        $route = new Route(
-            $this->container->getMiddleware(),
-            $this->container->getNamespace(),
-            $this->container->getPrefix(),
-            $path
-        );
+        $route = $this->createRouteInstance($path);
         $this->routeContainer->addRoute($route, $type);
         return $route;
     }
 
+    private function createRouteInstance(string $path): Route
+    {
+        return new Route(
+            $this->settingRouteContainer->getMiddleware(),
+            $this->settingRouteContainer->getNamespace(),
+            $this->settingRouteContainer->getPrefix(),
+            $path
+        );
+    }
+
     public function match(string $route, string ...$types): PlugRoute
     {
-        $this->container->addMatchType($route, ...$types);
+        $this->settingRouteContainer->addMatchType($route, ...$types);
         return $this;
     }
 
     public function any(string $route): PlugRoute
     {
-        $this->container->addMatchType($route, ...RouteType::getTypes());
+        $this->settingRouteContainer->addMatchType($route, ...RouteType::getTypes());
         return $this;
     }
 
     public function controller(string $controller, $method)
     {
-        $route = $this->container->getMatchRoute();
+        $route = $this->settingRouteContainer->getMatchRoute();
 
-        foreach ($this->container->getMatchTypes() as $type) {
+        foreach ($this->settingRouteContainer->getMatchTypes() as $type) {
             $this->$type($route)->controller($controller, $method);
         }
 
-        $this->container->reset();
+        $this->settingRouteContainer->reset();
     }
 
     public function callback(callable $callback)
     {
-        $route = $this->container->getMatchRoute();
+        $route = $this->settingRouteContainer->getMatchRoute();
 
-        foreach ($this->container->getMatchTypes() as $type) {
+        foreach ($this->settingRouteContainer->getMatchTypes() as $type) {
             $this->$type($route)->callback($callback);
         }
 
-        $this->container->reset();
+        $this->settingRouteContainer->reset();
     }
 
     public function fromJsonFile(string $file)

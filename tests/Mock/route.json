@@ -1,0 +1,14 @@
+[
+  {
+    "middlewares": [
+      "PlugRoute\\Test\\Mock\\FirstMiddlewareMock"
+    ],
+    "namespace": [
+      "PlugRoute\\Test\\Mock"
+    ],
+    "class": "\\ObjectMock",
+    "method": "run",
+    "path": "/",
+    "type": "get"
+  }
+]

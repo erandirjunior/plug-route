@@ -8,10 +8,11 @@ use PlugRoute\Action\ControllerAction;
 use PlugRoute\Container\MiddlewareContainer;
 use PlugRoute\Container\NamespaceContainer;
 use PlugRoute\Container\PrefixContainer;
+use PlugRoute\Container\Setting;
 
 class Route
 {
-    private NamespaceContainer $namespaceContainer;
+    private string $namespace;
 
     private string $route;
 
@@ -24,15 +25,15 @@ class Route
     private array $rules;
 
     public function __construct(
-        MiddlewareContainer $middlewareContainer,
-        NamespaceContainer $namespaceContainer,
-        PrefixContainer $prefixContainer,
+        Setting $middlewares,
+        Setting $namespaces,
+        Setting $prefixes,
         string $route
     )
     {
-        $this->middlewares = $middlewareContainer->getMiddlewares();
-        $this->route = $prefixContainer->getPrefix().$route;
-        $this->namespaceContainer = $namespaceContainer;
+        $this->middlewares = $middlewares->getData();
+        $this->namespace = $this->convertArrayToString($namespaces);
+        $this->route = $this->convertArrayToString($prefixes).$route;
         $this->name = '';
         $this->rules = [];
     }
@@ -68,7 +69,7 @@ class Route
 
     public function controller(string $controller, string $method): Route
     {
-        $namespaces = $this->namespaceContainer->getNamespaces();
+        $namespaces = $this->namespace;
         $this->action = new ControllerAction($namespaces, $controller, $method);
 
         return $this;
@@ -89,5 +90,10 @@ class Route
     public function getRules(): array
     {
         return $this->rules;
+    }
+
+    private function convertArrayToString(Setting $namespaces): string
+    {
+        return implode('',$namespaces->getData());
     }
 }
