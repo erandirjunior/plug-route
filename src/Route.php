@@ -51,6 +51,7 @@ class Route
     public function name(string $name): Route
     {
         $this->name = $name;
+        Cache::set($this);
 
         return $this;
     }
