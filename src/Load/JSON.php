@@ -79,13 +79,16 @@ class JSON
             ->name($route->name ?? '')
             ->controller($route->class, $route->method);
 
-        $this->setParameterRulesIfSent($route, $routeObject);
+        $this->setParameterRulesIfDefined($route, $routeObject);
     }
 
-    private function setParameterRulesIfSent(object $route, Route $routeObject): void
+    private function setParameterRulesIfDefined(object $route, Route $routeObject): void
     {
         if (!empty($route->rules)) {
-            $routeObject->rule(...$route->rules);
+            foreach ($route->rules as $rule) {
+                $key = key($rule);
+                $routeObject->rule($key, $rule->$key);
+            }
         }
     }
 }
