@@ -22,7 +22,7 @@ class RouteContainer
     public function getRoutesByType(string $type): array
     {
         $type = strtolower($type);
-        return $this->routes[$type];
+        return $this->routes[$type] ?? [];
     }
 
     public function getFallbackRoute(): array
