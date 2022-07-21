@@ -2,10 +2,8 @@
 
 namespace PlugRoute;
 
-use PlugHttp\Response;
 use PlugRoute\Callback\Callback;
 use PlugRoute\Container\RouteContainer;
-use PlugRoute\Helpers\ValidateHelper;
 use PlugRoute\Http\Request;
 
 class RouteHandle
@@ -47,8 +45,6 @@ class RouteHandle
             return $this->callback->handlerCallback($error);
         }
 
-        $response = new Response();
-        $response->setStatusCode(404)->response();
-		echo "The route could not be found.";
+        Error::throwException("The route could not be found.");
 	}
 }
