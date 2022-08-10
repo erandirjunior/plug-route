@@ -21,10 +21,9 @@ class Callback
         $this->reflection = new Reflection();
     }
 
-    public function handlerCallback(Route $route, array $dependencies = [])
+    public function handlerCallback(Route $route)
     {
         $this->reflection->setRequest($this->request);
-        $this->reflection->setDependencies($dependencies);
 
         $this->runMiddlewaresIfDefined($route);
         return $this->runAction($route);

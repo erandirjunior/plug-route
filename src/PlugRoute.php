@@ -17,12 +17,12 @@ class PlugRoute
 
     private Request $request;
 
-    public function __construct(Request $request)
+    public function __construct()
     {
         $this->routeContainer = new RouteContainer();
         $this->settingRouteContainer = new SettingRouteContainer();
         $this->json = new JSON($this);
-        $this->request = $request;
+        $this->request = new Request();
     }
 
     public function middleware(string ...$middleware): PlugRoute
@@ -151,6 +151,6 @@ class PlugRoute
     {
         $manager = new RouteHandle($this->routeContainer, $this->request);
 
-        echo $manager->run([]);
+        echo $manager->run();
     }
 }

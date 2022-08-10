@@ -24,7 +24,7 @@ class RouteHandle
 		$this->callback = new Callback($this->request);
 	}
 
-	public function run(array $dependencies = [])
+	public function run()
 	{
         $matchRoute = new MatchRoute($this->request->getUrl());
 
@@ -32,7 +32,7 @@ class RouteHandle
             if ($matchRoute->urlAndRouteAreEqual($route)) {
                 $this->request->setParameters($matchRoute->getParameters());
 
-                return $this->callback->handlerCallback($route, $dependencies);
+                return $this->callback->handlerCallback($route);
             }
 		}
 

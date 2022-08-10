@@ -4,7 +4,6 @@ namespace PlugRoute\Callback;
 
 use PlugRoute\Action\ClosureAction;
 use PlugRoute\Error;
-use PlugRoute\Helpers\ValidateHelper;
 use PlugRoute\Http\Request;
 use ReflectionException;
 use ReflectionMethod;
@@ -13,21 +12,9 @@ class Reflection
 {
     private Request $request;
 
-    private array $dependencies;
-
-    public function __construct()
-    {
-        $this->dependencies = [];
-    }
-
     public function setRequest(Request $request): void
     {
         $this->request = $request;
-    }
-
-    public function setDependencies(array $dependencies): void
-    {
-        $this->dependencies = $dependencies;
     }
 
     /**
