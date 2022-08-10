@@ -68,11 +68,4 @@ class ContentTest extends TestCase
 
         self::assertEquals($expected, $content->all());
     }
-
-    public function testFormData()
-    {
-        $instance = new ServerClassFormData();
-        $content = new Content($instance);
-        self::assertEquals(['value' => '10'], $content->all());
-    }
 }

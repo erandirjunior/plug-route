@@ -152,15 +152,6 @@ class PlugRouteTest extends TestCase
         $this->expectOutputString('');
     }
 
-    /**
-     * TODO:
-     * Testar rota com prefix, middleware, namespace, group, redirect, fromJsonFIle, controller, dependencia de classe
-     * fazer teste dos componentes de http
-     * tirar métodos de validation helper e verificar excluisão total dos helpers
-     * verificar exclusão da pasta old de src e de tests
-     * @return void
-     */
-
     public function testMatchRoute()
     {
         $this->plugRoute->match('/', RouteType::GET, RouteType::POST)
@@ -321,31 +312,10 @@ class PlugRouteTest extends TestCase
         $this->expectOutputString(5);
     }
 
-//    /**
-//     * @runInSeparateProcess
-//     */
-//    public function testRequestRedirectNamedRoute()
-//    {
-//        $this->plugRoute
-//            ->get('/test')
-//            ->callback(function () {
-//                return 'Redirected!';
-//            })
-//            ->name('test.redirect');
-//
-//        $this->plugRoute->get('/')
-//            ->callback(function (Request $request) {
-//                return $request->redirectToRoute('test.redirect');
-//            });
-//        $this->runRoutes();
-//
-//        $this->expectOutputString('Redirected!');
-//    }
-
     private function setPlugRouteInstance(string $uri = '/', string $method = 'GET'): void
     {
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['REQUEST_METHOD'] = $method;
-        $this->plugRoute = new PlugRoute(new Request());
+        $this->plugRoute = new PlugRoute();
     }
 }
