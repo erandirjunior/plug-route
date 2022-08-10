@@ -3,8 +3,6 @@
 namespace PlugRoute\Test;
 
 use PHPUnit\Framework\TestCase;
-use PlugRoute\Action\ClosureAction;
-use PlugRoute\Action\ControllerAction;
 use PlugRoute\PlugRoute;
 use PlugRoute\Route;
 use PlugRoute\RouteType;
@@ -64,7 +62,9 @@ class PlugRouteTest extends TestCase
             ->callback(function (Request $request) {
                 return $request->parameter('id');
             })
-            ->rule('id', '\d+');
+            ->rule('id', '\d+')
+            ->name('teste')
+        ;
         $this->runRoutes();
 
         $this->expectOutputString(50);
@@ -236,18 +236,61 @@ class PlugRouteTest extends TestCase
 
     public function testFromJsonFile()
     {
+        $this->setPlugRouteInstance('/people/10');
         $this->plugRoute->fromJsonFile(__DIR__.'/Mock/route.json');
         $this->runRoutes();
         $this->expectOutputString('working method');
     }
 
     /**
-     * The method redirect work, but this test fail.
-     * @runInSeparateProcesses
+     * @runInSeparateProcess
      **/
     public function testRedirect()
     {
         $this->plugRoute->redirect('/', 'https://github.com/erandirjunior/plug-route');
+        $this->runRoutes();
+
+		$this->assertContains(
+			'Location: https://github.com/erandirjunior/plug-route',
+            ['Location: https://github.com/erandirjunior/plug-route']
+		);
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testRedirectToRoute()
+    {
+        $this->plugRoute->get('/github')
+            ->callback(function (Request $request) {
+               $request->redirect('https://github.com/erandirjunior/plug-route');
+            })
+            ->name('github');
+
+        $this->plugRoute->get('/')
+            ->callback(function (Request $request) {
+               $request->redirectToRoute('github');
+            });
+
+        $this->runRoutes();
+
+		$this->assertContains(
+			'Location: https://github.com/erandirjunior/plug-route',
+            ['Location: https://github.com/erandirjunior/plug-route']
+		);
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testExceptionRedirectToRoute()
+    {
+        $this->expectException(\Exception::class);
+        $this->plugRoute->get('/')
+            ->callback(function (Request $request) {
+               $request->redirectToRoute('github');
+            });
+
         $this->runRoutes();
 
 		$this->assertContains(
@@ -277,6 +320,27 @@ class PlugRouteTest extends TestCase
 
         $this->expectOutputString(5);
     }
+
+//    /**
+//     * @runInSeparateProcess
+//     */
+//    public function testRequestRedirectNamedRoute()
+//    {
+//        $this->plugRoute
+//            ->get('/test')
+//            ->callback(function () {
+//                return 'Redirected!';
+//            })
+//            ->name('test.redirect');
+//
+//        $this->plugRoute->get('/')
+//            ->callback(function (Request $request) {
+//                return $request->redirectToRoute('test.redirect');
+//            });
+//        $this->runRoutes();
+//
+//        $this->expectOutputString('Redirected!');
+//    }
 
     private function setPlugRouteInstance(string $uri = '/', string $method = 'GET'): void
     {
