@@ -1,13 +1,15 @@
 # Starting:
 
 #### Configuration:
-> Here we will configure PlugRoute with the basic example
-```php
-$route = \PlugRoute\RouteFactory::create();
+> Here we will configure PlugRoute with the basic examples.
 
-$route->get('/', function() {
-    echo 'basic route';
-});
+```php
+$route = new \PlugRoute\PlugRoute(); 
+
+$route->get('/')
+    ->callback(function() {
+        echo 'basic route';
+    });
 
 $route->on();
 ``` 
@@ -15,80 +17,77 @@ $route->on();
 #### Route types
 > Other route types
 ```php
-$route->get($route, $callback);
+$route->get($route)->callback(function() {});
 
-$route->post($route, $callback);
+$route->post($route)->callback(function() {});
 
-$route->put($route, $callback);
+$route->put($route)->callback(function() {});
 
-$route->delete($route, $callback);
+$route->delete($route)->callback(function() {});
 
-$route->patch($route, $callback);
+$route->patch($route)->callback(function() {});
 
-$route->options($route, $callback);
+$route->options($route)->callback(function() {});
 ```
 
 #### Working Classes
 ```php
-$route->get('/', '\Path\To\Class@method');
+$route->get('/')
+    ->controller('\Namespace\Class', 'method');
 ```
-
-#### Sending dependencies
-> PlugRoute can be create dependencies, but It can't create dependency dependencies. If you need define dependencies, you can do it:
-```php
-$myDependencies = [
-    'Namespace\Dependency' => new Namespace\Dependency(
-        new Namespace\OtherDependency()
-    ),
-];
-
-$route->on($myDependencies);
-``` 
-**See more in the example folder examples**
 
 #### Route error
 > Set an action if a route was not found
 ```php
-$route->notFound($callback);
+$route->fallback()->controller('Namespace\Class', 'method');
+
+// or
+
+$route->fallback()->callback(function (){});
 ```
 
 #### Accept multiple HTTP verbs
 > Routes that responds to multiple HTTP verbs
 ```php
-$route->any('/', $callback);
+$route->any('/')->callback(function (){});
 
-$route->match(['GET', 'POST'],'/', $callback);
+$route->match('/', 'option', 'delete', \PlugRoute\RouteType::GET)->controller('Namespace\Class', 'method');
 ```
 
-#### Dynamic values
+#### Dynamic parameter
 > Defining dynamic routes
 ```php
-$route->get('product/{name}', function(){});
+$route->get('product/{name}')->callback(function (){});
 ```
 
 #### Getting parameters
 > Getting dynamic routes
 ```php
-$route->get('product/{name}', function(string $name) {
-    echo "Product: ${$name}";
-});
+$route->get('product/{name}')
+    ->callback(function(string $name) {
+        echo "Product: ${$name}";
+    });
 ```
 
 ```php
-$route->get('product/{name}', function(array $parameter) {
-	var_dump($parameter);
-});
+$route->get('product/{name}')
+    ->callback(function(array $parameter) {
+        var_dump($parameter);
+    });
 ```
 
 ```php
-$route->get('product/{name}', function(\PlugRoute\Http\Request $request) {
-    echo $request->parameter('name');
-});
+$route->get('product/{name}')
+    ->callback(function(\PlugRoute\Http\Request $request) {
+        echo $request->parameter('name');
+    });
 ```
 
 > You can pass a regex to set the route parameter
 ```php
-$route->get('people/{id:\d+}', function() {});
+$route->get('people/{id}')
+    ->callback(function() {})
+    ->rule('id', '\d+');
 ```
 
 #### Redirecting
@@ -100,137 +99,159 @@ $route->redirect($from, $to, $code);
 #### Named Routes
 > Named routes
 ```php
-$route->get($route, $callback)->name('home');
+$route->get($route)
+    ->callback(function (){})
+    ->name('home');
 ``` 
 
 #### Middlewares
-> Implementing a simple middleware
+> Adding one middleware
 ```php
-$route->get($route, $callback)->middleware(['\Namespace\YOUR_MIDDLEWARE']);
+$route->middleware('\Namespace\YOUR_MIDDLEWARE')
+    ->group(function ($route) {
+        $route->get('/')->callback(function (){})
+    });
 ```
+*The middlewares must implement PlugRoute\Middleware\PlugRouteMiddleware interface.*
 
-#### Route groups
-> Route group
+> Adding many middlewares
 ```php
-$route->group(['prefix' => '/news'], function($route) {
-    $route->get('/', function() {
-        echo 'Home page';
+$route->middleware('\Namespace\Middleware')
+    ->middleware('\Namespace\OtherMiddleware')
+    ->group(function ($route) {
+        $route->get('/')->callback(function (){});
     });
 
-    $route->get('/sport', function() {
-        echo 'Sports page';
+// or
+
+$route->middleware('\Namespace\Middleware', '\Namespace\OtherMiddleware')
+    ->group(function ($route) {
+        $route->get('/')->callback(function (){});
     });
-});
 ```
 
-> Namespace
+#### Namespace
+> Adding one namespace
 ```php
-$route->namespace('MyNamespace', function($route) {
-    $route->get('/', '\Example\MyClass@method'); 
-    // Final namespace: MyNamespace\Example\MyClass
-});
+$route->namespace('\Namespace')
+    ->group(function ($route) {
+        $route->get('/')->controller('Class', 'method');
+    });
 ```
 
-> Route group with namespace
+> Adding many namespaces
 ```php
-$route->group(['namespace' => 'MyNamespace'], function($route) {
-    $route->get('/', '\Example\MyClass@method');
-});
+$route->namespace('\NamespaceA')
+    ->namespace('\NamespaceB')
+    ->group(function ($route) {
+        $route->get('/')->controller('Class', 'method');
+    });
+
+// or
+
+$route->namespace('\NamespaceA', '\NamespaceB')
+    ->group(function ($route) {
+        $route->get('/')->controller('Class', 'method');
+    });
 ```
 
-> Route group with middlewares
+#### Prefix
+> Adding one prefix
 ```php
-$route->group(['middlewares' => [\Namespace\YOUR_MIDDLWARE::class], function($route) {
-    $route->get($callback, $route);
+$route->prefix('/system')
+    ->group(function ($route) {
+        $route->get('/')->controller('Class', 'method');
+    });
+```
 
-    $route->get($callback, $route);
-});
-``` 
+> Adding many prefixes
+```php
+$route->prefix('/system')
+    ->prefix('/adm')
+    ->group(function ($route) {
+        $route->get('/')->controller('Class', 'method');
+    });
 
-**The middlewares should implement the PlugRoute\Middleware\PlugRouteMiddleware interface and can return a Request data type** 
+// or
+
+$route->prefix('/system', '/adm')
+    ->group(function ($route) {
+        $route->get('/')->controller('Class', 'method');
+    });
+```
+
 
 #### JSON Route
 
-> Simple route
+> Added the path to json file
 ```php
-$route->loadFromJson('route.json');
+$route->fromJsonFile('route.json');
 ```
 
+> Defining a simple route in json file
 ```json
-{
-    "routes": [
-        {
-            "path": "/json-test",
-            "method": "GET",
-            "callback": "PlugRoute\\Example\\Home@example"
-        }
-    ]
-}
+[
+    {
+        "path": "/json-test",
+        "type": "get",
+        "name": "json",
+        "class": "PlugRoute\\Example\\Home",
+        "method": "example"
+    }
+]
 ```
 
-> Group route
+> Defining a complex route in json file
 ```json
-{
-    "routes": [
-        {
-            "group": {
-                "prefix": "/sports",
-                "middlewares": [
-                    "Middleware1",
-                    "Middleware2"
-                ],
-                "routes": [
+[
+    {
+        "prefix": "/sports",
+        "middlewares": [
+            "MiddlewareA",
+            "MiddlewareB"
+        ],
+        "group": [
+            {
+                "path": "/xadrez",
+                "type": "GET",
+                "class": "PlugRoute\\Example\\Home",
+                "method": "rankingXadrez"
+            },
+            {
+                "group": [
                     {
-                        "path": "/xadrez",
-                        "method": "GET",
-                        "callback": "PlugRoute\\Example\\Home@rankingXadrez"
+                        "prefix": "/f1",
+                        "path": "/ranking",
+                        "type": "GET",
+                        "class": "PlugRoute\\Example\\Home",
+                        "method": "rankingF1"
+                    }
+                ]
+            },
+            {
+                "prefix": "/soccer",
+                "middlewares": [
+                  "MiddlewareSoccer"
+                ],
+                "namespace": "PlugRoute\\",
+                "group": [
+                    {
+                        "path": "/champions-league",
+                        "type": "GET",
+                        "class": "Example\\Home",
+                        "method": "rankingChampions"
+                    },
+                    {
+                        "path": "/europe-league",
+                        "type": "GET",
+                        "class": "Example\\Home",
+                        "method": "rankingEurope"
                     }
                 ]
             }
-        }
-    ]
-}
-```
-
-#### XML Route
-
-> Simple route
-```php
-$route->loadFromXML('route.xml');
-```
-
-```xml
-<routes>
-    <route>
-        <path>/xml-test</path>
-        <method>GET</method>
-        <name>xml</name>
-        <callback>PlugRoute\Example\Home@example</callback>
-        <middlewares>
-            <middleware>OtherMiddleware</middleware>
-        </middlewares>
-    </route>
-</routes>
-```
-
-> Group route
-```xml
-<routes>
-    <route>
-        <group>
-            <prefix>/sports</prefix>
-            <namespace>PlugRoute</namespace>
-            <middlewares>
-                <middleware>OtherMiddleware</middleware>
-            </middlewares>
-            <route>
-                <path>/boxe</path>
-                <method>GET</method>
-                <callback>\Example\Home@boxe</callback>
-            </route>
-        </group>
-    </route>
-</routes>
+        ]
+    }
+]
 ```
 
 **Important: access to see the more examples [here](../examples)**
