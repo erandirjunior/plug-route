@@ -1,16 +1,18 @@
 version: '3.5'
 services:
-  site:
-    image: webdevops/php-apache:7.4
+  plugroute-app:
+    container_name: plugroute
+    build: .
     volumes:
       - .:/var/www/html
+    working_dir: /var/www/html
     environment:
       - WEB_DOCUMENT_ROOT=/var/www/html/examples
+      - PHP_IDE_CONFIG=serverName=xdebug
     ports:
       - 8080:80
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   composer:
     container_name: composer_installation
     image: composer
-    volumes:
-      - ./:/app
-    command: composer update

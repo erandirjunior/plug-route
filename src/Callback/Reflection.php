@@ -2,69 +2,55 @@
 
 namespace PlugRoute\Callback;
 
+use PlugRoute\Action\ClosureAction;
 use PlugRoute\Error;
-use PlugRoute\Helpers\ValidateHelper;
 use PlugRoute\Http\Request;
+use ReflectionException;
+use ReflectionMethod;
 
 class Reflection
 {
     private Request $request;
 
-    private array $dependencies;
-
-    public function __construct()
-    {
-        $this->dependencies = [];
-    }
-
-    public function setRequest($request): void
+    public function setRequest(Request $request): void
     {
         $this->request = $request;
     }
 
-    public function setDependencies($dependencies): void
+    /**
+     * @throws ReflectionException
+     */
+    public function callFunction(ClosureAction $closureAction)
     {
-        $this->dependencies = $dependencies;
-    }
-
-    public function callFunction($callback)
-    {
-        $reflection	= new \ReflectionFunction($callback);
+        $reflection	= new \ReflectionFunction($closureAction->getAction());
         $args 		= $this->getParameters($reflection);
 
-        return $callback(...$args);
+        return $closureAction->getAction()(...$args);
     }
 
     public function callClass($class)
     {
-        if (!ValidateHelper::classExists($class)) {
-            return Error::throwException("Error: class {$class} don't exists.");
+        if (!class_exists($class)) {
+            Error::throwException("Error: class {$class} don't exists.");
         }
 
-        $args       = [];
-        $construct  = '__construct';
-
-        if (ValidateHelper::methodExists($class, $construct)) {
-            $reflection = new \ReflectionMethod($class, $construct);
-            $args       = $this->getParameters($reflection);
-        }
+        $args = $this->getArgsFromConstructor($class);
 
         return new $class(...$args);
     }
 
     public function callMethod($object, $method)
     {
-        if (!ValidateHelper::methodExists($object, $method)) {
+        if (!$this->methodExists($object, $method)) {
             return Error::throwException("Error: method {$method} don't exists.");
         }
 
-        $reflection = new \ReflectionMethod($object, $method);
-        $args 		= $this->getParameters($reflection);
+        $args = $this->getArgsFromMethod($object, $method);
 
         return $object->$method(...$args);
     }
 
-    private function getParameters($reflection)
+    private function getParameters($reflection): array
     {
         $parameters = $reflection->getParameters();
         $args = [];
@@ -84,10 +70,10 @@ class Reflection
 
         if ($request instanceof Request) {
             foreach ($this->request->parameters() as $key => $value) {
-                $request->setParameter($key, $value);
+                $request->addParameter($key, $value);
             }
 
-            $request->setRouteNamed($this->request->getRouteNamed());
+            $request->setRouteNamed($this->request->getAllRouteNamed());
 
             return $request;
         }
@@ -97,10 +83,6 @@ class Reflection
 
     private function createObject($namespace)
     {
-        if (array_key_exists($namespace, $this->dependencies)) {
-            return $this->dependencies[$namespace];
-        }
-
         return new $namespace();
     }
 
@@ -125,5 +107,28 @@ class Reflection
             $args[] = $values[$counter];
             $counter++;
         }
+    }
+
+    private function getArgsFromConstructor($class): array
+    {
+        $args = [];
+        $construct = '__construct';
+
+        if ($this->methodExists($class, $construct)) {
+            $args = $this->getArgsFromMethod($class, $construct);
+        }
+
+        return $args;
+    }
+
+    private function methodExists($class, string $method): bool
+    {
+        return method_exists($class, $method);
+    }
+
+    private function getArgsFromMethod($object, $method): array
+    {
+        $reflection = new ReflectionMethod($object, $method);
+        return $this->getParameters($reflection);
     }
 }

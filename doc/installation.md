@@ -1,7 +1,7 @@
 # Installing the PlugRoute library
 
 ## Requirements
-* PHP 7.1 >=
+* PHP 7.4 >=
 * Composer 
 
 ## Install

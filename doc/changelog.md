@@ -1,5 +1,14 @@
 # Changelog
 
+### 4.5
+* Refactored all PlugRoute library interface
+* Imported all classes from PlugHttp
+* Added new documentation
+* Saved old documentation in a new folder
+* Applied tests in all the library
+* Removed routes from xml file
+* Removed routes from json file
+
 ### v4.4
 * Fixed parameters types
 
@@ -11,7 +20,7 @@
 * Sending dynamic Request classes
 
 ### v4.1
-* Now, It's possible get parameter without use Request class
+* Now It's possible get parameter without use Request class
 * Refactored RouteAnalyzer
 * Deleted DynamicRoute and SimpleRoute classes
 * Created RouteFactory class

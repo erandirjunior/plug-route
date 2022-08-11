@@ -16,20 +16,32 @@
 
 > Simple and fast.
 
-#### <a href="https://github.com/erandirjunior/plug-route/blob/master/doc/installation.md">Full documentation</a>
-
 ## Install
 ```bash
 composer require erandir/plug-route
 ```
 
 **Basic usage**
+
 ```php
-$route = \PlugRoute\RouteFactory::create();
+$route = new \PlugRoute\PlugRoute();
 
-$route->get('/', function() {
-    echo 'basic route';
-});
+$route->get('/')
+    ->callback(function() {
+        echo 'basic route';
+    });
 
-$route->on();
+$route->run();
 ```
+
+### <a href="https://github.com/erandirjunior/plug-route/blob/master/doc/installation.md">See the full documentation.</a>
+
+
+## Old version
+Install and use an old version, run:
+```bash
+composer require erandir/plug-route:v4.4
+```
+
+Access old documentation for a complete use.
+### <a href="https://github.com/erandirjunior/plug-route/blob/master/doc/old/installation.md">See the full documentation</a>

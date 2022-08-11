@@ -6,26 +6,35 @@
 $response->addHeader('Content-Type', 'application/json');
 ```
 
-> Adding several headers
+> Adding many headers
 ```php
-$response->setHeaders(['Content-Type' => 'application/json'])->response();
+$response->addHeaders(['Content-Type' => 'application/json']);
 ```
 
-> Set status code header
+> Getting all headers
+```php
+$response->getHeaders();
+```
+
+> Set status code
 ```php
 $response->setStatusCode(200);
 // or
 $response->setStatusCode('200 OK');
 ```
 
-> Return a response in json format. This method set Content-Type to application/json automatically.
+> Get status code
 ```php
-$response->json(['id' => 10]);
+$response->getStatusCode(200);
 ```
 
-> Manipulating responses
+> Handler response
 ```php
 $response->setStatusCode(404)->response()->json(['error' => 'Page not found']);
+
+// or
+
+$response->json(['id' => 10]);
 ```
 
 [previous](request.md)

@@ -2,136 +2,146 @@
 
 namespace PlugRoute;
 
-use \PlugRoute\Http\Request;
+use PlugRoute\Container\SettingRouteContainer;
+use PlugRoute\Container\RouteContainer;
+use PlugRoute\Http\Request;
 
 class PlugRoute
 {
-	private $route;
+    private RouteContainer $routeContainer;
 
-	private $request;
+    private SettingRouteContainer $settingRouteContainer;
 
-    public function __construct(RouteContainer $route, Request $request)
-	{
-		$this->route 	= $route;
-		$this->request 	= $request;
-	}
+    private Request $request;
 
-	public function getNotFound()
-	{
-		return $this->route->getErrorRouteNotFound();
-	}
-
-	public function notFound($callback)
-	{
-		$this->route->setErrorRouteNotFound($callback);
-	}
-	
-	public function getNamedRoute()
-	{
-		return $this->route->getNamedRoute();
-	}
-
-	public function getRoutes()
-	{
-		return $this->route->getRoutes();
-	}
-
-	private function addRoute(string $type, string $route, $callback)
-	{
-		$this->route->addRoute($type, $route, $callback);
-		return $this;
-	}
-
-	public function get(string $route, $callback)
+    public function __construct()
     {
-        return $this->addRoute('GET', $route, $callback);
+        $this->routeContainer = new RouteContainer();
+        $this->settingRouteContainer = new SettingRouteContainer();
+        $this->request = new Request();
     }
 
-	public function post(string $route, $callback)
+    public function middleware(string ...$middleware): PlugRoute
     {
-        return $this->addRoute('POST', $route, $callback);
-    }
-
-	public function put(string $route, $callback)
-    {
-        return $this->addRoute('PUT', $route, $callback);
-    }
-
-	public function delete(string $route, $callback)
-    {
-        return $this->addRoute('DELETE', $route, $callback);
-    }
-
-	public function patch(string $route, $callback)
-    {
-        return $this->addRoute('PATCH', $route, $callback);
-    }
-
-	public function options(string $route, $callback)
-	{
-		return $this->addRoute('OPTIONS', $route, $callback);
-	}
-
-	public function match(array $types, string $route, $callback)
-	{
-		$this->route->addMultipleRoutes($route, $callback, $types);
-    }
-
-    public function any(string $route, $callback)
-    {
-		$this->route->addMultipleRoutes($route, $callback);
-	}
-
-    public function group(array $route, callable $callback)
-	{
-	    $this->route->addGroup($this, $route, $callback);
-	}
-
-    public function name(string $name)
-	{
-		$this->route->setName($name);
+        $this->settingRouteContainer->addMiddleware(...$middleware);
         return $this;
-	}
+    }
 
-    public function middleware(array $middleware)
-	{
-		$this->route->setMiddleware($middleware);
-        return $this;
-	}
-
-	public function namespace(string $namespace, callable $callback)
-	{
-		$this->route->addGroup($this, ['namespace' => $namespace], $callback);
-	}
-
-	public function redirect(string $from, string $to, int $code = 301)
+    public function namespace(string ...$namespace): PlugRoute
     {
-        $this->route->addRoute('GET', $from, function () use ($to, $code) {
-            $this->request->redirect($to, $code);
-        });
+        $this->settingRouteContainer->addNamespace(...$namespace);
+        return $this;
     }
 
-	public function loadFromJson($json)
-	{
-		$this->route->loadRoutesFromJson($json);
+    public function prefix(string ...$prefix): PlugRoute
+    {
+        $this->settingRouteContainer->addPrefix(...$prefix);
+        return $this;
     }
 
-	public function loadFromXML($xml)
-	{
-		$this->route->loadRoutesFromXML($xml);
+    public function group(callable $callback)
+    {
+        $this->settingRouteContainer->incrementIndex();
+        $callback($this);
+        $this->settingRouteContainer->removeLastPosition();
     }
 
-    private function addNamedRoute()
-	{
-		$this->request->setRouteNamed($this->getNamedRoute());
-	}
+    public function get(string $route): Route
+    {
+        return $this->addRouteInContainer($route, RouteType::GET);
+    }
 
-	public function on(array $dependencies = [])
-	{
-		$this->addNamedRoute();
+    public function post(string $route): Route
+    {
+        return $this->addRouteInContainer($route, RouteType::POST);
+    }
 
-		$manager = new RouteManager($this->route, $this->request);
+    public function delete(string $route): Route
+    {
+        return $this->addRouteInContainer($route, RouteType::DELETE);
+    }
 
-		echo $manager->run($dependencies);
-	}
+    public function put(string $route): Route
+    {
+        return $this->addRouteInContainer($route, RouteType::PUT);
+    }
+
+    public function options(string $route): Route
+    {
+        return $this->addRouteInContainer($route, RouteType::OPTIONS);
+    }
+
+    public function patch(string $route): Route
+    {
+        return $this->addRouteInContainer($route, RouteType::PATCH);
+    }
+
+    public function fallback(): Route
+    {
+        return $this->addRouteInContainer('', RouteType::FALLBACK);
+    }
+
+    public function redirect(string $from, string $to, int $code = 301): void
+    {
+        $this->addRouteInContainer($from, RouteType::GET)
+            ->callback(fn() => $this->request->redirect($to, $code));
+    }
+
+    private function addRouteInContainer(string $path, string $type): Route
+    {
+        $route = $this->createRouteInstance($path);
+        $this->routeContainer->addRoute($route, $type);
+        return $route;
+    }
+
+    private function createRouteInstance(string $path): Route
+    {
+        return new Route(
+            $this->settingRouteContainer->getMiddleware(),
+            $this->settingRouteContainer->getNamespace(),
+            $this->settingRouteContainer->getPrefix(),
+            $path
+        );
+    }
+
+    public function match(string $route, string ...$types): PlugRoute
+    {
+        $this->settingRouteContainer->addMatchType($route, ...$types);
+        return $this;
+    }
+
+    public function any(string $route): PlugRoute
+    {
+        $this->settingRouteContainer->addMatchType($route, ...RouteType::getTypes());
+        return $this;
+    }
+
+    public function controller(string $controller, $method)
+    {
+        $route = $this->settingRouteContainer->getMatchRoute();
+
+        foreach ($this->settingRouteContainer->getMatchTypes() as $type) {
+            $this->$type($route)->controller($controller, $method);
+        }
+
+        $this->settingRouteContainer->reset();
+    }
+
+    public function callback(callable $callback)
+    {
+        $route = $this->settingRouteContainer->getMatchRoute();
+
+        foreach ($this->settingRouteContainer->getMatchTypes() as $type) {
+            $this->$type($route)->callback($callback);
+        }
+
+        $this->settingRouteContainer->reset();
+    }
+
+    public function run()
+    {
+        $manager = new RouteHandle($this->routeContainer, $this->request);
+
+        echo $manager->run();
+    }
 }
