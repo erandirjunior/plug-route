@@ -34,7 +34,7 @@ $route->get('/')
 $route->run();
 ```
 
-### <a href="https://github.com/erandirjunior/plug-route/blob/master/doc/installation.md">See a full documentation.</a>
+### <a href="https://github.com/erandirjunior/plug-route/blob/master/doc/installation.md">See the full documentation.</a>
 
 
 ## Old version
@@ -44,4 +44,4 @@ composer require erandir/plug-route:v4.4
 ```
 
 Access old documentation for a complete use.
-### <a href="https://github.com/erandirjunior/plug-route/blob/master/doc/old/installation.md">See a full documentation</a>
+### <a href="https://github.com/erandirjunior/plug-route/blob/master/doc/old/installation.md">See the full documentation</a>
