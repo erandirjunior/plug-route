@@ -225,14 +225,6 @@ class PlugRouteTest extends TestCase
         $this->expectOutputString('working method');
     }
 
-    public function testFromJsonFile()
-    {
-        $this->setPlugRouteInstance('/people/10');
-        $this->plugRoute->fromJsonFile(__DIR__.'/Mock/route.json');
-        $this->runRoutes();
-        $this->expectOutputString('working method');
-    }
-
     /**
      * @runInSeparateProcess
      **/

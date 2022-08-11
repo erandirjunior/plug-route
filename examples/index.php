@@ -4,7 +4,9 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 
 require_once 'OtherMiddleware.php';
 
-use \PlugRoute\Http\Request;
+use PlugRoute\Example\ControllerMock;
+use PlugRoute\Example\MyRequest;
+use PlugRoute\Http\Request;
 use PlugRoute\Http\Response;
 use PlugRoute\PlugRoute;
 use PlugRoute\RouteType;
@@ -20,7 +22,8 @@ header("Access-Control-Allow-Headers: Content-Type");
 $route = new PlugRoute();
 
 $route->fallback()
-    ->callback(function () {
+    ->callback(function (Response $response) {
+        $response->setStatusCode(404)->response();
         return 'Page not found!';
     });
 
@@ -29,9 +32,11 @@ $route->get('/')
         echo "Basic route";
     });
 
-$route->get('/people/{id:\d+}', function(Request $request) {
-    echo "ID iss: {$request->parameter('id')}";
-});
+$route->get('/people/{id}')
+    ->callback(function(Request $request) {
+        echo "ID is: {$request->parameter('id')}";
+    })
+    ->rule('id', '\d+');
 
 $route->get('/optional/{id?}')
     ->callback(function(MyRequest $request) {
@@ -67,9 +72,22 @@ $route->options('/people/{id}')
     })
     ->rule('id', '\d+');
 
-$route->match('/prodcuts', RouteType::POST, RouteType::POST, 'options')
+$route->match('/products', RouteType::GET, RouteType::POST, 'options')
     ->callback(function() {
         echo "Match route";
+    });
+
+$route->get('/users/{userId}/comments/{commentId}')
+    ->callback(function (array $data) {
+        var_dump($data);
+    });
+
+$route->get('/brands/{brandId}/products/{productId}')
+    ->callback(function (int $brand, int $product) {
+        var_dump([
+            'brand' => $brand,
+            'product' => $product,
+        ]);
     });
 
 $route->redirect('/test/redirect', '/');
@@ -95,9 +113,6 @@ $route
         });
     });
 
-$route->get('/cars')
-    ->controller('\NAMESPACE\YOUR_CLASS', 'method');
-
-$route->fromJsonFile('./route.json');
+//$route->fromJsonFile(__DIR__.'/route.json');
 
 $route->run();

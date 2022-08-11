@@ -95,6 +95,6 @@ class Route
 
     private function convertArrayToString(Setting $namespaces): string
     {
-        return implode('',$namespaces->getData());
+        return implode('', $namespaces->getData());
     }
 }

@@ -5,7 +5,6 @@ namespace PlugRoute;
 use PlugRoute\Container\SettingRouteContainer;
 use PlugRoute\Container\RouteContainer;
 use PlugRoute\Http\Request;
-use PlugRoute\Load\JSON;
 
 class PlugRoute
 {
@@ -13,15 +12,12 @@ class PlugRoute
 
     private SettingRouteContainer $settingRouteContainer;
 
-    private JSON $json;
-
     private Request $request;
 
     public function __construct()
     {
         $this->routeContainer = new RouteContainer();
         $this->settingRouteContainer = new SettingRouteContainer();
-        $this->json = new JSON($this);
         $this->request = new Request();
     }
 
@@ -140,11 +136,6 @@ class PlugRoute
         }
 
         $this->settingRouteContainer->reset();
-    }
-
-    public function fromJsonFile(string $file)
-    {
-        $this->json->loadRoutesFromFile($file);
     }
 
     public function run()

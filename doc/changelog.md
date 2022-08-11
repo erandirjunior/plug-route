@@ -7,7 +7,7 @@
 * Saved old documentation in a new folder
 * Applied tests in all the library
 * Removed routes from xml file
-* Modified routes from json file
+* Removed routes from json file
 
 ### v4.4
 * Fixed parameters types
