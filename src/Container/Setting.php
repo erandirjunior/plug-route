@@ -10,7 +10,7 @@ class Setting
 
     public function __construct()
     {
-        $this->index = 1;
+        $this->index = 0;
         $this->data = [];
     }
 
@@ -32,19 +32,18 @@ class Setting
 
     public function incrementIndex(): void
     {
-        $this->index++;
+        ++$this->index;
     }
 
     public function removeLastPosition(): void
     {
         $this->decrementIndex();
-        $this->data = array_slice($this->data, 0, $this->index);
+
+        array_pop($this->data);
     }
 
     private function decrementIndex(): void
     {
-        if ($this->index > 1) {
-            $this->index--;
-        }
+        --$this->index;
     }
 }

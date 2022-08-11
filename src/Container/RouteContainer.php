@@ -9,6 +9,11 @@ class RouteContainer
 {
     private array $routes;
 
+    public function __construct()
+    {
+        $this->routes = [];
+    }
+
     public function addRoute(Route $route, string $type)
     {
         $this->routes[$type][] = $route;
