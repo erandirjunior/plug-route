@@ -70,10 +70,10 @@ class Reflection
 
         if ($request instanceof Request) {
             foreach ($this->request->parameters() as $key => $value) {
-                $request->setParameter($key, $value);
+                $request->addParameter($key, $value);
             }
 
-            $request->setRouteNamed($this->request->getRouteNamed());
+            $request->setRouteNamed($this->request->getAllRouteNamed());
 
             return $request;
         }

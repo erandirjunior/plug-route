@@ -9,6 +9,6 @@ class FirstMiddlewareMock implements PlugRouteMiddleware
 {
     public function handler(Request $request)
     {
-        $request->setParameter('firstMiddleware', true);
+        $request->addParameter('firstMiddleware', true);
     }
 }

@@ -149,7 +149,7 @@ class Request
         $this->env->remove($key);
     }
 
-    public function file(?string $key = null)
+    public function files(?string $key = null)
     {
         if ($key) {
             return $this->file->get($key);
@@ -183,7 +183,7 @@ class Request
         $this->server->add($key, $value);
     }
 
-    public function header(?string $key = null)
+    public function headers(?string $key = null)
     {
         if ($key) {
             return $this->server->get($key);
@@ -330,14 +330,14 @@ class Request
         return $this->parameter;
     }
 
-    public function setParameter($key, $value): Request
+    public function addParameter($key, $value): Request
     {
         $this->parameter[$key] = $value;
 
         return $this;
     }
 
-    public function setParameters(array $data): Request
+    public function addParameters(array $data): Request
     {
         foreach ($data as $key => $value) {
             $this->parameter[$key] = $value;
@@ -364,7 +364,7 @@ class Request
         return $this;
     }
 
-    public function getRouteNamed(): array
+    public function getAllRouteNamed(): array
     {
         return $this->routeNamed;
     }

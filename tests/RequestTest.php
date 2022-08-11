@@ -66,8 +66,8 @@ class RequestTest extends TestCase
 
 	public function testFile()
 	{
-		self::assertEquals($_FILES, $this->instance->file());
-		self::assertEquals($_FILES['background'], $this->instance->file('background'));
+		self::assertEquals($_FILES, $this->instance->files());
+		self::assertEquals($_FILES['background'], $this->instance->files('background'));
 		self::assertEquals(['profile' => $_FILES['profile']], $this->instance->onlyFiles(['profile']));
 		self::assertEquals(['background' => $_FILES['background']], $this->instance->exceptFiles(['profile']));
 
@@ -100,10 +100,10 @@ class RequestTest extends TestCase
         $this->instance->addHeader('id', 10);
         $this->instance->addHeader('name', 'Erandir Junior');
         $this->instance->addHeader('site', 'github');
-        self::assertEquals(10, $this->instance->header('id'));
+        self::assertEquals(10, $this->instance->headers('id'));
         self::assertEquals(['name' => 'Erandir Junior', 'site' => 'github'], $this->instance->onlyHeaders(['name', 'site']));
         self::assertArrayHasKey('id', $this->instance->exceptHeaders(['name']));
-        self::assertEquals($_SERVER, $this->instance->header());
+        self::assertEquals($_SERVER, $this->instance->headers());
 
         $this->instance->removeHeader('site');
         self::assertEquals(false, $this->instance->hasHeader('site'));

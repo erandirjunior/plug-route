@@ -30,7 +30,7 @@ class RouteHandle
 
 		foreach ($this->routes as $route) {
             if ($matchRoute->urlAndRouteAreEqual($route)) {
-                $this->request->setParameters($matchRoute->getParameters());
+                $this->request->addParameters($matchRoute->getParameters());
 
                 return $this->callback->handlerCallback($route);
             }
