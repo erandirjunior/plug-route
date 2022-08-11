@@ -2,11 +2,12 @@
 
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
-require_once 'Auth.php';
 require_once 'OtherMiddleware.php';
 
 use \PlugRoute\Http\Request;
-use \PlugRoute\Example\{A, B, C, D, E};
+use PlugRoute\Http\Response;
+use PlugRoute\PlugRoute;
+use PlugRoute\RouteType;
 
 /**** CORS ****/
 header('Access-Control-Allow-Origin: *');
@@ -16,79 +17,87 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 // If you are working without virtualhost modify the file .htaccess on line 49, setting the path correct.
 
-$route          = \PlugRoute\RouteFactory::create();
-$dependencies   = require_once 'dependencies.php';
+$route = new PlugRoute();
 
-$route->notFound(function() {
-	echo 'Error Page';
-});
+$route->fallback()
+    ->callback(function () {
+        return 'Page not found!';
+    });
 
-$route->get('/', function() {
-	echo "Basic route";
-});
+$route->get('/')
+    ->callback(function() {
+        echo "Basic route";
+    });
 
 $route->get('/people/{id:\d+}', function(Request $request) {
-	echo "ID iss: {$request->parameter('id')}";
+    echo "ID iss: {$request->parameter('id')}";
 });
 
-$route->get('/optional/{id:?}', function(\PlugRoute\Example\Dependency\MyRequest $request) {
-	echo "Parameter sent is: {$request->parameter('id')}";
-});
+$route->get('/optional/{id?}')
+    ->callback(function(MyRequest $request) {
+        echo "Parameter if sent is: {$request->parameter('id')}";
+    });
 
-$route->post('/people', function() {
-	echo "Post route";
-});
+$route->post('/people')
+    ->callback(function() {
+        echo "Post route";
+    });
 
-$route->put('/people/{id:\d+}', function(string $id) {
-	echo "Put route, id: {$id}";
-});
+$route->put('/people/{id}')
+    ->callback(function(string $id) {
+        echo "Put route, id: {$id}";
+    })
+    ->rule('id', '\d+');
 
-$route->delete('/people/{id:\d+}', function() {
-	echo "Delete route";
-});
+$route->delete('/people/{id}')
+    ->callback(function() {
+        echo "Delete route";
+    })
+    ->rule('id', '\d+');
 
-$route->patch('/people/{id:\d+}', function() {
-	echo "Patch route";
-});
+$route->patch('/people/{id}')
+    ->callback(function() {
+        echo "Patch route";
+    })
+    ->rule('id', '\d+');
 
-$route->options('/people/{id:\d+}', function() {
-	echo "Options route";
-});
+$route->options('/people/{id}')
+    ->callback(function() {
+        echo "Options route";
+    })
+    ->rule('id', '\d+');
 
-$route->match(['GET', 'POST'], '/products', function() {
-	echo "Match route";
-});
+$route->match('/prodcuts', RouteType::POST, RouteType::POST, 'options')
+    ->callback(function() {
+        echo "Match route";
+    });
 
 $route->redirect('/test/redirect', '/');
 
-$route->group(['prefix' => '/department', 'middlewares' => [OtherMiddleware::class]], function($route) {
-	$route->get('/it', function(\PlugRoute\Http\Response $response, Request $request) {
-		echo $response->json(['departament' => 'IT Departament']);
-	})->name('ti');
+$route
+    ->middleware('MidlewareOne', 'MidlewareTwo')
+    ->middleware(OtherMiddleware::class)
+    ->prefix('/site', '/system')
+    ->group(function (PlugRoute $route) {
+        $route->get('/ti')
+        ->callback(function(Response $response, Request $request) {
+            echo $response->json(['departament' => 'IT Departament']);
+        })
+        ->name('ti');
 
-	$route->get('/tecnology', function(Request $request) {
-		$request->redirectToRoute('ti');
+        $route->get('/tecnology')
+        ->callback(function(Request $request) {
+            $request->redirectToRoute('ti');
 
-		// If you use this library without name a route, without virtualhost or php server built-in
-		// use the redirect method
-//		$request->redirect('http://localhost/plug-route/examples/department/it');
-	});
-});
+        // If you use this library without name a route, without virtualhost or php server built-in
+        // use the redirect method
+        // $request->redirect('http://localhost/plug-route/examples/department/it');
+        });
+    });
 
-$route->get('/cars', '\NAMESPACE\YOUR_CLASS@method');
+$route->get('/cars')
+    ->controller('\NAMESPACE\YOUR_CLASS', 'method');
 
-$route->loadFromJson('./routes.json');
+$route->fromJsonFile('./route.json');
 
-$route->get('/contracts', '\NAMESPACE\YOUR_CLASS@method');
-
-$route->get('/injection', function () {
-    return (new A(new B(new C())))->method(new D(new E()));
-});
-
-$route->loadFromXML('routes.xml');
-
-$route->get('/groups', '\NAMESPACE\YOUR_CLASS@method');
-
-$route->get('/contract/{id:\d+}/item', 'PlugRoute\Example\Dependency\MyService@apresentation');
-
-$route->on();
+$route->run();

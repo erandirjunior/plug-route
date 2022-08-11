@@ -1,0 +1,75 @@
+[
+  {
+    "path": "/json-test",
+    "type": "get",
+    "name": "json",
+    "class": "PlugRoute\\Example\\Home",
+    "method": "example"
+  },
+  {
+    "middlewares": [
+      "Middleware1",
+      "Middleware2"
+    ],
+    "class": "PlugRoute\\Example\\Home@anything",
+    "method": "example",
+    "path": "/json/{anything}",
+    "type": "get"
+  },
+  {
+    "prefix": "/sports",
+    "middlewares": [
+      "MiddlewareA",
+      "MiddlewareB"
+    ],
+    "group": [
+      {
+        "path": "/xadrez",
+        "type": "GET",
+        "class": "PlugRoute\\Example\\Home",
+        "method": "rankingXadrez"
+      },
+      {
+        "group": [
+          {
+            "prefix": "/f1",
+            "path": "/ranking",
+            "type": "GET",
+            "class": "PlugRoute\\Example\\Home",
+            "method": "rankingF1"
+          }
+        ]
+      },
+      {
+        "prefix": "/soccer",
+        "middlewares": [
+          "MiddlewareSoccer"
+        ],
+        "namespace": "PlugRoute\\",
+        "group": [
+          {
+            "path": "/champions-league",
+            "type": "GET",
+            "class": "Example\\Home",
+            "method": "rankingChampions"
+          },
+          {
+            "path": "/europe-league",
+            "type": "GET",
+            "class": "Example\\Home",
+            "method": "rankingEurope"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "/jhdjkasd",
+    "type": "GET",
+    "middlewares": [
+      "MiddlewareAAAAAAAAAAAAAAAAAAAAAAAA"
+    ],
+    "class": "PlugRoute\\Example\\Home",
+    "method": "anything"
+  }
+]
