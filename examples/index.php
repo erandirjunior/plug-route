@@ -2,10 +2,9 @@
 
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
-require_once 'OtherMiddleware.php';
-
 use PlugRoute\Example\ControllerMock;
 use PlugRoute\Example\MyRequest;
+use PlugRoute\Example\OtherMiddleware;
 use PlugRoute\Http\Request;
 use PlugRoute\Http\Response;
 use PlugRoute\PlugRoute;
@@ -112,7 +111,5 @@ $route
         // $request->redirect('http://localhost/plug-route/examples/department/it');
         });
     });
-
-//$route->fromJsonFile(__DIR__.'/route.json');
 
 $route->run();

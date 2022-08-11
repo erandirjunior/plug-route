@@ -1,5 +1,7 @@
 <?php
 
+namespace PlugRoute\Example;
+
 use \PlugRoute\Middleware\PlugRouteMiddleware;
 use \PlugRoute\Http\Request;
 

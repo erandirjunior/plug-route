@@ -13,4 +13,8 @@ class ControllerMock
             'Product sent' => $request->parameter('productId')
         ]);
     }
+    public function test(Request $request, Response $response)
+    {
+        return 'Route defined in json file.';
+    }
 }
