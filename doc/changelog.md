@@ -1,6 +1,6 @@
 # Changelog
 
-#4.5
+### 4.5
 * Refactored all PlugRoute library interface
 * Imported all classes from PlugHttp
 * Added new documentation
