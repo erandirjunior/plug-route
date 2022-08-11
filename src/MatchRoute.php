@@ -89,7 +89,7 @@ class MatchRoute
 
     private function setGenericExpression($value): void
     {
-        $pattern = '(.+)';
+        $pattern = '([^\s\/]+)';
 
         if ($this->hasPreviousPattern($value[0]) || isset($value[2])) {
             $pattern .= '?';
