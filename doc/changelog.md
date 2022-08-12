@@ -1,5 +1,10 @@
 # Changelog
 
+### 4.6
+* Fixed documentation
+* Removed unnecessary code
+* Improvements in return type
+
 ### 4.5
 * Refactored all PlugRoute library interface
 * Imported all classes from PlugHttp
