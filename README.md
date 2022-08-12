@@ -34,7 +34,7 @@ $route->get('/')
 $route->run();
 ```
 
-### <a href="https://github.com/erandirjunior/plug-route/blob/master/doc/installation.md">See the full documentation.</a>
+### <a href="https://github.com/erandirjunior/plug-route/blob/master/doc/installation.md">See the full documentation</a>
 
 
 ## Old version
