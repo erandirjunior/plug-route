@@ -2,8 +2,8 @@
 
 namespace PlugRoute\Http;
 
-use Exception;
 use PlugRoute\Cache;
+use PlugRoute\Error;
 use PlugRoute\Http\Body\Content;
 use PlugRoute\Http\Globals\Cookie;
 use PlugRoute\Http\Globals\Env;
@@ -229,8 +229,8 @@ class Request
 
     public function redirect(string $path, int $code = 301)
     {
-        header("HTTP/1.0 {$code}");
-        header("Location: {$path}");
+        header('HTTP/1.0 '.$code);
+        header('Location: '.$path);
 
         return true;
     }
@@ -294,9 +294,15 @@ class Request
         $this->content->add($key, $value);
     }
 
-    public function all(): array
+    public function all()
     {
-        return $this->content->all();
+        $content = $this->content->all();
+
+        if (is_array($content)) {
+            return $content;
+        }
+
+        return [$content];
     }
 
     public function bodyAsObject(): stdClass
@@ -307,7 +313,7 @@ class Request
             return ArrayUtil::convertToObject($this->content->all());
         }
 
-        throw new Exception("It wasn't possible convert to object");
+        Error::throwException("It wasn't possible convert to object");
     }
 
     public function get(string $value)
@@ -351,7 +357,7 @@ class Request
         $route = Cache::get($name);
 
         if (empty($route)) {
-            throw new Exception("Name wasn't defined.");
+            Error::throwException("Name wasn't defined.");
         }
 
         return $this->redirect($route, $code);

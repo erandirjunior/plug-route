@@ -5,6 +5,7 @@ namespace PlugRoute\Callback;
 use Exception;
 use PlugRoute\Action\ClosureAction;
 use PlugRoute\Action\ControllerAction;
+use PlugRoute\Error;
 use PlugRoute\Http\Request;
 use PlugRoute\Middleware\PlugRouteMiddleware;
 use PlugRoute\Route;
@@ -44,7 +45,7 @@ class Callback
             if (!($obj instanceof PlugRouteMiddleware)) {
                 $message = "Error: the class {$middleware} must implement PlugRouteMiddleware.";
 
-                throw new Exception($message);
+                Error::throwException($message);
             }
 
             $obj->handler($this->request);
