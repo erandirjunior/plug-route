@@ -2,8 +2,8 @@
 
 namespace PlugRoute\Example;
 
-use \PlugRoute\Middleware\PlugRouteMiddleware;
-use \PlugRoute\Http\Request;
+use PlugRoute\Http\Request;
+use PlugRoute\Middleware\PlugRouteMiddleware;
 
 class OtherMiddleware implements PlugRouteMiddleware
 {
