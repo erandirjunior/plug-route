@@ -6,7 +6,7 @@ use PlugRoute\Http\Globals\Server;
 
 class ServerClassTextPlain extends Server
 {
-	public function getContentType()
+	public function getContentType(): string
 	{
 		$array = [
 			'Content-Type: text/plain'

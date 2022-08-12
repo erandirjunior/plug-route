@@ -8,7 +8,7 @@ class ServerClassXml extends Server
 {
 	private $flag;
 
-	public function getContentType()
+	public function getContentType(): string
 	{
 	    $contentType = $this->flag == 1 ? 'application/xml' : 'text/xml';
 

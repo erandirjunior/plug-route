@@ -6,7 +6,7 @@ use PlugRoute\Http\Globals\Server;
 
 class ServerClass extends Server
 {
-	public function getContentType()
+	public function getContentType(): string
 	{
 		$array = [
 			'Content-Type: json'

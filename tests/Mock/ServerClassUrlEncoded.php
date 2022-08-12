@@ -8,7 +8,7 @@ class ServerClassUrlEncoded extends Server
 {
 	private $flag;
 
-	public function getContentType()
+	public function getContentType(): string
 	{
 		$array = [
 			'Content-Type: x-www-form-urlencoded'

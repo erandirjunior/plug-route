@@ -42,7 +42,7 @@ class Server
 	public function getContentType(): string
 	{
 		$contentType = $this->getContentTypeFromHeadersList('Content-Type');
-		return $this->server['CONTENT_TYPE'] ?? $contentType;
+		return $this->server['CONTENT_TYPE'] ?? $contentType ?? '';
 	}
 
 	public function isMethod(string $method): bool
