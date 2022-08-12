@@ -39,7 +39,7 @@ class Server
         return strpos($this->getContentType(), $type) !== false;
     }
 
-	public function getContentType()
+	public function getContentType(): string
 	{
 		$contentType = $this->getContentTypeFromHeadersList('Content-Type');
 		return $this->server['CONTENT_TYPE'] ?? $contentType;

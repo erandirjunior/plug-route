@@ -5,9 +5,6 @@ namespace PlugRoute;
 use Closure;
 use PlugRoute\Action\ClosureAction;
 use PlugRoute\Action\ControllerAction;
-use PlugRoute\Container\MiddlewareContainer;
-use PlugRoute\Container\NamespaceContainer;
-use PlugRoute\Container\PrefixContainer;
 use PlugRoute\Container\Setting;
 
 class Route

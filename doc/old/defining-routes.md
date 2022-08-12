@@ -4,7 +4,7 @@
 > Here we will configure PlugRoute with the basic example
 
 ```php
-$route = \PlugRoute\OLD\RouteFactory::create();
+$route = \PlugRoute\RouteFactory::create();
 
 $route->get('/', function() {
     echo 'basic route';
